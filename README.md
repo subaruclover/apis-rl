@@ -7,7 +7,7 @@ rl learning file and scenario files, as well as apis-main files.
 
 ## File description
 config.py and global_var.py are files copied from the apis-main. These files are system files.
-getLogdata.py is the main file for getting the state variables and generating new scenario.json file. New scenario.json
+agent.py is the main file for getting the state variables and generating new scenario.json file. New scenario.json
 file will be replaced the older file under the directory apis-main/exe/.
 
 ## TODO
