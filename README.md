@@ -12,8 +12,11 @@ file will be replaced the older file under the directory apis-main/exe/.
 
 ## TODO
 makefile for apis-rl under the main APIS (makefile)
-maybe: venv for make file
-       requirement.txt for the dependency of the project
-       (pandas, tf, keras, numpy, matplotlib, ...)
+
+### consider: 
+- venv for make file
+- requirement.txt for the dependency of the project
+(pandas, tf, keras, numpy, matplotlib, ...)
+
 
 
