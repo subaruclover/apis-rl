@@ -111,6 +111,7 @@ data1 = {
 newSce = CreateScenario()
 newSce.write_json(new_data=data1)
 
+# get log data for states
 host = conf.b_host
 port = conf.b_port
 # url = "http://0.0.0.0:4390/get/log"

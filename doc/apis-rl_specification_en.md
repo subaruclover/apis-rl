@@ -29,7 +29,7 @@ The Emulator runs a computer emulation that reproduces the hardware system for e
     
 ## **3.1. config**
 
-## **3.2. globak_var**
+## **3.2. global_var**
   
 ## **3.3. agent**
 ![](media/media/states.gif)
