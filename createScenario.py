@@ -150,14 +150,27 @@ data1 = {
 # create scenario file and put it under the dir of apis-main/exe
 class CreateScenario():
     def __init__(self):
-        self.filename = "scenario.json"
+        self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+        self.batterySize = 4800
+        self.filename1 = "scenario.json"
+        self.filename2 = "scenario2.json"
+        self.filename3 = "scenario3.json"
+        self.filename4 = "scenario4.json"
         self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
-        self.full_path = os.path.join(self.desired_dir, self.filename)
+        self.full_path1 = os.path.join(self.desired_dir, self.filename1)
+        self.full_path2 = os.path.join(self.desired_dir, self.filename2)
+        self.full_path3 = os.path.join(self.desired_dir, self.filename3)
+        self.full_path4 = os.path.join(self.desired_dir, self.filename4)
 
     def write_json(self, new_data):
-        with open(self.full_path, 'w') as f:
-            json_string = json.dumps(new_data)
-            f.write(json_string)
+        with open(self.full_path1, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=4)
+        with open(self.full_path2, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=4)
+        with open(self.full_path3, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=4)
+        with open(self.full_path4, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=4)
 
 # write_json(new_data=data1, filename="scenario.json")
 

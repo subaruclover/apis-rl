@@ -24,6 +24,7 @@ from createScenario import CreateScenario
 timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
 batterySize = 4800
 data1 = {
+    "#": "place this file at the path defined by 'scenarioFile' in config file",
     "refreshingPeriodMsec": 5000,
 
     "acceptSelection": {
@@ -111,6 +112,7 @@ data1 = {
 newSce = CreateScenario()
 newSce.write_json(new_data=data1)
 
+"""
 # get log data for states
 host = conf.b_host
 port = conf.b_port
@@ -161,4 +163,4 @@ while not gl.sema:  # True, alter for different time periods
     # interval = 60 * 60  # every 60s
     # command = createJson()
     # run(interval, command)
-
+"""
