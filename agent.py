@@ -1,9 +1,6 @@
+"""
 #  for each nodes
 #  get the log data from apis-emulator for states
-#  created by Qiong
-
-"""
-Create on Sep 26, 2021
 
 @author: Qiong
 """
