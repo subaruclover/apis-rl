@@ -27,9 +27,7 @@ class DQNNet():
         # state_size = (3, )
         input = Input(shape=self.state_size)
 
-        x = Dense(50, activation="relu", kernel_initializer=glorot_uniform(seed=42))(
-            input
-        )
+        x = Dense(50, activation="relu", kernel_initializer=glorot_uniform(seed=42))(input)
         x = Dense(200, activation="relu", kernel_initializer=glorot_uniform(seed=42))(x)
 
         output = Dense(

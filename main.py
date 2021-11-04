@@ -3,25 +3,75 @@ DQN training, single run
 
 created by: Qiong
 """
-import time
+import os
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
-import pickle
+import logging.config
+logger = logging.getLogger(__name__)
+
+import time
+import global_var as gl
+import config as conf
+import requests, json
+
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
 
-import os
-os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
-
-from RL_learn import DQNNet, SumTree, Memory, BatteryEnv
+from RL_learn import DQNNet, Memory, BatteryEnv
 
 start_time = time.time()
 
 ##############################
 # Data loading
+# get log data for states
+host = conf.b_host
+port = conf.b_port
+# url = "http://0.0.0.0:4390/get/log"
+URL = "http://" + host + ":" + str(port) + "/get/log"
 
+# dicts of states for all houses
+pvc_charge_power = {}
+ups_output_power = {}
+p2 = {}  # powermeter.p2, Power consumption to the power storage system [W]
+wg = {}  # meter.wg, DC Grid power [W]
+wb = {}  # meter.wb, Battery Power [W]
+
+# need to refresh the output data every 5s? time.sleep()
+while not gl.sema:  # True, alter for different time periods
+    # # refresh every 5 seconds
+    # time.sleep(5)
+    # read variables from /get/log url
+    # print(output_data.text)
+    output_data = requests.get(URL).text
+    output_data = json.loads(output_data)  # dict
+
+    for ids, dict_ in output_data.items():  # ids: E001, E002, ... house ID
+        # print('the name of the dictionary is ', ids)
+        # print('the dictionary is ', dict_)
+        pvc_charge_power[ids] = output_data[ids]["emu"]["pvc_charge_power"]
+        ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
+        p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
+        wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+        wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+
+        # print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
+        #       "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
+        #       "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
+        #       "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
+        #       "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
+        #       )
+
+    # refresh every 5 seconds
+    # print("\n")
+    time.sleep(5)
+
+    # scenario files
+    # interval = 60 * 60  # every 60s
+    # command = createJson()
+    # run(interval, command)
+"""
 # input data of house 214, 2019 (every 15mins (quarter hour), each day (pu, per unit) contains 96 data points)
 df_raw = pd.read_csv("/home/doya/Documents/DQNBattery/data/house214_2019_quarterhour_avg.csv")
 # df_raw = pd.read_csv("./data/house214_2019_quarterhour_avg.csv")
@@ -36,7 +86,7 @@ battery_current = df["battery_current"]  # A(DC)
 p2 = df["p2"]  # W
 ups_output_power = df["ups_output_power"]
 
-
+"""
 #############################
 # State concatenate
 pv = df[["pvc_charge_power"]].values
