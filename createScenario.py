@@ -31,108 +31,6 @@ def run(interval, command):
             print(e)
 
 
-# set time periods for scenario files
-timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
-
-# per hour: TimePeriods[0],...,TimePeriods[23]
-TimePeriods = ["00:00:00-01:00:00", "01:00:00-02:00:00", "02:00:00-03:00:00",
-               "03:00:00-04:00:00", "04:00:00-05:00:00", "05:00:00-06:00:00",
-               "06:00:00-07:00:00", "07:00:00-08:00:00", "08:00:00-09:00:00",
-               "09:00:00-10:00:00", "10:00:00-11:00:00", "11:00:00-12:00:00",
-               "12:00:00-13:00:00", "13:00:00-14:00:00", "14:00:00-15:00:00",
-               "15:00:00-16:00:00", "16:00:00-17:00:00", "17:00:00-18:00:00",
-               "18:00:00-19:00:00", "19:00:00-20:00:00", "20:00:00-21:00:00",
-               "21:00:00-22:00:00", "22:00:00-23:00:00", "23:00:00-24:00:00"]
-# battery Size: 4800
-batterySize = 4800
-
-data1 = {
-    "refreshingPeriodMsec": 5000,
-
-    "acceptSelection": {
-        "strategy": "pointAndAmount"
-    },
-
-    timePeriods[0]: {
-        "batteryStatus": {
-            str(batterySize * 0.8) + "-": "excess",
-            str(str(batterySize * 0.5) + "-" + str(batterySize * 0.8)): "sufficient",
-            str(str(batterySize * 0.4) + "-" + str(batterySize * 0.5)): "scarce",
-            "-" + str(batterySize * 0.4): "short"
-        },
-        "request": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.8,
-                "pointPerWh": 10
-            }},
-            "sufficient": {},
-            "scarce": {},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.4,
-                "pointPerWh": 10
-            }}
-        },
-        "accept": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "sufficient": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "scarce": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }}
-        }
-    },
-
-    timePeriods[1]: {
-        "batteryStatus": {
-            str(batterySize * 0.7) + "-": "excess",
-            str(str(batterySize * 0.5) + "-" + str(batterySize * 0.7)): "sufficient",
-            str(str(batterySize * 0.3) + "-" + str(batterySize * 0.5)): "scarce",
-            "-" + str(batterySize * 0.3): "short"
-        },
-        "request": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.7,
-                "pointPerWh": 10
-            }},
-            "sufficient": {},
-            "scarce": {},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.3,
-                "pointPerWh": 10
-            }}
-        },
-        "accept": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "sufficient": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "scarce": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }}
-        }
-    }
-}
-
-
 # generate scenario.json file
 # t_end = time.time() + 60 * 15  # run for 15 min x 60 s = 900 seconds.
 # while time.time() < t_end:
@@ -147,10 +45,13 @@ data1 = {
 # with open('scenario.json', 'w') as jsonfile:
 #     json.dump(data1, jsonfile)
 
+
 # create scenario file and put it under the dir of apis-main/exe
 class CreateScenario():
     def __init__(self):
+        # set time periods for scenario files
         self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+        # per hour: TimePeriods[0],...,TimePeriods[23]
         self.TimePeriods = ["00:00:00-01:00:00", "01:00:00-02:00:00", "02:00:00-03:00:00",
                             "03:00:00-04:00:00", "04:00:00-05:00:00", "05:00:00-06:00:00",
                             "06:00:00-07:00:00", "07:00:00-08:00:00", "08:00:00-09:00:00",
@@ -168,79 +69,79 @@ class CreateScenario():
                 "strategy": "pointAndAmount"
             },
 
-            timePeriods[0]: {
+            self.timePeriods[0]: {
                 "batteryStatus": {
-                    str(batterySize * 0.8) + "-": "excess",
-                    str(str(batterySize * 0.5) + "-" + str(batterySize * 0.8)): "sufficient",
-                    str(str(batterySize * 0.4) + "-" + str(batterySize * 0.5)): "scarce",
-                    "-" + str(batterySize * 0.4): "short"
+                    str(self.batterySize * 0.8) + "-": "excess",
+                    str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.8)): "sufficient",
+                    str(str(self.batterySize * 0.4) + "-" + str(self.batterySize * 0.5)): "scarce",
+                    "-" + str(self.batterySize * 0.4): "short"
                 },
                 "request": {
                     "excess": {"discharge": {
-                        "limitWh": batterySize * 0.8,
+                        "limitWh": self.batterySize * 0.8,
                         "pointPerWh": 10
                     }},
                     "sufficient": {},
                     "scarce": {},
                     "short": {"charge": {
-                        "limitWh": batterySize * 0.4,
+                        "limitWh": self.batterySize * 0.4,
                         "pointPerWh": 10
                     }}
                 },
                 "accept": {
                     "excess": {"discharge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }},
                     "sufficient": {"discharge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }},
                     "scarce": {"charge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }},
                     "short": {"charge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }}
                 }
             },
 
-            timePeriods[1]: {
+            self.timePeriods[1]: {
                 "batteryStatus": {
-                    str(batterySize * 0.7) + "-": "excess",
-                    str(str(batterySize * 0.5) + "-" + str(batterySize * 0.7)): "sufficient",
-                    str(str(batterySize * 0.3) + "-" + str(batterySize * 0.5)): "scarce",
-                    "-" + str(batterySize * 0.3): "short"
+                    str(self.batterySize * 0.7) + "-": "excess",
+                    str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.7)): "sufficient",
+                    str(str(self.batterySize * 0.3) + "-" + str(self.batterySize * 0.5)): "scarce",
+                    "-" + str(self.batterySize * 0.3): "short"
                 },
                 "request": {
                     "excess": {"discharge": {
-                        "limitWh": batterySize * 0.7,
+                        "limitWh": self.batterySize * 0.7,
                         "pointPerWh": 10
                     }},
                     "sufficient": {},
                     "scarce": {},
                     "short": {"charge": {
-                        "limitWh": batterySize * 0.3,
+                        "limitWh": self.batterySize * 0.3,
                         "pointPerWh": 10
                     }}
                 },
                 "accept": {
                     "excess": {"discharge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }},
                     "sufficient": {"discharge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }},
                     "scarce": {"charge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }},
                     "short": {"charge": {
-                        "limitWh": batterySize * 0.5,
+                        "limitWh": self.batterySize * 0.5,
                         "pointPerWh": 10
                     }}
                 }
@@ -256,24 +157,17 @@ class CreateScenario():
         self.full_path3 = os.path.join(self.desired_dir, self.filename3)
         self.full_path4 = os.path.join(self.desired_dir, self.filename4)
 
-    def write_json(self, new_data):
+    def write_json(self):
         with open(self.full_path1, 'w', encoding='utf-8') as f:
-            json.dump(new_data, f, ensure_ascii=False, indent=4)
+            json.dump(self.data, f, ensure_ascii=False, indent=4)
         with open(self.full_path2, 'w', encoding='utf-8') as f:
-            json.dump(new_data, f, ensure_ascii=False, indent=4)
+            json.dump(self.data, f, ensure_ascii=False, indent=4)
         with open(self.full_path3, 'w', encoding='utf-8') as f:
-            json.dump(new_data, f, ensure_ascii=False, indent=4)
+            json.dump(self.data, f, ensure_ascii=False, indent=4)
         with open(self.full_path4, 'w', encoding='utf-8') as f:
-            json.dump(new_data, f, ensure_ascii=False, indent=4)
+            json.dump(self.data, f, ensure_ascii=False, indent=4)
 
 
-# def createJson():
-#     with open('scenario.json', 'w') as jsonfile:
-#         json.dump(data1, jsonfile)
-
-
-# command = createJson()
-#
 # if __name__ == "__main__":
 #     interval = 60 * 60  # every 60s
 #     command = createJson()

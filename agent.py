@@ -21,96 +21,96 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 from createScenario import CreateScenario
 #  create new scenario file and put it under apis-main dir
-timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
-batterySize = 4800
-data1 = {
-    "#": "place this file at the path defined by 'scenarioFile' in config file",
-    "refreshingPeriodMsec": 5000,
-
-    "acceptSelection": {
-        "strategy": "pointAndAmount"
-    },
-
-    timePeriods[0]: {
-        "batteryStatus": {
-            str(batterySize * 0.8) + "-": "excess",
-            str(str(batterySize * 0.5) + "-" + str(batterySize * 0.8)): "sufficient",
-            str(str(batterySize * 0.4) + "-" + str(batterySize * 0.5)): "scarce",
-            "-" + str(batterySize * 0.4): "short"
-        },
-        "request": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.8,
-                "pointPerWh": 10
-            }},
-            "sufficient": {},
-            "scarce": {},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.4,
-                "pointPerWh": 10
-            }}
-        },
-        "accept": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "sufficient": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "scarce": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }}
-        }
-    },
-
-    timePeriods[1]: {
-        "batteryStatus": {
-            str(batterySize * 0.7) + "-": "excess",
-            str(str(batterySize * 0.5) + "-" + str(batterySize * 0.7)): "sufficient",
-            str(str(batterySize * 0.3) + "-" + str(batterySize * 0.5)): "scarce",
-            "-" + str(batterySize * 0.3): "short"
-        },
-        "request": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.7,
-                "pointPerWh": 10
-            }},
-            "sufficient": {},
-            "scarce": {},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.3,
-                "pointPerWh": 10
-            }}
-        },
-        "accept": {
-            "excess": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "sufficient": {"discharge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "scarce": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }},
-            "short": {"charge": {
-                "limitWh": batterySize * 0.5,
-                "pointPerWh": 10
-            }}
-        }
-    }
-}
+# timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+# batterySize = 4800
+# data1 = {
+#     "#": "place this file at the path defined by 'scenarioFile' in config file",
+#     "refreshingPeriodMsec": 5000,
+#
+#     "acceptSelection": {
+#         "strategy": "pointAndAmount"
+#     },
+#
+#     timePeriods[0]: {
+#         "batteryStatus": {
+#             str(batterySize * 0.8) + "-": "excess",
+#             str(str(batterySize * 0.5) + "-" + str(batterySize * 0.8)): "sufficient",
+#             str(str(batterySize * 0.4) + "-" + str(batterySize * 0.5)): "scarce",
+#             "-" + str(batterySize * 0.4): "short"
+#         },
+#         "request": {
+#             "excess": {"discharge": {
+#                 "limitWh": batterySize * 0.8,
+#                 "pointPerWh": 10
+#             }},
+#             "sufficient": {},
+#             "scarce": {},
+#             "short": {"charge": {
+#                 "limitWh": batterySize * 0.4,
+#                 "pointPerWh": 10
+#             }}
+#         },
+#         "accept": {
+#             "excess": {"discharge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }},
+#             "sufficient": {"discharge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }},
+#             "scarce": {"charge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }},
+#             "short": {"charge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }}
+#         }
+#     },
+#
+#     timePeriods[1]: {
+#         "batteryStatus": {
+#             str(batterySize * 0.7) + "-": "excess",
+#             str(str(batterySize * 0.5) + "-" + str(batterySize * 0.7)): "sufficient",
+#             str(str(batterySize * 0.3) + "-" + str(batterySize * 0.5)): "scarce",
+#             "-" + str(batterySize * 0.3): "short"
+#         },
+#         "request": {
+#             "excess": {"discharge": {
+#                 "limitWh": batterySize * 0.7,
+#                 "pointPerWh": 10
+#             }},
+#             "sufficient": {},
+#             "scarce": {},
+#             "short": {"charge": {
+#                 "limitWh": batterySize * 0.3,
+#                 "pointPerWh": 10
+#             }}
+#         },
+#         "accept": {
+#             "excess": {"discharge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }},
+#             "sufficient": {"discharge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }},
+#             "scarce": {"charge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }},
+#             "short": {"charge": {
+#                 "limitWh": batterySize * 0.5,
+#                 "pointPerWh": 10
+#             }}
+#         }
+#     }
+# }
 newSce = CreateScenario()
-newSce.write_json(new_data=data1)
+newSce.write_json()
 
 """
 # get log data for states
