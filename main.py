@@ -21,7 +21,7 @@ sns.set(style="whitegrid")
 
 from RL_learn import DQNNet, Memory, BatteryEnv
 
-start_time = time.time()
+# start_time = time.time()
 
 ##############################
 # Data loading
@@ -56,12 +56,12 @@ while not gl.sema:  # True, alter for different time periods
         wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
         wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
-        # print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
-        #       "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
-        #       "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
-        #       "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
-        #       "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
-        #       )
+        print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
+              "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
+              "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
+              "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
+              "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
+              )
 
     # refresh every 5 seconds
     # print("\n")
@@ -71,6 +71,16 @@ while not gl.sema:  # True, alter for different time periods
     # interval = 60 * 60  # every 60s
     # command = createJson()
     # run(interval, command)
+
+    # States  pvc_charge_power[ids]
+    pv = np.array([pvc_charge_power[ids]])
+    load = np.array([ups_output_power[ids]])
+    p2 = np.array([p2[ids]])
+    # wg = np.array([wg[ids]])
+    #
+    x = np.concatenate([pv, load, p2], axis=-1)
+    #
+    state_size = (4, )
 """
 # input data of house 214, 2019 (every 15mins (quarter hour), each day (pu, per unit) contains 96 data points)
 df_raw = pd.read_csv("/home/doya/Documents/DQNBattery/data/house214_2019_quarterhour_avg.csv")
@@ -86,7 +96,7 @@ battery_current = df["battery_current"]  # A(DC)
 p2 = df["p2"]  # W
 ups_output_power = df["ups_output_power"]
 
-"""
+
 #############################
 # State concatenate
 pv = df[["pvc_charge_power"]].values
@@ -346,3 +356,4 @@ plt.yticks(fontsize=14)
 ax.legend(loc="lower right", fontsize=14)
 
 plt.show()
+"""
