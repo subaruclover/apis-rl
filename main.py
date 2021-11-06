@@ -83,8 +83,7 @@ while not gl.sema:  # True, alter for different time periods
     # command = createJson()
     # run(interval, command)
 
-    # States  pvc_charge_power[ids]
-
+        # States  pvc_charge_power[ids], for house E001
         pv_e001 = np.array([pvc_charge_power["E001"]])
         load_e001 = np.array([ups_output_power["E001"]])
         p2_e001 = np.array([p2["E001"]])
