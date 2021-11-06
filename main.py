@@ -19,6 +19,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
 
+# RL_learn functions
+"""
+class DQNNet : Deep Q-network Model
+class Memory : Memory model
+class BatteryEnv: my battery model -> replaced with APIS battery model
+"""
 from RL_learn import DQNNet, Memory, BatteryEnv
 
 # start_time = time.time()
@@ -38,6 +44,10 @@ p2 = {}  # powermeter.p2, Power consumption to the power storage system [W]
 wg = {}  # meter.wg, DC Grid power [W]
 wb = {}  # meter.wb, Battery Power [W]
 
+pv_list = []
+load_list = []
+p2_list = []
+
 # need to refresh the output data every 5s? time.sleep()
 while not gl.sema:  # True, alter for different time periods
     # # refresh every 5 seconds
@@ -50,6 +60,7 @@ while not gl.sema:  # True, alter for different time periods
     for ids, dict_ in output_data.items():  # ids: E001, E002, ... house ID
         # print('the name of the dictionary is ', ids)
         # print('the dictionary is ', dict_)
+        # when ids is "E001" (change to other house ID for other houses)
         pvc_charge_power[ids] = output_data[ids]["emu"]["pvc_charge_power"]
         ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
         p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
@@ -64,8 +75,8 @@ while not gl.sema:  # True, alter for different time periods
               )
 
     # refresh every 5 seconds
-    print("\n")
-    time.sleep(5)
+    # print("\n")
+    # time.sleep(5)
 
     # scenario files
     # interval = 60 * 60  # every 60s
@@ -73,14 +84,44 @@ while not gl.sema:  # True, alter for different time periods
     # run(interval, command)
 
     # States  pvc_charge_power[ids]
-    pv_ids = np.array([pvc_charge_power[ids]])
-    load_ids = np.array([ups_output_power[ids]])
-    p2_ids = np.array([p2[ids]])
 
-    x = np.concatenate([pv_ids, load_ids, p2_ids], axis=-1)
-    #
-    print(x)
-    state_size = (4, )
+        pv_e001 = np.array([pvc_charge_power["E001"]])
+        load_e001 = np.array([ups_output_power["E001"]])
+        p2_e001 = np.array([p2["E001"]])
+
+        x_e001 = np.concatenate([pv_e001, load_e001, p2_e001], axis=-1)
+        #
+        # print(x_e001)
+        state_size = (4, )
+        action_feature = 3  # batteryStatus, request, accept
+        learning_rate = 0.01
+
+        # Training hyperparameters
+        batch_size = 256
+        # EPI = 10
+
+        # Exploration hyperparameters for epsilon greedy strategy
+        explore_start = 1.0  # exploration probability at start
+        explore_stop = 0.01  # minimum exploration probability
+        decay_rate = 0.001  # exponential decay rate for exploration prob
+
+        # Q-learning hyperparameters
+        gamma = 0.96  # Discounting rate of future reward
+
+        # Memory hyperparameters
+        pretrain_length = 10000  # # of experiences stored in Memory during initialization
+        memory_size = 10000  # # of experiences Memory can keep
+
+        # battery = BatteryEnv(action_size=action_size)
+        # how the battery changes: from APIS
+        # action: scenario generation variables (request, accept, etc..)
+        # action refresh to create new scenarios
+
+        memory = Memory(memory_size)
+
+        np.random.seed(42)
+
+    time.sleep(5)
 
 
 """
