@@ -64,7 +64,7 @@ while not gl.sema:  # True, alter for different time periods
               )
 
     # refresh every 5 seconds
-    # print("\n")
+    print("\n")
     time.sleep(5)
 
     # scenario files
@@ -73,14 +73,16 @@ while not gl.sema:  # True, alter for different time periods
     # run(interval, command)
 
     # States  pvc_charge_power[ids]
-    pv = np.array([pvc_charge_power[ids]])
-    load = np.array([ups_output_power[ids]])
-    p2 = np.array([p2[ids]])
-    # wg = np.array([wg[ids]])
+    pv_ids = np.array([pvc_charge_power[ids]])
+    load_ids = np.array([ups_output_power[ids]])
+    p2_ids = np.array([p2[ids]])
+
+    x = np.concatenate([pv_ids, load_ids, p2_ids], axis=-1)
     #
-    x = np.concatenate([pv, load, p2], axis=-1)
-    #
+    print(x)
     state_size = (4, )
+
+
 """
 # input data of house 214, 2019 (every 15mins (quarter hour), each day (pu, per unit) contains 96 data points)
 df_raw = pd.read_csv("/home/doya/Documents/DQNBattery/data/house214_2019_quarterhour_avg.csv")
