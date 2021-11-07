@@ -84,13 +84,14 @@ while not gl.sema:  # True, alter for different time periods
     # run(interval, command)
 
         # States  pvc_charge_power[ids], for house E002
-        pv_e002 = np.array([pvc_charge_power["E002"]])
-        load_e002 = np.array([ups_output_power["E002"]])
-        p2_e002 = np.array([p2["E002"]])
+        if ids == "E002":
+            pv_e002 = np.array([pvc_charge_power["E002"]])
+            load_e002 = np.array([ups_output_power["E002"]])
+            p2_e002 = np.array([p2["E002"]])
 
-        x_e002 = np.concatenate([pv_e002, load_e002, p2_e002], axis=-1)
-        #
-        # print(x_e002)
+            x_e002 = np.concatenate([pv_e002, load_e002, p2_e002], axis=-1)
+            # print(x_e002)
+
         state_size = (4, )
         action_feature = 3  # batteryStatus, request, accept
         learning_rate = 0.01

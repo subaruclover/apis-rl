@@ -84,41 +84,42 @@ while not gl.sema:  # True, alter for different time periods
     # run(interval, command)
 
         # States  pvc_charge_power[ids], for house E001
-        pv_e001 = np.array([pvc_charge_power["E001"]])
-        load_e001 = np.array([ups_output_power["E001"]])
-        p2_e001 = np.array([p2["E001"]])
+        if ids == "E001":
+            pv_e001 = np.array([pvc_charge_power["E001"]])
+            load_e001 = np.array([ups_output_power["E001"]])
+            p2_e001 = np.array([p2["E001"]])
 
-        x_e001 = np.concatenate([pv_e001, load_e001, p2_e001], axis=-1)
+            x_e001 = np.concatenate([pv_e001, load_e001, p2_e001], axis=-1)
+            # print(x_e001)
+
+        # state_size = (4, )
+        # action_feature = 3  # batteryStatus, request, accept
+        # learning_rate = 0.01
         #
-        # print(x_e001)
-        state_size = (4, )
-        action_feature = 3  # batteryStatus, request, accept
-        learning_rate = 0.01
-
-        # Training hyperparameters
-        batch_size = 256
-        # EPI = 10
-
-        # Exploration hyperparameters for epsilon greedy strategy
-        explore_start = 1.0  # exploration probability at start
-        explore_stop = 0.01  # minimum exploration probability
-        decay_rate = 0.001  # exponential decay rate for exploration prob
-
-        # Q-learning hyperparameters
-        gamma = 0.96  # Discounting rate of future reward
-
-        # Memory hyperparameters
-        pretrain_length = 10000  # # of experiences stored in Memory during initialization
-        memory_size = 10000  # # of experiences Memory can keep
-
-        # battery = BatteryEnv(action_size=action_size)
-        # how the battery changes: from APIS
-        # action: scenario generation variables (request, accept, etc..)
-        # action refresh to create new scenarios
-
-        memory = Memory(memory_size)
-
-        np.random.seed(42)
+        # # Training hyperparameters
+        # batch_size = 256
+        # # EPI = 10
+        #
+        # # Exploration hyperparameters for epsilon greedy strategy
+        # explore_start = 1.0  # exploration probability at start
+        # explore_stop = 0.01  # minimum exploration probability
+        # decay_rate = 0.001  # exponential decay rate for exploration prob
+        #
+        # # Q-learning hyperparameters
+        # gamma = 0.96  # Discounting rate of future reward
+        #
+        # # Memory hyperparameters
+        # pretrain_length = 10000  # # of experiences stored in Memory during initialization
+        # memory_size = 10000  # # of experiences Memory can keep
+        #
+        # # battery = BatteryEnv(action_size=action_size)
+        # # how the battery changes: from APIS
+        # # action: scenario generation variables (request, accept, etc..)
+        # # action refresh to create new scenarios
+        #
+        # memory = Memory(memory_size)
+        #
+        # np.random.seed(42)
 
     time.sleep(5)
 
