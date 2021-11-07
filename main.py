@@ -41,6 +41,7 @@ URL = "http://" + host + ":" + str(port) + "/get/log"
 pvc_charge_power = {}
 ups_output_power = {}
 p2 = {}  # powermeter.p2, Power consumption to the power storage system [W]
+rsoc = {}
 wg = {}  # meter.wg, DC Grid power [W]
 wb = {}  # meter.wb, Battery Power [W]
 
@@ -64,14 +65,16 @@ while not gl.sema:  # True, alter for different time periods
         pvc_charge_power[ids] = output_data[ids]["emu"]["pvc_charge_power"]
         ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
         p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
+        rsoc[ids] = output_data[ids]["emu"]["rsoc"]
         wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
         wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
         print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
               "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
               "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
-              "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
-              "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
+              "rsoc of {ids} is {rsoc},".format(ids=ids, rsoc=rsoc[ids])
+              # "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
+              # "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
               )
 
     # refresh every 5 seconds
@@ -88,93 +91,51 @@ while not gl.sema:  # True, alter for different time periods
             pv_e001 = np.array([pvc_charge_power["E001"]])
             load_e001 = np.array([ups_output_power["E001"]])
             p2_e001 = np.array([p2["E001"]])
+            rsoc_e001 = np.array([rsoc["E001"]])
 
-            x_e001 = np.concatenate([pv_e001, load_e001, p2_e001], axis=-1)
-            # print(x_e001)
+            x_e001 = np.concatenate([pv_e001, load_e001, p2_e001, rsoc_e001], axis=-1)
+            print(x_e001)
 
-        # state_size = (4, )
-        # action_feature = 3  # batteryStatus, request, accept
-        # learning_rate = 0.01
-        #
-        # # Training hyperparameters
-        # batch_size = 256
-        # # EPI = 10
-        #
-        # # Exploration hyperparameters for epsilon greedy strategy
-        # explore_start = 1.0  # exploration probability at start
-        # explore_stop = 0.01  # minimum exploration probability
-        # decay_rate = 0.001  # exponential decay rate for exploration prob
-        #
-        # # Q-learning hyperparameters
-        # gamma = 0.96  # Discounting rate of future reward
-        #
-        # # Memory hyperparameters
-        # pretrain_length = 10000  # # of experiences stored in Memory during initialization
-        # memory_size = 10000  # # of experiences Memory can keep
-        #
-        # # battery = BatteryEnv(action_size=action_size)
-        # # how the battery changes: from APIS
-        # # action: scenario generation variables (request, accept, etc..)
-        # # action refresh to create new scenarios
-        #
-        # memory = Memory(memory_size)
-        #
-        # np.random.seed(42)
+        state_size = (4, )
+        action_feature = 3  # batteryStatus, request, accept
+        learning_rate = 0.01
+
+        # Training hyperparameters
+        batch_size = 256
+        # EPI = 10
+
+        # Exploration hyperparameters for epsilon greedy strategy
+        explore_start = 1.0  # exploration probability at start
+        explore_stop = 0.01  # minimum exploration probability
+        decay_rate = 0.001  # exponential decay rate for exploration prob
+
+        # Q-learning hyperparameters
+        gamma = 0.96  # Discounting rate of future reward
+
+        # Memory hyperparameters
+        pretrain_length = 10000  # # of experiences stored in Memory during initialization
+        memory_size = 10000  # # of experiences Memory can keep
+
+        # TODO: battery update replaced
+        # battery = BatteryEnv(action_size=action_size)
+        # how the battery changes: from APIS
+        # action: scenario generation variables (request, accept, etc..)
+        # action refresh to create new scenarios
+
+        memory = Memory(memory_size)
+
+        np.random.seed(42)
+
+        # Memory initialization
+        day = 0
+        quarter_hour = 0
+        done = False
+        # timestep = 15.0
 
     time.sleep(5)
 
 
 """
-# input data of house 214, 2019 (every 15mins (quarter hour), each day (pu, per unit) contains 96 data points)
-df_raw = pd.read_csv("/home/doya/Documents/DQNBattery/data/house214_2019_quarterhour_avg.csv")
-# df_raw = pd.read_csv("./data/house214_2019_quarterhour_avg.csv")
-df = df_raw.fillna(method="ffill", inplace=False)  # replace NaN data with forward vaild data
-# T = 96 * 50
-# df = df[:T]
-
-charge_discharge_power = df["charge_discharge_power"]  # W
-rsoc = df["rsoc"]  # %
-pvc_charge_power = df["pvc_charge_power"]  # W
-battery_current = df["battery_current"]  # A(DC)
-p2 = df["p2"]  # W
-ups_output_power = df["ups_output_power"]
-
-
-#############################
-# State concatenate
-pv = df[["pvc_charge_power"]].values
-load = df[["ups_output_power"]].values
-p2 = df[["p2"]].values
-
-x = np.concatenate([pv, load, p2], axis=-1)
-
-# Parameters
-# DQN hyperparameters
-state_size = (4,)  # rsoc, pv_power, consumption
-action_size = 15
-learning_rate = 0.01
-
-# Training hyperparameters
-batch_size = 256
-EPI = 10
-
-# Exploration hyperparameters for epsilon greedy strategy
-explore_start = 1.0  # exploration probability at start
-explore_stop = 0.01  # minimum exploration probability
-decay_rate = 0.001  # exponential decay rate for exploration prob
-
-# Q-learning hyperparameters
-gamma = 0.96  # Discounting rate of future reward
-
-# Memory hyperparameters
-pretrain_length = 10000  # # of experiences stored in Memory during initialization
-memory_size = 10000  # # of experiences Memory can keep
-
-battery = BatteryEnv(action_size=action_size)
-
-memory = Memory(memory_size)
-
-np.random.seed(42)
 
 ##################################
 # Memory initialization

@@ -41,6 +41,7 @@ URL = "http://" + host + ":" + str(port) + "/get/log"
 pvc_charge_power = {}
 ups_output_power = {}
 p2 = {}  # powermeter.p2, Power consumption to the power storage system [W]
+rsoc = {}
 wg = {}  # meter.wg, DC Grid power [W]
 wb = {}  # meter.wb, Battery Power [W]
 
@@ -64,12 +65,14 @@ while not gl.sema:  # True, alter for different time periods
         pvc_charge_power[ids] = output_data[ids]["emu"]["pvc_charge_power"]
         ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
         p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
+        rsoc[ids] = output_data[ids]["emu"]["rsoc"]
         wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
         wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
         print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
               "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
               "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
+              "rsoc of {ids} is {rsoc},".format(ids=ids, rsoc=rsoc[ids]),
               "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
               "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
               )
@@ -88,8 +91,9 @@ while not gl.sema:  # True, alter for different time periods
             pv_e004 = np.array([pvc_charge_power["E004"]])
             load_e004 = np.array([ups_output_power["E004"]])
             p2_e004 = np.array([p2["E004"]])
+            rsoc_e004 = np.array([rsoc["E004"]])
 
-            x_e004 = np.concatenate([pv_e004, load_e004, p2_e004], axis=-1)
+            x_e004 = np.concatenate([pv_e004, load_e004, p2_e004, rsoc_e004], axis=-1)
             # print(x_e004)
 
         state_size = (4, )
