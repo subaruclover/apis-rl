@@ -1,5 +1,5 @@
 """
-DQN training, single run
+DQN training, single run, house E001
 
 created by: Qiong
 """
