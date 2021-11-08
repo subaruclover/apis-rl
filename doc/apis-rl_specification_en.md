@@ -9,6 +9,7 @@
   - [**3.2. global_var**](#32-global_var)
   - [**3.3. agent**](#33-agent)
   - [**3.4. RL_learn**](#34-rl_learn)
+  - [**3.5. main**](#35-main)
 <br>
 
 # **1. Terms and abbreviations**
@@ -39,6 +40,10 @@ Figure 3-1
 Figure 3-2
 <br>
 ## **3.4. RL_learn**
+
+## **3.5. main**
+Each node has its own main.py function file to run its DQN methods.
+main.py main2.py main3.py main4.py etc....
 
 
 
