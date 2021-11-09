@@ -97,7 +97,7 @@ while not gl.sema:  # True, alter for different time periods
             print(x_e001)
 
         state_size = (4, )
-        action_feature = 3  # batteryStatus, request, accept
+        action_feature = 4  # excess, sufficient, scare, short
         learning_rate = 0.01
 
         # Training hyperparameters
@@ -121,6 +121,9 @@ while not gl.sema:  # True, alter for different time periods
         # how the battery changes: from APIS
         # action: scenario generation variables (request, accept, etc..)
         # action refresh to create new scenarios
+
+
+
 
         memory = Memory(memory_size)
 
