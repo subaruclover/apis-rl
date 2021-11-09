@@ -77,14 +77,16 @@ while not gl.sema:  # True, alter for different time periods
               # "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
               )
 
-    # refresh every 5 seconds
-    # print("\n")
-    # time.sleep(5)
+        # refresh every 5 seconds
+        # print("\n")
+        # time.sleep(5)
 
-    # scenario files
-    # interval = 60 * 60  # every 60s
-    # command = createJson()
-    # run(interval, command)
+        # scenario files
+        # interval = 60 * 60  # every 60s
+        # command = createJson()
+        # run(interval, command)
+        #     rsoc_ave = np.mean(rsoc["E001"])
+        #     print(rsoc["E001"], rsoc["E002"], rsoc["E003"], rsoc["E004"])
 
         # States  pvc_charge_power[ids], for house E001
         if ids == "E001":
@@ -95,45 +97,47 @@ while not gl.sema:  # True, alter for different time periods
 
             x_e001 = np.concatenate([pv_e001, load_e001, p2_e001, rsoc_e001], axis=-1)
             print(x_e001)
+##
+    print(rsoc)
+    state_size = (4, )
+    action_feature = 4  # excess, sufficient, scare, short
+    learning_rate = 0.01
 
-        state_size = (4, )
-        action_feature = 4  # excess, sufficient, scare, short
-        learning_rate = 0.01
+    # Training hyperparameters
+    batch_size = 256
+    # EPI = 10
 
-        # Training hyperparameters
-        batch_size = 256
-        # EPI = 10
+    # Exploration hyperparameters for epsilon greedy strategy
+    explore_start = 1.0  # exploration probability at start
+    explore_stop = 0.01  # minimum exploration probability
+    decay_rate = 0.001  # exponential decay rate for exploration prob
 
-        # Exploration hyperparameters for epsilon greedy strategy
-        explore_start = 1.0  # exploration probability at start
-        explore_stop = 0.01  # minimum exploration probability
-        decay_rate = 0.001  # exponential decay rate for exploration prob
+    # Q-learning hyperparameters
+    gamma = 0.96  # Discounting rate of future reward
 
-        # Q-learning hyperparameters
-        gamma = 0.96  # Discounting rate of future reward
+    # Memory hyperparameters
+    pretrain_length = 10000  # # of experiences stored in Memory during initialization
+    memory_size = 10000  # # of experiences Memory can keep
 
-        # Memory hyperparameters
-        pretrain_length = 10000  # # of experiences stored in Memory during initialization
-        memory_size = 10000  # # of experiences Memory can keep
-
-        # TODO: battery update replaced
-        # battery = BatteryEnv(action_size=action_size)
-        # how the battery changes: from APIS
-        # action: scenario generation variables (request, accept, etc..)
-        # action refresh to create new scenarios
+    # TODO: battery update replaced
+    # battery = BatteryEnv(action_size=action_size)
+    # how the battery changes: from APIS
+    # action: scenario generation variables (request, accept, etc..)
+    # action refresh to create new scenarios
+    # if rsoc[ids]
 
 
 
 
-        memory = Memory(memory_size)
+    memory = Memory(memory_size)
 
-        np.random.seed(42)
+    np.random.seed(42)
 
-        # Memory initialization
-        day = 0
-        quarter_hour = 0
-        done = False
-        # timestep = 15.0
+    # Memory initialization
+    day = 0
+    quarter_hour = 0
+    done = False
+    # timestep = 15.0
 
     time.sleep(5)
 
