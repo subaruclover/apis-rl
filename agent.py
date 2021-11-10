@@ -73,3 +73,16 @@ while not gl.sema:  # True, alter for different time periods
     # command = createJson()
     # run(interval, command)
 """
+
+# action section
+rsoc = []
+action = {}
+
+if rsoc >= 80.:
+    action[item] == "excess"
+elif 50. <= rsoc < 80.:
+    action[item] == "sufficient"
+elif 40. <= rsoc < 50.
+    action[item] == "scare"
+else:
+    action[item] == "short"
