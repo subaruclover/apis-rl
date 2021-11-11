@@ -14,12 +14,10 @@ import global_var as gl
 import config as conf
 
 import os
+
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 from createScenario import CreateScenario
-
-newSce = CreateScenario()
-newSce.write_json()
 
 """
 # get log data for states
@@ -74,15 +72,43 @@ while not gl.sema:  # True, alter for different time periods
     # run(interval, command)
 """
 
-# action section
-rsoc = []
-action = {}
 
-if rsoc >= 80.:
-    action[item] == "excess"
-elif 50. <= rsoc < 80.:
-    action[item] == "sufficient"
-elif 40. <= rsoc < 50.
-    action[item] == "scare"
-else:
-    action[item] == "short"
+class APIS():
+    def __init__(self):
+        self.action_space = ["excess", "sufficient", "scarce", "short"]
+        self.n_actions = len(self.action_space)
+        self._build_agent()
+
+    def _build_agent(self, action, rsoc):
+        if rsoc >= 80.:
+            action == "excess"
+        elif 50. <= rsoc < 80.:
+            action == "sufficient"
+        elif 40. <= rsoc < 50.:
+            action == "scare"
+        else:  # rsoc < 40.
+            action == "short"
+
+    # def reset(self):
+
+    # def step(self): # request, accept
+
+
+# batteryLeve, init actions
+batteryLevel = ["excess", "sufficient", "scarce", "short"]
+newSce = CreateScenario(batteryLevel=batteryLevel)
+# newSce.batteryLevel
+newSce.write_json()
+
+# action section
+# rsoc = []
+# action = {}
+#
+# if rsoc >= 80.:
+#     action[item] == "excess"
+# elif 50. <= rsoc < 80.:
+#     action[item] == "sufficient"
+# elif 40. <= rsoc < 50.
+#     action[item] == "scare"
+# else: # rsoc < 40.
+#     action[item] == "short"

@@ -99,6 +99,18 @@ while not gl.sema:  # True, alter for different time periods
             print(x_e001)
 ##
     print(rsoc)
+    # action section
+    # rsoc = []
+    # action_space =  ["excess", "sufficient", "scarce", "short"]
+    #
+    # if rsoc >= 80.:
+    #     action == "excess"
+    # elif 50. <= rsoc < 80.:
+    #     action == "sufficient"
+    # elif 40. <= rsoc < 50.
+    #     action == "scare"
+    # else: # rsoc < 40.
+    #     action == "short"
     state_size = (4, )
     action_feature = 4  # excess, sufficient, scare, short
     learning_rate = 0.01
