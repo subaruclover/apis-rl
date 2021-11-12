@@ -89,9 +89,14 @@ class APIS():
         else:  # rsoc < 40.
             action == "short"
 
+        # request, accept
+
     # def reset(self):
 
     # def step(self): # request, accept
+
+        # reward function
+        # reward = -cost
 
 
 # batteryLeve, init actions

@@ -172,6 +172,6 @@ class CreateScenario():
 
 
 # if __name__ == "__main__":
-#     interval = 60 * 60  # every 60s
+#     interval = 60 * 60  # every 60 * 60s
 #     command = createJson()
 #     run(interval, command)

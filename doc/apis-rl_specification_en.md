@@ -8,6 +8,7 @@
   - [**3.1. config**](#31-config)
   - [**3.2. global_var**](#32-global_var)
   - [**3.3. agent**](#33-agent)
+    - [**3.3.1 createScenario**](#331-createScenario)
   - [**3.4. RL_learn**](#34-rl_learn)
   - [**3.5. main**](#35-main)
 <br>
@@ -33,12 +34,18 @@ The Emulator runs a computer emulation that reproduces the hardware system for e
 ## **3.2. global_var**
   
 ## **3.3. agent**
+
 ![](media/media/states.gif)
 Figure 3-1
 
 ![](media/media/refresh%20scenario.png)
 Figure 3-2
+
+### **3.3.1 createScenario**
+Create scenario files for updating the energy exchange rules. The class CreateScenario()
+create scenario file and put it under the dir of apis-main/exe
 <br>
+
 ## **3.4. RL_learn**
 
 ## **3.5. main**

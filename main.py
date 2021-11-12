@@ -26,6 +26,8 @@ class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
 from RL_learn import DQNNet, Memory, BatteryEnv
+# TODO: agent class (env, step(reward setting, etc))
+from agent import APIS
 
 # start_time = time.time()
 
@@ -96,9 +98,13 @@ while not gl.sema:  # True, alter for different time periods
             rsoc_e001 = np.array([rsoc["E001"]])
 
             x_e001 = np.concatenate([pv_e001, load_e001, p2_e001, rsoc_e001], axis=-1)
-            print(x_e001)
+            print(x_e001)  # [39.14 575.58 734.    29.98]
 ##
     print(rsoc)
+    # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
+    # rsoc_ave = np.mean(rsoc[ids]) # get average rsoc of this community
+    # state = np.concatenate((x, rsoc_ave), axis=-1)
+
     # action section
     # rsoc = []
     # action_space =  ["excess", "sufficient", "scarce", "short"]
