@@ -8,7 +8,8 @@
   - [**3.1. config**](#31-config)
   - [**3.2. global_var**](#32-global_var)
   - [**3.3. agent**](#33-agent)
-    - [**3.3.1 createScenario**](#331-createScenario)
+    - [**3.3.1. createScenario**](#331-createScenario)
+    - [**3.3.2. action**](#332-action)
   - [**3.4. RL_learn**](#34-rl_learn)
   - [**3.5. main**](#35-main)
 <br>
@@ -41,10 +42,16 @@ Figure 3-1
 ![](media/media/refresh%20scenario.png)
 Figure 3-2
 
-### **3.3.1 createScenario**
+### **3.3.1. createScenario**
 Create scenario files for updating the energy exchange rules. The class CreateScenario()
 create scenario file and put it under the dir of apis-main/exe
 <br>
+
+### **3.3.2. action**
+For scenarios, the key decision value for each node to set the thresholds of
+different battery status are the boundary value of different situations, i.e., 
+"excess", "sufficient", "scarce", "short".
+        
 
 ## **3.4. RL_learn**
 
