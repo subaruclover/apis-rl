@@ -27,7 +27,7 @@ class BatteryEnv: my battery model -> replaced with APIS battery model
 """
 from RL_learn import DQNNet, Memory, BatteryEnv
 # TODO: agent class (env, step(reward setting, etc))
-from agent import APIS
+# from agent import APIS
 
 # start_time = time.time()
 
