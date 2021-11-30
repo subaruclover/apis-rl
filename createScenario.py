@@ -48,9 +48,12 @@ def run(interval, command):
 
 # create scenario file and put it under the dir of apis-main/exe
 class CreateScenario():
-    def __init__(self, batteryLevel):
+    def __init__(self, batteryLevel, action):
+
+        self.action_space = [0.8, 0.5, 0.4]
         # set time periods for scenario files
-        self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+        # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+        self.timePeriods = ["00:00:00-24:00:00"]
         # per hour: TimePeriods[0],...,TimePeriods[23]
         self.TimePeriods = ["00:00:00-01:00:00", "01:00:00-02:00:00", "02:00:00-03:00:00",
                             "03:00:00-04:00:00", "04:00:00-05:00:00", "05:00:00-06:00:00",
@@ -81,74 +84,74 @@ class CreateScenario():
                 },
                 "request": {
                     self.batteryLevel[0]: {"discharge": {
-                        "limitWh": self.batterySize * 0.8,
+                        "limitWh": self.batterySize * self.action_space[action],  # 0.8,
                         "pointPerWh": 10
                     }},
                     self.batteryLevel[1]: {},
                     self.batteryLevel[2]: {},
                     self.batteryLevel[3]: {"charge": {
-                        "limitWh": self.batterySize * 0.4,
+                        "limitWh": self.batterySize * self.action_space[action],  # 0.4,
                         "pointPerWh": 10
                     }}
                 },
                 "accept": {
                     self.batteryLevel[0]: {"discharge": {
-                        "limitWh": self.batterySize * 0.5,
+                        "limitWh": self.batterySize * self.action_space[action],  # 0.5,
                         "pointPerWh": 10
                     }},
                     self.batteryLevel[1]: {"discharge": {
-                        "limitWh": self.batterySize * 0.5,
+                        "limitWh": self.batterySize * self.action_space[action],  # 0.5,
                         "pointPerWh": 10
                     }},
                     self.batteryLevel[2]: {"charge": {
-                        "limitWh": self.batterySize * 0.5,
+                        "limitWh": self.batterySize * self.action_space[action],  # 0.5,
                         "pointPerWh": 10
                     }},
                     self.batteryLevel[3]: {"charge": {
-                        "limitWh": self.batterySize * 0.5,
+                        "limitWh": self.batterySize * self.action_space[action],  # 0.5,
                         "pointPerWh": 10
                     }}
                 }
             },
 
-            self.timePeriods[1]: {
-                "batteryStatus": {
-                    str(self.batterySize * 0.7) + "-": self.batteryLevel[0],
-                    str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.7)): self.batteryLevel[1],
-                    str(str(self.batterySize * 0.3) + "-" + str(self.batterySize * 0.5)): self.batteryLevel[2],
-                    "-" + str(self.batterySize * 0.3): self.batteryLevel[3]
-                },
-                "request": {
-                    self.batteryLevel[0]: {"discharge": {
-                        "limitWh": self.batterySize * 0.7,
-                        "pointPerWh": 10
-                    }},
-                    self.batteryLevel[1]: {},
-                    self.batteryLevel[2]: {},
-                    self.batteryLevel[3]: {"charge": {
-                        "limitWh": self.batterySize * 0.3,
-                        "pointPerWh": 10
-                    }}
-                },
-                "accept": {
-                    self.batteryLevel[0]: {"discharge": {
-                        "limitWh": self.batterySize * 0.5,
-                        "pointPerWh": 10
-                    }},
-                    self.batteryLevel[1]: {"discharge": {
-                        "limitWh": self.batterySize * 0.5,
-                        "pointPerWh": 10
-                    }},
-                    self.batteryLevel[2]: {"charge": {
-                        "limitWh": self.batterySize * 0.5,
-                        "pointPerWh": 10
-                    }},
-                    self.batteryLevel[3]: {"charge": {
-                        "limitWh": self.batterySize * 0.5,
-                        "pointPerWh": 10
-                    }}
-                }
-            }
+            # self.timePeriods[1]: {
+            #     "batteryStatus": {
+            #         str(self.batterySize * 0.7) + "-": self.batteryLevel[0],
+            #         str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.7)): self.batteryLevel[1],
+            #         str(str(self.batterySize * 0.3) + "-" + str(self.batterySize * 0.5)): self.batteryLevel[2],
+            #         "-" + str(self.batterySize * 0.3): self.batteryLevel[3]
+            #     },
+            #     "request": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.7,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {},
+            #         self.batteryLevel[2]: {},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.3,
+            #             "pointPerWh": 10
+            #         }}
+            #     },
+            #     "accept": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[2]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }}
+            #     }
+            # }
         }
         self.filename1 = "scenario.json"
         self.filename2 = "scenario2.json"

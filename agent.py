@@ -75,10 +75,11 @@ while not gl.sema:  # True, alter for different time periods
 
 class APIS():
     def __init__(self):
-        self.action_space = ["excess", "sufficient", "scarce", "short"]
+        # self.action_space = ["excess", "sufficient", "scarce", "short"]
+        self.action_space = [0.8, 0.5, 0.4]
         self.n_actions = len(self.action_space)
-        self._build_agent()
 
+    """
     def _build_agent(self, action, rsoc):
         if rsoc >= 80.:
             action == "excess"
@@ -88,8 +89,18 @@ class APIS():
             action == "scare"
         else:  # rsoc < 40.
             action == "short"
+    """
 
-        # request, accept
+        # actions 0.8, 0.5, 0.4 \in [0,1]
+    def step(self, action):
+        if self.action_space[action] == 0.8:
+            batteryLevel == "excess"
+        elif self.action_space[action] == 0.5:
+            batteryLevel == "sufficient"
+        elif self.action_space[action] == 0.4:
+            batteryLevel == "scare"
+        else:
+            batteryLevel =="short"
 
     # def reset(self):
 
@@ -98,12 +109,12 @@ class APIS():
         # reward function
         # reward = -cost
 
-
-# batteryLeve, init actions
-batteryLevel = ["excess", "sufficient", "scarce", "short"]
-newSce = CreateScenario(batteryLevel=batteryLevel)
-# newSce.batteryLevel
-newSce.write_json()
+    def CreateSce(self, action):
+        # batteryLeve, init actions
+        # batteryLevel = ["excess", "sufficient", "scarce", "short"]
+        newSce = CreateScenario(batteryLevel=self.batteryLevel, action)
+        # newSce.batteryLevel
+        newSce.write_json()
 
 # action section
 # rsoc = []
