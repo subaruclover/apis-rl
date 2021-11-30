@@ -53,7 +53,7 @@ different battery status are the boundary value of different situations, i.e.,
 "excess", "sufficient", "scarce", "short"。
 
 The design of initial values for the actions are set to be 0.8, 0.5, and 0.4.
-<h4>Actions: &isin; [0,1] </h4>
+<p>Actions: &isin; [0,1] </p>
 
 
 ## **3.4. RL_learn**
