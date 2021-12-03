@@ -94,13 +94,15 @@ class APIS():
         # actions 0.8, 0.5, 0.4 \in [0,1]
     def step(self, action):
         if self.action_space[action] == 0.8:
-            batteryLevel == "excess"
+            self.batteryLevel == "excess"
         elif self.action_space[action] == 0.5:
-            batteryLevel == "sufficient"
+            self.batteryLevel == "sufficient"
         elif self.action_space[action] == 0.4:
-            batteryLevel == "scare"
+            self.batteryLevel == "scare"
         else:
-            batteryLevel =="short"
+            self.batteryLevel =="short"
+
+        return self.batteryLevel
 
     # def reset(self):
 
@@ -112,9 +114,15 @@ class APIS():
     def CreateSce(self, action):
         # batteryLeve, init actions
         # batteryLevel = ["excess", "sufficient", "scarce", "short"]
-        newSce = CreateScenario(batteryLevel=self.batteryLevel, action)
+        # newSce = CreateScenario(batteryLevel=self.batteryLevel, action)
+        newSce = CreateScenario()
         # newSce.batteryLevel
         newSce.write_json()
+
+        # if __name__ == "__main__":
+        #     interval = 60 * 60  # every 60 * 60s
+        #     command = createJson()
+        #     run(interval, command)
 
 # action section
 # rsoc = []

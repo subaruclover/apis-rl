@@ -56,6 +56,10 @@ The design of initial values for the actions are set to be 0.8, 0.5, and 0.4.
 <p>Actions: &isin; [0,1] </p>
 
 
+
+
+
+
 ## **3.4. RL_learn**
 
 ## **3.5. main**
