@@ -91,7 +91,8 @@ class APIS():
             action == "short"
     """
 
-        # actions 0.8, 0.5, 0.4 \in [0,1]
+    # actions 0.8, 0.5, 0.4 \in [0,1]
+    # reward
     def step(self, action):
         if self.action_space[action] == 0.8:
             self.batteryLevel == "excess"
@@ -102,14 +103,20 @@ class APIS():
         else:
             self.batteryLevel == "short"
 
-        return self.batteryLevel
+        # minimize purchase from the powerline
+        # receiving states: pv , load, p2, rsoc
+        # powerline_energy = power_flow_to_battery - load ?
+        # reward = powerline_energy
+
+        #  return next_s, reward
+        return self.batteryLevel  # , reward
 
     # def reset(self):
 
     # def step(self): # request, accept
 
-        # reward function
-        # reward = -cost
+    # reward function
+    # reward = -cost
 
     def CreateSce(self, action):
         # batteryLeve, init actions

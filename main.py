@@ -148,9 +148,6 @@ while not gl.sema:  # True, alter for different time periods
     # action refresh to create new scenarios
     # if rsoc[ids]
 
-
-
-
     memory = Memory(memory_size)
 
     np.random.seed(42)
@@ -161,7 +158,13 @@ while not gl.sema:  # True, alter for different time periods
     done = False
     # timestep = 15.0
 
-    time.sleep(5)
+    state = x_e001
+
+    # Compute the reward and new state based on the selected action
+    # next_rsoc, batteryLevel, reward
+    # batteryLevel = agent.step(state, action)
+
+    time.sleep(5)  # 5s
 
 
 """
