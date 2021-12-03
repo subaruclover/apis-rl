@@ -114,8 +114,8 @@ class APIS():
     def CreateSce(self, action):
         # batteryLeve, init actions
         # batteryLevel = ["excess", "sufficient", "scarce", "short"]
-        # newSce = CreateScenario(batteryLevel=self.batteryLevel, action)
-        newSce = CreateScenario()
+        # newSce = CreateScenario(batteryLevel=self.batteryLevel, action=action)
+        newSce = CreateScenario(action=action)
         # newSce.batteryLevel
         newSce.write_json()
 

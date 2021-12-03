@@ -48,7 +48,7 @@ def run(interval, command):
 
 # create scenario file and put it under the dir of apis-main/exe
 class CreateScenario():
-    def __init__(self, batteryLevel, action):
+    def __init__(self,  action):
 
         self.action_space = [0.8, 0.5, 0.4]
         # set time periods for scenario files
@@ -65,8 +65,8 @@ class CreateScenario():
                             "21:00:00-22:00:00", "22:00:00-23:00:00", "23:00:00-24:00:00"]
         self.batterySize = 4800
         # batteryLevel : 4 levels
-        # self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
-        self.batteryLevel = batteryLevel
+        self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
+        # self.batteryLevel = batteryLevel
         self.data = {
             "#": "place this file at the path defined by 'scenarioFile' in config file",
             "refreshingPeriodMsec": 5000,
