@@ -120,9 +120,9 @@ while not gl.sema:  # True, alter for different time periods
     # else: # rsoc < 40.
     #     action == "short"
     state_size = (4, )
-    action_size = 3  # excess, sufficient, scare, short
+    action_space = 3  # excess, sufficient, scare, short
     learning_rate = 0.01
-    action = np.random.randint(0, action_size)
+    action = np.random.randint(0, action_space)
     agent.CreateSce(action)
 
     # Training hyperparameters
