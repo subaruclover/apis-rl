@@ -100,7 +100,7 @@ class APIS():
         elif self.action_space[action] == 0.4:
             self.batteryLevel == "scare"
         else:
-            self.batteryLevel =="short"
+            self.batteryLevel == "short"
 
         return self.batteryLevel
 

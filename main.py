@@ -120,8 +120,9 @@ while not gl.sema:  # True, alter for different time periods
     # else: # rsoc < 40.
     #     action == "short"
     state_size = (4, )
-    action_feature = 4  # excess, sufficient, scare, short
+    action_feature = 3  # excess, sufficient, scare, short
     learning_rate = 0.01
+    agent.CreateSce()
 
     # Training hyperparameters
     batch_size = 256
