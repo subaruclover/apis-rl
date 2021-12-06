@@ -91,7 +91,7 @@ class APIS():
             action == "short"
     """
 
-    # actions 0.8, 0.5, 0.4 \in [0,1]
+    # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
     def step(self, action):
         if self.action_space[action] == 0.8:
@@ -103,10 +103,12 @@ class APIS():
         else:
             self.batteryLevel == "short"
 
+
         # minimize purchase from the powerline
         # receiving states: pv , load, p2, rsoc
         # powerline_energy = power_flow_to_battery - load ?
         # reward = powerline_energy
+        # reward = p2
 
         #  return next_s, reward
         return self.batteryLevel  # , reward

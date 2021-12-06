@@ -164,7 +164,7 @@ while not gl.sema:  # True, alter for different time periods
     # next_rsoc, batteryLevel, reward
     # batteryLevel = agent.step(state, action)
 
-    time.sleep(5)  # 5s
+    time.sleep(60)  # 5s
 
 
 """
