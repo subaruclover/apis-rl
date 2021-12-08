@@ -105,8 +105,8 @@ class APIS():
     # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
     def step(self, action_request, action_accept):
-        batteryLevel_req = [" ", " ", " ", " "]
-        batteryLevel_acc = [" ", " ", " ", " "]
+        batteryLevel_req = ["excess", "sufficient", "scarce", "short"]
+        batteryLevel_acc = ["excess", "sufficient", "scarce", "short"]
 
         if self.action_request_space[action_request] >= 0.8:
             batteryLevel_req[0] = "excess"  # discharge
@@ -118,13 +118,13 @@ class APIS():
             batteryLevel_req[3] = "short"  # charge
 
         if self.action_accept_space[action_accept] >= 0.5:
-            batteryLevel_acc[0] = "excess"
+            batteryLevel_acc[0] = "excess"  # discharge
         elif 0.4 > self.action_accept_space[action_accept] >= 0.3:
-            batteryLevel_acc[1] = "sufficient"
+            batteryLevel_acc[1] = "sufficient"  # discharge
         elif 0.3 > self.action_accept_space[action_accept] >= 0.2:
-            batteryLevel_acc[2] = "scare"
+            batteryLevel_acc[2] = "scare"  # charge
         elif self.action_accept_space[action_accept] < 0.2:
-            batteryLevel_acc[3] = "short"
+            batteryLevel_acc[3] = "short"  # charge
 
         # minimize purchase from the powerline
         # receiving states: pv , load, p2, rsoc

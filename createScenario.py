@@ -162,8 +162,8 @@ class CreateScenario():
         self.filename2 = "scenario2.json"
         self.filename3 = "scenario3.json"
         self.filename4 = "scenario4.json"
-        self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
-        # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
+        # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
+        self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
         self.full_path1 = os.path.join(self.desired_dir, self.filename1)
         self.full_path2 = os.path.join(self.desired_dir, self.filename2)
         self.full_path3 = os.path.join(self.desired_dir, self.filename3)
