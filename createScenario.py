@@ -4,6 +4,7 @@
 import json
 import time
 import os
+import numpy as np
 
 
 def print_ts(message):
@@ -51,8 +52,8 @@ class CreateScenario():
     def __init__(self,  action_request, action_accept, batteryLevel_req, batteryLevel_acc):
 
         # self.action_space = [0.8, 0.5, 0.4]
-        self.action_request_space = [0.9, 0.8, 0.7, 0.6]
-        self.action_accept_space = [0.1, 0.2, 0.3, 0.4, 0.5]
+        self.action_request_space = np.linspace(0.1, 1, 10)  # [0.9, 0.8, 0.7, 0.6, 0.5]
+        self.action_accept_space = np.linspace(0.1, 1, 10)  # [0.5, 0.4, 0.3, 0.2, 0.1]
         # set time periods for scenario files
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
@@ -81,10 +82,11 @@ class CreateScenario():
 
             self.timePeriods[0]: {
                 "batteryStatus": {  # batteryLevels
-                    str(self.batterySize * 0.8) + "-": self.batteryLevel[0],
-                    str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.8)): self.batteryLevel[1],
-                    str(str(self.batterySize * 0.4) + "-" + str(self.batterySize * 0.5)): self.batteryLevel[2],
-                    "-" + str(self.batterySize * 0.4): self.batteryLevel[3]
+                    # list of actions
+                    str(self.batterySize * action_request[0]) + "-": self.batteryLevel[0],
+                    str(str(self.batterySize * action_request[1]) + "-" + str(self.batterySize * action_request[0])): self.batteryLevel[1],
+                    str(str(self.batterySize * action_accept[0]) + "-" + str(self.batterySize * action_request[1])): self.batteryLevel[2],
+                    "-" + str(self.batterySize * action_accept[1]): self.batteryLevel[3]
                 },
                 "request": {
                     batteryLevel_req[0]: {"discharge": {

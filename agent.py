@@ -9,6 +9,7 @@ import logging.config
 import time
 
 # from main import batteryLevel
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -79,16 +80,16 @@ class APIS():
     def __init__(self):
         # self.action_space = ["excess", "sufficient", "scarce", "short"]
         # request and accept level: between [0, 1]
-        self.action_request_space = [0.9, 0.8, 0.7, 0.6, 0.5]
-        self.action_accept_space = [0.5, 0.4, 0.3, 0.2, 0.1]
+        self.action_request_space = np.linspace(0.1, 1, 10)  # [0.9, 0.8, 0.7, 0.6, 0.5]
+        self.action_accept_space = np.linspace(0.1, 1, 10)  # [0.5, 0.4, 0.3, 0.2, 0.1]
+        # action : 2 request (sort), 1 accept, concat as a list of action (3 values)
+        # actions: [0, 1] and sort
         # action_request ={[0.9, 0.8, 0.7, 0.6, 0.5],
         # [0.9, 0.8, 0.7, 0.6, 0.5],
         # [0.9, 0.8, 0.7, 0.6, 0.5],
         # [0.9, 0.8, 0.7, 0.6, 0.5],
         # [0.9, 0.8, 0.7, 0.6, 0.5]} list of actions, pick one of the list
         self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
-        self.batteryLevel_req = [" ", " ", " ", " "]
-        self.batteryLevel_acc = [" ", " ", " ", " "]
 
     """
     def _build_agent(self, action, rsoc):
@@ -105,9 +106,12 @@ class APIS():
     # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
     def step(self, action_request, action_accept):
-        batteryLevel_req = ["excess", "sufficient", "scarce", "short"]
-        batteryLevel_acc = ["excess", "sufficient", "scarce", "short"]
+        # batteryLevel_req = ["excess", "sufficient", "scarce", "short"]
+        # batteryLevel_acc = ["excess", "sufficient", "scarce", "short"]
+        batteryLevel_req = [" ", " ", " ", " "]
+        batteryLevel_acc = [" ", " ", " ", " "]
 
+        '''
         if self.action_request_space[action_request] >= 0.8:
             batteryLevel_req[0] = "excess"  # discharge
         elif 0.8 > self.action_request_space[action_request] >= 0.6:
@@ -125,6 +129,7 @@ class APIS():
             batteryLevel_acc[2] = "scare"  # charge
         elif self.action_accept_space[action_accept] < 0.2:
             batteryLevel_acc[3] = "short"  # charge
+        '''
 
         # minimize purchase from the powerline
         # receiving states: pv , load, p2, rsoc

@@ -126,6 +126,7 @@ while not gl.sema:  # True, alter for different time periods
     action_accept_num = len(action_accept_space)
     learning_rate = 0.01
     action_request = np.random.randint(0, action_request_num)
+
     action_accept = np.random.randint(0, action_accept_num)
     # agent.CreateSce(action_request, action_accept)
 
