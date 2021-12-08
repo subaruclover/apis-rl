@@ -8,6 +8,8 @@
 import logging.config
 import time
 
+# from main import batteryLevel
+
 logger = logging.getLogger(__name__)
 
 import global_var as gl
@@ -77,9 +79,16 @@ class APIS():
     def __init__(self):
         # self.action_space = ["excess", "sufficient", "scarce", "short"]
         # request and accept level: between [0, 1]
-        self.action_request = [0.9, 0.8, 0.7, 0.6]
-        self.action_accept = [0.1, 0.2, 0.3, 0.4, 0.5]
-        self.n_actions = len(self.action_request) + len(self.action_accept)
+        self.action_request_space = [0.9, 0.8, 0.7, 0.6, 0.5]
+        self.action_accept_space = [0.5, 0.4, 0.3, 0.2, 0.1]
+        # action_request ={[0.9, 0.8, 0.7, 0.6, 0.5],
+        # [0.9, 0.8, 0.7, 0.6, 0.5],
+        # [0.9, 0.8, 0.7, 0.6, 0.5],
+        # [0.9, 0.8, 0.7, 0.6, 0.5],
+        # [0.9, 0.8, 0.7, 0.6, 0.5]} list of actions, pick one of the list
+        self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
+        self.batteryLevel_req = [" ", " ", " ", " "]
+        self.batteryLevel_acc = [" ", " ", " ", " "]
 
     """
     def _build_agent(self, action, rsoc):
@@ -95,15 +104,25 @@ class APIS():
 
     # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
-    def step(self, action):
-        if self.action_request[action] == 0.8:
-            self.batteryLevel == "excess"
-        elif self.action_request[action] == 0.5:
-            self.batteryLevel == "sufficient"
-        elif self.action_request[action] == 0.4:
-            self.batteryLevel == "scare"
-        else:
-            self.batteryLevel == "short"
+    def step(self, action_request, action_accept):
+
+        if self.action_request_space[action_request] >= 0.8:
+            self.batteryLevel_req[0] == "excess"  # discharge
+        elif 0.8 > self.action_request_space[action_request] >= 0.6:
+            self.batteryLevel_req[1] == "sufficient"  # discharge
+        elif 0.6 > self.action_request_space[action_request] >= 0.5:
+            self.batteryLevel_req[2] == "scare"  # charge
+        elif self.action_request_space[action_request] < 0.5:
+            self.batteryLevel_req[3] == "short"  # charge
+
+        if self.action_accept_space[action_accept] >= 0.5:
+            self.batteryLevel_acc[0] == "excess"
+        elif 0.4 > self.action_accept_space[action_accept] >= 0.3:
+            self.batteryLevel_acc[1] == "sufficient"
+        elif 0.3 > self.action_accept_space[action_accept] >= 0.2:
+            self.batteryLevel_acc[2] == "scare"
+        elif self.action_accept_space[action_accept] < 0.2:
+            self.batteryLevel_acc[3] == "short"
 
 
         # minimize purchase from the powerline
@@ -113,7 +132,7 @@ class APIS():
         # reward = p2
 
         #  return next_s, reward
-        return self.batteryLevel  # , reward
+        return self.batteryLevel_req, self.batteryLevel_acc  # , reward
 
     # def reset(self):
 
@@ -122,11 +141,11 @@ class APIS():
     # reward function
     # reward = -cost
 
-    def CreateSce(self, action):
+    def CreateSce(self, action_request, action_accept):
         # batteryLeve, init actions
         # batteryLevel = ["excess", "sufficient", "scarce", "short"]
         # newSce = CreateScenario(batteryLevel=self.batteryLevel, action=action)
-        newSce = CreateScenario(action=action)
+        newSce = CreateScenario(action_request=action_request, action_accept=action_accept)
         # newSce.batteryLevel
         newSce.write_json()
 

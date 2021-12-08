@@ -120,10 +120,14 @@ while not gl.sema:  # True, alter for different time periods
     # else: # rsoc < 40.
     #     action == "short"
     state_size = (4, )
-    action_space = 3  # excess, sufficient, scare, short
+    action_request_space = [0.9, 0.8, 0.7, 0.6, 0.5]
+    action_accept_space = [0.5, 0.4, 0.3, 0.2, 0.1]
+    action_request_num = len(action_request_space)  # excess, sufficient, scare, short
+    action_accept_num = len(action_accept_space)
     learning_rate = 0.01
-    action = np.random.randint(0, action_space)
-    agent.CreateSce(action)
+    action_request = np.random.randint(0, action_request_num)
+    action_accept = np.random.randint(0, action_accept_num)
+    agent.CreateSce(action_request, action_accept)
 
     # Training hyperparameters
     batch_size = 256
@@ -162,10 +166,11 @@ while not gl.sema:  # True, alter for different time periods
 
     # Compute the reward and new state based on the selected action
     # next_rsoc, batteryLevel, reward
-    # batteryLevel = agent.step(state, action)
+    batteryLevel_req, batteryLevel_acc = agent.step(action_request, action_accept)
+    # batteryLevel = agent.step(state, action_request, action_accept)
 
+    print("req_act: ", action_request_space[action_request], "acc_act: ", action_accept_space[action_accept])
     time.sleep(60)  # 5s
-
 
 """
 
