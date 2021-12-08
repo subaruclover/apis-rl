@@ -105,25 +105,26 @@ class APIS():
     # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
     def step(self, action_request, action_accept):
+        batteryLevel_req = [" ", " ", " ", " "]
+        batteryLevel_acc = [" ", " ", " ", " "]
 
         if self.action_request_space[action_request] >= 0.8:
-            self.batteryLevel_req[0] = "excess"  # discharge
+            batteryLevel_req[0] = "excess"  # discharge
         elif 0.8 > self.action_request_space[action_request] >= 0.6:
-            self.batteryLevel_req[1] = "sufficient"  # discharge
+            batteryLevel_req[1] = "sufficient"  # discharge
         elif 0.6 > self.action_request_space[action_request] >= 0.5:
-            self.batteryLevel_req[2] = "scare"  # charge
+            batteryLevel_req[2] = "scare"  # charge
         elif self.action_request_space[action_request] < 0.5:
-            self.batteryLevel_req[3] = "short"  # charge
+            batteryLevel_req[3] = "short"  # charge
 
         if self.action_accept_space[action_accept] >= 0.5:
-            self.batteryLevel_acc[0] = "excess"
+            batteryLevel_acc[0] = "excess"
         elif 0.4 > self.action_accept_space[action_accept] >= 0.3:
-            self.batteryLevel_acc[1] = "sufficient"
+            batteryLevel_acc[1] = "sufficient"
         elif 0.3 > self.action_accept_space[action_accept] >= 0.2:
-            self.batteryLevel_acc[2] = "scare"
+            batteryLevel_acc[2] = "scare"
         elif self.action_accept_space[action_accept] < 0.2:
-            self.batteryLevel_acc[3] = "short"
-
+            batteryLevel_acc[3] = "short"
 
         # minimize purchase from the powerline
         # receiving states: pv , load, p2, rsoc
@@ -132,8 +133,8 @@ class APIS():
         # reward = p2
 
         #  return next_s, reward
-        print(self.batteryLevel_req, self.batteryLevel_acc)
-        return self.batteryLevel_req, self.batteryLevel_acc  # , reward
+        print(batteryLevel_req, batteryLevel_acc)
+        return batteryLevel_req, batteryLevel_acc  # , reward
 
     # def reset(self):
 
