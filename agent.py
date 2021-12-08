@@ -76,8 +76,10 @@ while not gl.sema:  # True, alter for different time periods
 class APIS():
     def __init__(self):
         # self.action_space = ["excess", "sufficient", "scarce", "short"]
-        self.action_space = [0.8, 0.5, 0.4]
-        self.n_actions = len(self.action_space)
+        # request and accept level: between [0, 1]
+        self.action_request = [0.9, 0.8, 0.7, 0.6]
+        self.action_accept = [0.1, 0.2, 0.3, 0.4, 0.5]
+        self.n_actions = len(self.action_request) + len(self.action_accept)
 
     """
     def _build_agent(self, action, rsoc):
@@ -94,11 +96,11 @@ class APIS():
     # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
     def step(self, action):
-        if self.action_space[action] == 0.8:
+        if self.action_request[action] == 0.8:
             self.batteryLevel == "excess"
-        elif self.action_space[action] == 0.5:
+        elif self.action_request[action] == 0.5:
             self.batteryLevel == "sufficient"
-        elif self.action_space[action] == 0.4:
+        elif self.action_request[action] == 0.4:
             self.batteryLevel == "scare"
         else:
             self.batteryLevel == "short"
