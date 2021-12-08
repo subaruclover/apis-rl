@@ -127,7 +127,7 @@ while not gl.sema:  # True, alter for different time periods
     learning_rate = 0.01
     action_request = np.random.randint(0, action_request_num)
     action_accept = np.random.randint(0, action_accept_num)
-    agent.CreateSce(action_request, action_accept)
+    # agent.CreateSce(action_request, action_accept)
 
     # Training hyperparameters
     batch_size = 256
@@ -168,6 +168,7 @@ while not gl.sema:  # True, alter for different time periods
     # next_rsoc, batteryLevel, reward
     batteryLevel_req, batteryLevel_acc = agent.step(action_request, action_accept)
     # batteryLevel = agent.step(state, action_request, action_accept)
+    agent.CreateSce(action_request, action_accept, batteryLevel_req, batteryLevel_acc)
 
     print("req_act: ", action_request_space[action_request], "acc_act: ", action_accept_space[action_accept])
     time.sleep(60)  # 5s

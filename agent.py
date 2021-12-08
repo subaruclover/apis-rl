@@ -107,22 +107,22 @@ class APIS():
     def step(self, action_request, action_accept):
 
         if self.action_request_space[action_request] >= 0.8:
-            self.batteryLevel_req[0] == "excess"  # discharge
+            self.batteryLevel_req[0] = "excess"  # discharge
         elif 0.8 > self.action_request_space[action_request] >= 0.6:
-            self.batteryLevel_req[1] == "sufficient"  # discharge
+            self.batteryLevel_req[1] = "sufficient"  # discharge
         elif 0.6 > self.action_request_space[action_request] >= 0.5:
-            self.batteryLevel_req[2] == "scare"  # charge
+            self.batteryLevel_req[2] = "scare"  # charge
         elif self.action_request_space[action_request] < 0.5:
-            self.batteryLevel_req[3] == "short"  # charge
+            self.batteryLevel_req[3] = "short"  # charge
 
         if self.action_accept_space[action_accept] >= 0.5:
-            self.batteryLevel_acc[0] == "excess"
+            self.batteryLevel_acc[0] = "excess"
         elif 0.4 > self.action_accept_space[action_accept] >= 0.3:
-            self.batteryLevel_acc[1] == "sufficient"
+            self.batteryLevel_acc[1] = "sufficient"
         elif 0.3 > self.action_accept_space[action_accept] >= 0.2:
-            self.batteryLevel_acc[2] == "scare"
+            self.batteryLevel_acc[2] = "scare"
         elif self.action_accept_space[action_accept] < 0.2:
-            self.batteryLevel_acc[3] == "short"
+            self.batteryLevel_acc[3] = "short"
 
 
         # minimize purchase from the powerline
@@ -132,6 +132,7 @@ class APIS():
         # reward = p2
 
         #  return next_s, reward
+        print(self.batteryLevel_req, self.batteryLevel_acc)
         return self.batteryLevel_req, self.batteryLevel_acc  # , reward
 
     # def reset(self):
@@ -141,11 +142,12 @@ class APIS():
     # reward function
     # reward = -cost
 
-    def CreateSce(self, action_request, action_accept):
+    def CreateSce(self, action_request, action_accept, batteryLevel_req, batteryLevel_acc):
         # batteryLeve, init actions
         # batteryLevel = ["excess", "sufficient", "scarce", "short"]
         # newSce = CreateScenario(batteryLevel=self.batteryLevel, action=action)
-        newSce = CreateScenario(action_request=action_request, action_accept=action_accept)
+        newSce = CreateScenario(action_request=action_request, action_accept=action_accept,
+                                batteryLevel_req=batteryLevel_req, batteryLevel_acc=batteryLevel_acc)
         # newSce.batteryLevel
         newSce.write_json()
 

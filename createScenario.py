@@ -48,7 +48,7 @@ def run(interval, command):
 
 # create scenario file and put it under the dir of apis-main/exe
 class CreateScenario():
-    def __init__(self,  action_request, action_accept):
+    def __init__(self,  action_request, action_accept, batteryLevel_req, batteryLevel_acc):
 
         # self.action_space = [0.8, 0.5, 0.4]
         self.action_request_space = [0.9, 0.8, 0.7, 0.6]
@@ -68,8 +68,8 @@ class CreateScenario():
         self.batterySize = 4800
         # batteryLevel : 4 levels
         self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
-        self.batteryLevel_req = [" ", " ", " ", " "]
-        self.batteryLevel_acc = [" ", " ", " ", " "]
+        # self.batteryLevel_req = [" ", " ", " ", " "]
+        # self.batteryLevel_acc = [" ", " ", " ", " "]
         # self.batteryLevel = batteryLevel
         self.data = {
             "#": "place this file at the path defined by 'scenarioFile' in config file",
@@ -87,31 +87,31 @@ class CreateScenario():
                     "-" + str(self.batterySize * 0.4): self.batteryLevel[3]
                 },
                 "request": {
-                    self.batteryLevel_req[0]: {"discharge": {
+                    batteryLevel_req[0]: {"discharge": {
                         "limitWh": self.batterySize * self.action_request_space[action_request],  # 0.8,
                         "pointPerWh": 10
                     }},
-                    self.batteryLevel_req[1]: {},
-                    self.batteryLevel_req[2]: {},
-                    self.batteryLevel_req[3]: {"charge": {
+                    batteryLevel_req[1]: {},
+                    batteryLevel_req[2]: {},
+                    batteryLevel_req[3]: {"charge": {
                         "limitWh": self.batterySize * self.action_request_space[action_request],  # 0.4,
                         "pointPerWh": 10
                     }}
                 },
                 "accept": {
-                    self.batteryLevel_acc[0]: {"discharge": {
+                    batteryLevel_acc[0]: {"discharge": {
                         "limitWh": self.batterySize * self.action_accept_space[action_accept],  # 0.5,
                         "pointPerWh": 10
                     }},
-                    self.batteryLevel_acc[1]: {"discharge": {
+                    batteryLevel_acc[1]: {"discharge": {
                         "limitWh": self.batterySize * self.action_accept_space[action_accept],  # 0.5,
                         "pointPerWh": 10
                     }},
-                    self.batteryLevel_acc[2]: {"charge": {
+                    batteryLevel_acc[2]: {"charge": {
                         "limitWh": self.batterySize * self.action_accept_space[action_accept],  # 0.5,
                         "pointPerWh": 10
                     }},
-                    self.batteryLevel_acc[3]: {"charge": {
+                    batteryLevel_acc[3]: {"charge": {
                         "limitWh": self.batterySize * self.action_accept_space[action_accept],  # 0.5,
                         "pointPerWh": 10
                     }}
