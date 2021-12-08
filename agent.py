@@ -105,8 +105,10 @@ class APIS():
     # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
     def step(self, action_request, action_accept):
-        batteryLevel_req = ["excess", "sufficient", "scarce", "short"]
-        batteryLevel_acc = ["excess", "sufficient", "scarce", "short"]
+        # batteryLevel_req = ["excess", "sufficient", "scarce", "short"]
+        # batteryLevel_acc = ["excess", "sufficient", "scarce", "short"]
+        batteryLevel_req = [" ", " ", " ", " "]
+        batteryLevel_acc = [" ", " ", " ", " "]
 
         if self.action_request_space[action_request] >= 0.8:
             batteryLevel_req[0] = "excess"  # discharge

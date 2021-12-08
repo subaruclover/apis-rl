@@ -51,7 +51,7 @@ class CreateScenario():
     def __init__(self,  action_request, action_accept, batteryLevel_req, batteryLevel_acc):
 
         # self.action_space = [0.8, 0.5, 0.4]
-        self.action_request_space = [0.9, 0.8, 0.7, 0.6]
+        self.action_request_space = [0.9, 0.8, 0.7, 0.6, 0.5]
         self.action_accept_space = [0.1, 0.2, 0.3, 0.4, 0.5]
         # set time periods for scenario files
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
@@ -162,8 +162,8 @@ class CreateScenario():
         self.filename2 = "scenario2.json"
         self.filename3 = "scenario3.json"
         self.filename4 = "scenario4.json"
-        # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
-        self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
+        self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
+        # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
         self.full_path1 = os.path.join(self.desired_dir, self.filename1)
         self.full_path2 = os.path.join(self.desired_dir, self.filename2)
         self.full_path3 = os.path.join(self.desired_dir, self.filename3)
