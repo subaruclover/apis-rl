@@ -31,6 +31,7 @@ from RL_learn import DQNNet, Memory, BatteryEnv
 # TODO: agent class (env, step(reward setting, etc))
 
 from agent import APIS
+
 agent = APIS()
 
 # start_time = time.time()
@@ -105,14 +106,14 @@ while not gl.sema:  # True, alter for different time periods
 
             x_e001 = np.concatenate([pv_e001, load_e001, p2_e001, rsoc_e001], axis=-1)
             print(x_e001)  # [39.14 575.58 734.    29.98] E001
-##
+    ##
     # print(rsoc)
     # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
     rsoc_ave = np.mean(rsoc_list)  # get average rsoc of this community
     # print(rsoc_ave)
     # state = np.concatenate((x_e001, rsoc_ave), axis=-1)
 
-    state_size = (4, )
+    state_size = (4,)
     action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9], 8 options
     action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
     action_request_num = len(action_request_space)

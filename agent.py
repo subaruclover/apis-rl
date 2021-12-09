@@ -105,12 +105,31 @@ class APIS():
     # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
     # reward
     def step(self, action_request, action_accept):
-        # batteryLevel_req = ["excess", "sufficient", "scarce", "short"]
-        # batteryLevel_acc = ["excess", "sufficient", "scarce", "short"]
-        batteryLevel_req = [" ", " ", " ", " "]
-        batteryLevel_acc = [" ", " ", " ", " "]
 
-        '''
+        # Exploration hyperparameters for epsilon greedy strategy
+        explore_start = 1.0  # exploration probability at start
+        explore_stop = 0.01  # minimum exploration probability
+        decay_rate = 0.001  # exponential decay rate for exploration prob
+        decay_step = 0  # Decay rate for ϵ-greedy policy
+
+        # action selection
+        # ϵ-greedy policy
+
+        # action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
+        # action_accept = np.random.choice(action_accept_num, 1, replace=False)
+
+        exp_exp_tradeoff = np.random.rand()
+        explore_probability = explore_stop + (explore_start - explore_stop) * np.exp(
+            -decay_rate * decay_step
+        )
+
+        # if explore_probability > exp_exp_tradeoff:
+        #     action_request = np.random.choice()  # 2 values
+        #     action_accept = np.random.choice()  # 1 value
+        # else:
+        #     action = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
+
+        """
         if self.action_request_space[action_request] >= 0.8:
             batteryLevel_req[0] = "excess"  # discharge
         elif 0.8 > self.action_request_space[action_request] >= 0.6:
@@ -128,7 +147,7 @@ class APIS():
             batteryLevel_acc[2] = "scare"  # charge
         elif self.action_accept_space[action_accept] < 0.2:
             batteryLevel_acc[3] = "short"  # charge
-        '''
+        """
 
         # minimize purchase from the powerline
         # receiving states: pv , load, p2, rsoc
@@ -136,9 +155,8 @@ class APIS():
         # reward = powerline_energy
         # reward = p2
 
-        #  return next_s, reward
-        print(batteryLevel_req, batteryLevel_acc)
-        return batteryLevel_req, batteryLevel_acc  # , reward
+        # return next_s, reward
+        # return reward
 
     # def reset(self):
 
