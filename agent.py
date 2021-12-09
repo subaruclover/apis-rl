@@ -10,6 +10,7 @@ import time
 
 # from main import batteryLevel
 import numpy as np
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -80,9 +81,11 @@ class APIS():
     def __init__(self):
         # self.action_space = ["excess", "sufficient", "scarce", "short"]
         # request and accept level: between [0, 1]
-        self.action_request_space = np.linspace(0.1, 1, 10)  # [0.9, 0.8, 0.7, 0.6, 0.5]
-        self.action_accept_space = np.linspace(0.1, 1, 10)  # [0.5, 0.4, 0.3, 0.2, 0.1]
-        # action : 2 request (sort), 1 accept, concat as a list of action (3 values)
+        self.action_request_space = np.linspace(0.2, 9, 8)  # [0.9, 0.8, 0.7, 0.6, 0.5]
+        self.action_accept_space = np.linspace(0.2, 0.9, 8)  # [0.5, 0.4, 0.3, 0.2, 0.1]
+        self.actions_request = sorted(random.sample(self.action_request_space, 2))  # 2 values
+        self.actions_accept = random.sample(self.action_request_space, 1)  # 1 value
+        # action : 2 request (sorted), 1 accept, concat as a list of action (3 values)
         # actions: [0, 1] and sort
         # action_request ={[0.9, 0.8, 0.7, 0.6, 0.5],
         # [0.9, 0.8, 0.7, 0.6, 0.5],
