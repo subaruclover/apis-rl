@@ -27,7 +27,7 @@ class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
 
-from RL_learn import DQNNet, Memory, BatteryEnv
+from RL_learn import DQNNet, Memory, HouseEnv
 # TODO: agent class (env, step(reward setting, etc))
 
 from agent import APIS
@@ -90,13 +90,6 @@ while not gl.sema:  # True, alter for different time periods
         # print("\n")
         # time.sleep(5)
 
-        # scenario files
-        # interval = 60 * 60  # every 60s
-        # command = createJson()
-        # run(interval, command)
-        #     rsoc_ave = np.mean(rsoc["E001"])
-        #     print(rsoc["E001"], rsoc["E002"], rsoc["E003"], rsoc["E004"])
-
         # States  pvc_charge_power[ids], for house E001
         if ids == "E001":
             pv_e001 = np.array([pvc_charge_power["E001"]])
@@ -124,7 +117,7 @@ while not gl.sema:  # True, alter for different time periods
     # actions_request = sorted(random.sample(action_request_space, 2))  # 2 values
     # actions_accept = random.sample(action_request_space, 1)  # 1 value
     action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
-    action_accept = np.random.choice(action_accept_num, 1, replace=False)
+    action_accept = np.random.randint(action_request[1], action_request[0], 1)  # 1 value between 2 request actions
 
     # agent.CreateSce(action_request, action_accept)
 

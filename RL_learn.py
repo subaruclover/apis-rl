@@ -214,8 +214,8 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
             self.tree.update(ti, p)
 
 
-# Battery Model, step function (reward)
-class BatteryEnv():
+# House Model, step function (reward)
+class HouseEnv():
 
     def __init__(self, action_size):
         """
@@ -234,6 +234,42 @@ class BatteryEnv():
         self.coeff_c = 0.02
         self.coeff_d = 0.02
         self.decay = 0.001
+
+        # list of possible actions
+        # reward
+        def step(self, state, action_request, action_accept):
+
+            # Exploration hyperparameters for epsilon greedy strategy
+            explore_start = 1.0  # exploration probability at start
+            explore_stop = 0.01  # minimum exploration probability
+            decay_rate = 0.001  # exponential decay rate for exploration prob
+            decay_step = 0  # Decay rate for ϵ-greedy policy
+
+            # action selection
+            # ϵ-greedy policy
+
+            # action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
+            # action_accept = np.random.choice(action_accept_num, 1, replace=False)
+
+            exp_exp_tradeoff = np.random.rand()
+            explore_probability = explore_stop + (explore_start - explore_stop) * np.exp(
+                -decay_rate * decay_step
+            )
+
+            if explore_probability > exp_exp_tradeoff:
+                action_request = np.random.choice()  # 2 values
+                action_accept = np.random.choice()  # 1 value
+            else:
+                action_req = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
+
+            # minimize purchase from the powerline
+            # receiving states: pv , load, p2, rsoc
+            # powerline_energy = power_flow_to_battery - load ?
+            # reward = powerline_energy
+            # reward = p2
+
+            return next_state, reward
+            # return reward
 
     def step(self, state, action, timestep):
         current_pv = state[0]

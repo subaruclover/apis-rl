@@ -52,8 +52,8 @@ class CreateScenario():
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
-        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.9, 0.8, 0.7, 0.6, 0.5]
-        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.5, 0.4, 0.3, 0.2, 0.1]
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
         # set time periods for scenario files
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
@@ -81,9 +81,9 @@ class CreateScenario():
                 "batteryStatus": {  # batteryLevels
                     # list of actions
                     str(self.batterySize * self.action_request_space[action_request[0]]) + "-": self.batteryLevel[0],
-                    str(str(self.batterySize * self.action_request_space[action_request[1]]) + "-" + str(self.batterySize * self.action_request_space[action_request[0]])): self.batteryLevel[1],
-                    str(str(self.batterySize * self.action_request_space[action_accept[0]]) + "-" + str(self.batterySize * self.action_request_space[action_request[1]])): self.batteryLevel[2],
-                    "-" + str(self.batterySize * self.action_request_space[action_accept[0]]): self.batteryLevel[3]
+                    str(str(self.batterySize * self.action_accept_space[action_accept[0]]) + "-" + str(self.batterySize * self.action_request_space[action_request[0]])): self.batteryLevel[1],
+                    str(str(self.batterySize * self.action_request_space[action_request[1]]) + "-" + str(self.batterySize * self.action_accept_space[action_accept[0]])): self.batteryLevel[2],
+                    "-" + str(self.batterySize * self.action_request_space[action_request[1]]): self.batteryLevel[3]
                 },
                 "request": {
                     self.batteryLevel[0]: {"discharge": {

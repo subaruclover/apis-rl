@@ -23,6 +23,8 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 from createScenario import CreateScenario
 
+from RL_learn import DQNNet, Memory
+
 """
 # get log data for states
 host = conf.b_host
@@ -91,20 +93,9 @@ class APIS():
         # self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
 
     """
-    def _build_agent(self, action, rsoc):
-        if rsoc >= 80.:
-            action == "excess"
-        elif 50. <= rsoc < 80.:
-            action == "sufficient"
-        elif 40. <= rsoc < 50.:
-            action == "scare"
-        else:  # rsoc < 40.
-            action == "short"
-    """
-
-    # actions 0.8, 0.5, 0.4 \in [0,1], list of possible actions
+    # list of possible actions
     # reward
-    def step(self, action_request, action_accept):
+    def step(self, state, action_request, action_accept):
 
         # Exploration hyperparameters for epsilon greedy strategy
         explore_start = 1.0  # exploration probability at start
@@ -123,31 +114,11 @@ class APIS():
             -decay_rate * decay_step
         )
 
-        # if explore_probability > exp_exp_tradeoff:
-        #     action_request = np.random.choice()  # 2 values
-        #     action_accept = np.random.choice()  # 1 value
-        # else:
-        #     action = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
-
-        """
-        if self.action_request_space[action_request] >= 0.8:
-            batteryLevel_req[0] = "excess"  # discharge
-        elif 0.8 > self.action_request_space[action_request] >= 0.6:
-            batteryLevel_req[1] = "sufficient"  # discharge
-        elif 0.6 > self.action_request_space[action_request] >= 0.5:
-            batteryLevel_req[2] = "scare"  # charge
-        elif self.action_request_space[action_request] < 0.5:
-            batteryLevel_req[3] = "short"  # charge
-
-        if self.action_accept_space[action_accept] >= 0.5:
-            batteryLevel_acc[0] = "excess"  # discharge
-        elif 0.4 > self.action_accept_space[action_accept] >= 0.3:
-            batteryLevel_acc[1] = "sufficient"  # discharge
-        elif 0.3 > self.action_accept_space[action_accept] >= 0.2:
-            batteryLevel_acc[2] = "scare"  # charge
-        elif self.action_accept_space[action_accept] < 0.2:
-            batteryLevel_acc[3] = "short"  # charge
-        """
+        if explore_probability > exp_exp_tradeoff:
+            action_request = np.random.choice()  # 2 values
+            action_accept = np.random.choice()  # 1 value
+        else:
+            action_req = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
 
         # minimize purchase from the powerline
         # receiving states: pv , load, p2, rsoc
@@ -155,15 +126,12 @@ class APIS():
         # reward = powerline_energy
         # reward = p2
 
-        # return next_s, reward
+        return next_state, reward
         # return reward
 
     # def reset(self):
 
-    # def step(self): # request, accept
-
-    # reward function
-    # reward = -cost
+    """
 
     def CreateSce(self, action_request, action_accept):
         # batteryLeve, init actions
@@ -177,16 +145,3 @@ class APIS():
         #     interval = 60 * 60  # every 60 * 60s
         #     command = createJson()
         #     run(interval, command)
-
-# action section
-# rsoc = []
-# action = {}
-#
-# if rsoc >= 80.:
-#     action[item] == "excess"
-# elif 50. <= rsoc < 80.:
-#     action[item] == "sufficient"
-# elif 40. <= rsoc < 50.
-#     action[item] == "scare"
-# else: # rsoc < 40.
-#     action[item] == "short"
