@@ -69,9 +69,6 @@ class CreateScenario():
         self.batterySize = 4800
         # batteryLevel : 4 levels
         self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
-        # self.batteryLevel_req = [" ", " ", " ", " "]
-        # self.batteryLevel_acc = [" ", " ", " ", " "]
-        # self.batteryLevel = batteryLevel
         self.data = {
             "#": "place this file at the path defined by 'scenarioFile' in config file",
             "refreshingPeriodMsec": 5000,

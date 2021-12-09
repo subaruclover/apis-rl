@@ -26,6 +26,7 @@ class DQNNet : Deep Q-network Model
 class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
+
 from RL_learn import DQNNet, Memory, BatteryEnv
 # TODO: agent class (env, step(reward setting, etc))
 
@@ -63,6 +64,8 @@ while not gl.sema:  # True, alter for different time periods
     output_data = requests.get(URL).text
     output_data = json.loads(output_data)  # dict
 
+    rsoc_list = []
+
     for ids, dict_ in output_data.items():  # ids: E001, E002, ... house ID
         # print('the name of the dictionary is ', ids)
         # print('the dictionary is ', dict_)
@@ -81,7 +84,7 @@ while not gl.sema:  # True, alter for different time periods
               # "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
               # "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
               )
-
+        rsoc_list.append(rsoc[ids])
         # refresh every 5 seconds
         # print("\n")
         # time.sleep(5)
@@ -101,33 +104,24 @@ while not gl.sema:  # True, alter for different time periods
             rsoc_e001 = np.array([rsoc["E001"]])
 
             x_e001 = np.concatenate([pv_e001, load_e001, p2_e001, rsoc_e001], axis=-1)
-            print(x_e001)  # [39.14 575.58 734.    29.98]
+            print(x_e001)  # [39.14 575.58 734.    29.98] E001
 ##
-    print(rsoc)
+    # print(rsoc)
     # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
-    # rsoc_ave = np.mean(rsoc[ids]) # get average rsoc of this community
-    # state = np.concatenate((x, rsoc_ave), axis=-1)
+    rsoc_ave = np.mean(rsoc_list)  # get average rsoc of this community
+    # print(rsoc_ave)
+    # state = np.concatenate((x_e001, rsoc_ave), axis=-1)
 
-    # action section
-    # rsoc = []
-    # action_space =  ["excess", "sufficient", "scarce", "short"]
-    #
-    # if rsoc >= 80.:
-    #     action == "excess"
-    # elif 50. <= rsoc < 80.:
-    #     action == "sufficient"
-    # elif 40. <= rsoc < 50.
-    #     action == "scare"
-    # else: # rsoc < 40.
-    #     action == "short"
     state_size = (4, )
     action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9], 8 options
     action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
     action_request_num = len(action_request_space)
     action_accept_num = len(action_accept_space)
     learning_rate = 0.01
-    action_request = sorted(np.random.randint(0, action_request_num, 2), reverse=True)  # 2 values
-    action_accept = np.random.randint(0, action_accept_num, 1)
+    # action_request = sorted(np.random.randint(0, action_request_num, 2), reverse=True)  # 2 values
+    # action_accept = np.random.randint(0, action_accept_num, 1)
+    action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
+    action_accept = np.random.choice(action_accept_num, 1, replace=False)
     # actions_request = sorted(random.sample(action_request_space, 2))  # 2 values
     # actions_accept = random.sample(action_request_space, 1)  # 1 value
     # agent.CreateSce(action_request, action_accept)
