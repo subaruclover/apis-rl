@@ -120,10 +120,11 @@ while not gl.sema:  # True, alter for different time periods
     learning_rate = 0.01
     # action_request = sorted(np.random.randint(0, action_request_num, 2), reverse=True)  # 2 values
     # action_accept = np.random.randint(0, action_accept_num, 1)
-    action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
-    action_accept = np.random.choice(action_accept_num, 1, replace=False)
     # actions_request = sorted(random.sample(action_request_space, 2))  # 2 values
     # actions_accept = random.sample(action_request_space, 1)  # 1 value
+    action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
+    action_accept = np.random.choice(action_accept_num, 1, replace=False)
+
     # agent.CreateSce(action_request, action_accept)
 
     # Training hyperparameters
