@@ -15,6 +15,7 @@ import config as conf
 import requests, json
 
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
@@ -120,14 +121,15 @@ while not gl.sema:  # True, alter for different time periods
     # else: # rsoc < 40.
     #     action == "short"
     state_size = (4, )
-    action_request_space = [0.9, 0.8, 0.7, 0.6, 0.5]
-    action_accept_space = [0.5, 0.4, 0.3, 0.2, 0.1]
-    action_request_num = len(action_request_space)  # excess, sufficient, scare, short
+    action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9], 8 options
+    action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+    action_request_num = len(action_request_space)
     action_accept_num = len(action_accept_space)
     learning_rate = 0.01
-    action_request = np.random.randint(0, action_request_num)
-
-    action_accept = np.random.randint(0, action_accept_num)
+    action_request = sorted(np.random.randint(0, action_request_num, 2), reverse=True)  # 2 values
+    action_accept = np.random.randint(0, action_accept_num, 1)
+    # actions_request = sorted(random.sample(action_request_space, 2))  # 2 values
+    # actions_accept = random.sample(action_request_space, 1)  # 1 value
     # agent.CreateSce(action_request, action_accept)
 
     # Training hyperparameters
@@ -167,11 +169,12 @@ while not gl.sema:  # True, alter for different time periods
 
     # Compute the reward and new state based on the selected action
     # next_rsoc, batteryLevel, reward
-    batteryLevel_req, batteryLevel_acc = agent.step(action_request, action_accept)
+    # batteryLevel_req, batteryLevel_acc = agent.step(action_request, action_accept)
     # batteryLevel = agent.step(state, action_request, action_accept)
-    agent.CreateSce(action_request, action_accept, batteryLevel_req, batteryLevel_acc)
+    agent.CreateSce(action_request, action_accept)
 
-    print("req_act: ", action_request_space[action_request], "acc_act: ", action_accept_space[action_accept])
+    print("req_act: ", action_request_space[action_request[0]], action_request_space[action_request[1]],
+          "acc_act: ", action_accept_space[action_accept[0]])
     time.sleep(60)  # 5s
 
 """

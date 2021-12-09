@@ -81,18 +81,14 @@ class APIS():
     def __init__(self):
         # self.action_space = ["excess", "sufficient", "scarce", "short"]
         # request and accept level: between [0, 1]
-        self.action_request_space = np.linspace(0.2, 9, 8)  # [0.9, 0.8, 0.7, 0.6, 0.5]
-        self.action_accept_space = np.linspace(0.2, 0.9, 8)  # [0.5, 0.4, 0.3, 0.2, 0.1]
-        self.actions_request = sorted(random.sample(self.action_request_space, 2))  # 2 values
-        self.actions_accept = random.sample(self.action_request_space, 1)  # 1 value
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
+        # self.actions_request = sorted(random.sample(self.action_request_space, 2))  # 2 values
+        # self.actions_accept = random.sample(self.action_request_space, 1)  # 1 value
         # action : 2 request (sorted), 1 accept, concat as a list of action (3 values)
         # actions: [0, 1] and sort
-        # action_request ={[0.9, 0.8, 0.7, 0.6, 0.5],
-        # [0.9, 0.8, 0.7, 0.6, 0.5],
-        # [0.9, 0.8, 0.7, 0.6, 0.5],
-        # [0.9, 0.8, 0.7, 0.6, 0.5],
-        # [0.9, 0.8, 0.7, 0.6, 0.5]} list of actions, pick one of the list
-        self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
+
+        # self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
 
     """
     def _build_agent(self, action, rsoc):
@@ -151,12 +147,11 @@ class APIS():
     # reward function
     # reward = -cost
 
-    def CreateSce(self, action_request, action_accept, batteryLevel_req, batteryLevel_acc):
+    def CreateSce(self, action_request, action_accept):
         # batteryLeve, init actions
         # batteryLevel = ["excess", "sufficient", "scarce", "short"]
         # newSce = CreateScenario(batteryLevel=self.batteryLevel, action=action)
-        newSce = CreateScenario(action_request=action_request, action_accept=action_accept,
-                                batteryLevel_req=batteryLevel_req, batteryLevel_acc=batteryLevel_acc)
+        newSce = CreateScenario(action_request=action_request, action_accept=action_accept)
         # newSce.batteryLevel
         newSce.write_json()
 
