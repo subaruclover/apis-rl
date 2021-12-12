@@ -7,23 +7,24 @@ created by: Qiong
 """
 
 import numpy as np
+import tensorflow as tf
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense
 from tensorflow.keras.initializers import glorot_uniform
 from tensorflow.keras.optimizers import Adam
 
+
 # Deep Q-Network Model
 class DQNNet():
-    def __init__(self, state_size, action_size, learning_rate):
 
+    def __init__(self, state_size, action_size, learning_rate):
         self.state_size = state_size
         self.action_size = action_size
         self.learning_rate = learning_rate
         self.model = self.create_model()
 
     def create_model(self):
-
         # state_size = (3, )
         input = Input(shape=self.state_size)
 
@@ -162,7 +163,7 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
     def store(self, experience):
 
         # Find the max priority
-        max_priority = np.max(self.tree.tree[-self.tree.capacity :])
+        max_priority = np.max(self.tree.tree[-self.tree.capacity:])
 
         # If the max priority = 0, this experience will never have a chance to be selected
         # So a minimum priority is assigned
@@ -188,7 +189,7 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
 
         self.PER_b = np.min([1.0, self.PER_b + self.PER_b_increment_per_sampling])
 
-        prob_min = np.min(self.tree.tree[-self.tree.capacity :]) / self.tree.tree[0]
+        prob_min = np.min(self.tree.tree[-self.tree.capacity:]) / self.tree.tree[0]
         max_weight = (prob_min * n) ** (-self.PER_b)
 
         for i in range(n):
@@ -214,91 +215,155 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
             self.tree.update(ti, p)
 
 
-# House Model, step function (reward)
-class HouseEnv():
+# DQN, with/without Prioritized Replay
+class DQNPrioritizedReplay:
+    def __init__(
+            self,
+            n_actions,
+            n_features,
+            learning_rate=0.005,
+            reward_decay=0.9,
+            e_greedy=0.9,
+            replace_target_iter=500,
+            memory_size=10000,
+            batch_size=32,
+            e_greedy_increment=None,
+            output_graph=False,
+            prioritized=True,
+            sess=None,
+    ):
+        self.n_actions = n_actions
+        self.n_features = n_features
+        self.lr = learning_rate
+        self.gamma = reward_decay
+        self.epsilon_max = e_greedy
+        self.replace_target_iter = replace_target_iter
+        self.memory_size = memory_size
+        self.batch_size = batch_size
+        self.epsilon_increment = e_greedy_increment
+        self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
 
-    def __init__(self, action_size):
-        """
-        coeff_d - discharge coefficient
-        coeff_c - charge coefficient
+        self.prioritized = prioritized    # decide to use double q or not
 
-        actions space is 3, where
-        a = -1, battery discharge
-        a = 0,  battery in idle
-        a = 1,  battery charge
-        """
+        self.learn_step_counter = 0
 
-        self.action_set = np.linspace(-35, 35, num=action_size, endpoint=True)
-        self.initial_rsoc = 30.
-        self.battery_voltage = 52.
-        self.coeff_c = 0.02
-        self.coeff_d = 0.02
-        self.decay = 0.001
+        self._build_net()
+        t_params = tf.compat.v1.get_collection('target_net_params')
+        e_params = tf.compat.v1.get_collection('eval_net_params')
+        self.replace_target_op = [tf.compat.v1.assign(t, e) for t, e in zip(t_params, e_params)]
 
-        # list of possible actions
-        # reward
-        def step(self, state, action_request, action_accept):
+        if self.prioritized:
+            self.memory = Memory(capacity=memory_size)
+        else:
+            self.memory = np.zeros((self.memory_size, n_features*2+2))
 
-            # Exploration hyperparameters for epsilon greedy strategy
-            explore_start = 1.0  # exploration probability at start
-            explore_stop = 0.01  # minimum exploration probability
-            decay_rate = 0.001  # exponential decay rate for exploration prob
-            decay_step = 0  # Decay rate for ϵ-greedy policy
+        if sess is None:
+            self.sess = tf.compat.v1.Session()
+            self.sess.run(tf.compat.v1.global_variables_initializer())
+        else:
+            self.sess = sess
 
-            # action selection
-            # ϵ-greedy policy
+        if output_graph:
+            tf.compat.v1.summary.FileWriter("logs/", self.sess.graph)
 
-            # action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
-            # action_accept = np.random.choice(action_accept_num, 1, replace=False)
+        self.cost_his = []
 
-            exp_exp_tradeoff = np.random.rand()
-            explore_probability = explore_stop + (explore_start - explore_stop) * np.exp(
-                -decay_rate * decay_step
-            )
+    def _build_net(self):
+        def build_layers(s, c_names, n_l1, w_initializer, b_initializer, trainable):
+            with tf.compat.v1.variable_scope('l1'):
+                w1 = tf.compat.v1.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names, trainable=trainable)
+                b1 = tf.compat.v1.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names,  trainable=trainable)
+                l1 = tf.compat.v1.nn.relu(tf.compat.v1.matmul(s, w1) + b1)
 
-            if explore_probability > exp_exp_tradeoff:
-                action_request = np.random.choice()  # 2 values
-                action_accept = np.random.choice()  # 1 value
+            with tf.compat.v1.variable_scope('l2'):
+                w2 = tf.compat.v1.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names,  trainable=trainable)
+                b2 = tf.compat.v1.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names,  trainable=trainable)
+                out = tf.compat.v1.matmul(l1, w2) + b2
+            return out
+
+        # ------------------ build evaluate_net ------------------
+        self.s = tf.compat.v1.placeholder(tf.float32, [None, self.n_features], name='s')  # input
+        self.q_target = tf.compat.v1.placeholder(tf.float32, [None, self.n_actions], name='Q_target')  # for calculating loss
+        if self.prioritized:
+            self.ISWeights = tf.compat.v1.placeholder(tf.float32, [None, 1], name='IS_weights')
+        with tf.compat.v1.variable_scope('eval_net'):
+            c_names, n_l1, w_initializer, b_initializer = \
+                ['eval_net_params', tf.compat.v1.GraphKeys.GLOBAL_VARIABLES], 20, \
+                tf.compat.v1.random_normal_initializer(0., 0.3), tf.compat.v1.constant_initializer(0.1)  # config of layers
+
+            self.q_eval = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer, True)
+
+        with tf.compat.v1.variable_scope('loss'):
+            if self.prioritized:
+                self.abs_errors = tf.math.reduce_sum(tf.math.abs(self.q_target - self.q_eval), axis=1)    # for updating Sumtree
+                self.loss = tf.math.reduce_mean(self.ISWeights * tf.math.squared_difference(self.q_target, self.q_eval))
             else:
-                action_req = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
+                self.loss = tf.math.reduce_mean(tf.math.squared_difference(self.q_target, self.q_eval))
+        with tf.compat.v1.variable_scope('train'):
+            self._train_op = tf.compat.v1.train.RMSPropOptimizer(self.lr).minimize(self.loss)
 
-            # minimize purchase from the powerline
-            # receiving states: pv , load, p2, rsoc
-            # powerline_energy = power_flow_to_battery - load ?
-            # reward = powerline_energy
-            # reward = p2
+        # ------------------ build target_net ------------------
+        self.s_ = tf.compat.v1.placeholder(tf.float32, [None, self.n_features], name='s_')    # input
+        with tf.compat.v1.variable_scope('target_net'):
+            c_names = ['target_net_params', tf.compat.v1.GraphKeys.GLOBAL_VARIABLES]
+            self.q_next = build_layers(self.s_, c_names, n_l1, w_initializer, b_initializer, False)
 
-            return next_state, reward
-            # return reward
+    def store_transition(self, s, a, r, s_):
+        if self.prioritized:    # prioritized replay
+            transition = np.hstack((s, [a, r], s_))
+            self.memory.store(transition)    # have high priority for newly arrived transition
+        else:       # random replay
+            if not hasattr(self, 'memory_counter'):
+                self.memory_counter = 0
+            transition = np.hstack((s, [a, r], s_))
+            index = self.memory_counter % self.memory_size
+            self.memory[index, :] = transition
+            self.memory_counter += 1
 
-    def step(self, state, action, timestep):
-        current_pv = state[0]
-        current_load = state[1]
-        current_p2 = state[2]
-        current_rsoc = state[3]
+    def choose_action(self, observation):
+        observation = observation[np.newaxis, :]
+        if np.random.uniform() < self.epsilon:
+            actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
+            action = np.argmax(actions_value)
+        else:
+            action = np.random.randint(0, self.n_actions)
+        return action
 
-        # RSOC -- Bat_cur -> w0, w1
-        if self.action_set[action] < 0:  # == -1:   # discharge
-            next_rsoc = current_rsoc + (self.coeff_d * self.action_set[action] - self.decay) * timestep
-            next_rsoc = np.maximum(next_rsoc, 20.)
+    def learn(self):
+        if self.learn_step_counter % self.replace_target_iter == 0:
+            self.sess.run(self.replace_target_op)
+            print('\ntarget_params_replaced\n')
 
-        elif self.action_set[action] > 0:  # == 1:   # charge
-            next_rsoc = current_rsoc + (self.coeff_c * self.action_set[action] - self.decay) * timestep
-            next_rsoc = np.minimum(next_rsoc, 100.)
+        if self.prioritized:
+            tree_idx, batch_memory, ISWeights = self.memory.sample(self.batch_size)
+        else:
+            sample_index = np.random.choice(self.memory_size, size=self.batch_size)
+            batch_memory = self.memory[sample_index, :]
 
-        else:  # idle
-            next_rsoc = current_rsoc - self.decay * timestep
-            next_rsoc = np.maximum(next_rsoc, 20.)
+        q_next, q_eval = self.sess.run(
+                [self.q_next, self.q_eval],
+                feed_dict={self.s_: batch_memory[:, -self.n_features:],
+                           self.s: batch_memory[:, :self.n_features]})
 
-        next_rsoc = np.array([next_rsoc])
+        q_target = q_eval.copy()
+        batch_index = np.arange(self.batch_size, dtype=np.int32)
+        eval_act_index = batch_memory[:, self.n_features].astype(int)
+        reward = batch_memory[:, self.n_features + 1]
 
-        battery_charge_power = self.battery_voltage * self.action_set[action]  # battery_output
-        p2_sim = current_pv - battery_charge_power
-        cost = -p2_sim
+        q_target[batch_index, eval_act_index] = reward + self.gamma * np.max(q_next, axis=1)
 
-        # reward function
-        reward = np.minimum(-cost, 0.)
-        # reward = -cost
+        if self.prioritized:
+            _, abs_errors, self.cost = self.sess.run([self._train_op, self.abs_errors, self.loss],
+                                         feed_dict={self.s: batch_memory[:, :self.n_features],
+                                                    self.q_target: q_target,
+                                                    self.ISWeights: ISWeights})
+            self.memory.batch_update(tree_idx, abs_errors)     # update priority
+        else:
+            _, self.cost = self.sess.run([self._train_op, self.loss],
+                                         feed_dict={self.s: batch_memory[:, :self.n_features],
+                                                    self.q_target: q_target})
 
-        return next_rsoc, reward, p2_sim, battery_charge_power
+        self.cost_his.append(self.cost)
 
+        self.epsilon = self.epsilon + self.epsilon_increment if self.epsilon < self.epsilon_max else self.epsilon_max
+        self.learn_step_counter += 1
