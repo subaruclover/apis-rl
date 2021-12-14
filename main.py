@@ -31,10 +31,10 @@ class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
 
-from RL_learn import DQNNet, Memory  # , HouseEnv
+from RL_learn import DQNNet, Memory, DQNPrioritizedReplay #HouseEnv
 # TODO: agent class (env, step(reward setting, etc))
 
-from agent import APIS
+from agent import APIS, House
 
 agent = APIS()
 
@@ -170,10 +170,15 @@ while not gl.sema:  # True, alter for different time periods
           "acc_act: ", action_accept_space[action_accept[0]])
     time.sleep(60)  # 5s
 
+############################
+env = House()
+
+MEMORY_SIZE = 10000
+
 sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
-        n_actions=3, n_features=2, memory_size=MEMORY_SIZE,
+        n_actions=3, n_features=5, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=False,
     )
 
@@ -193,7 +198,6 @@ def train(RL):
         observation = env.reset()
         start_time = time.time()
         while True:
-            env.render()
 
             action = RL.choose_action(observation)
 

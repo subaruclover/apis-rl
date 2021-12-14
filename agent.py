@@ -142,83 +142,63 @@ class APIS():
 
 
 # House Model, step function (reward)
-"""
+
 class House():
 
     def __init__(self, action_size):
 
-        self.action_set = np.linspace(-35, 35, num=action_size, endpoint=True)
-        self.initial_rsoc = 30.
-        self.battery_voltage = 52.
-        self.coeff_c = 0.02
-        self.coeff_d = 0.02
-        self.decay = 0.001
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
 
         # list of possible actions
         # reward
-        def step(self, state, action_request, action_accept):
+    def step(self, state, action_request, action_accept):
 
-            # Exploration hyperparameters for epsilon greedy strategy
-            explore_start = 1.0  # exploration probability at start
-            explore_stop = 0.01  # minimum exploration probability
-            decay_rate = 0.001  # exponential decay rate for exploration prob
-            decay_step = 0  # Decay rate for ϵ-greedy policy
+        # Exploration hyperparameters for epsilon greedy strategy
+        explore_start = 1.0  # exploration probability at start
+        explore_stop = 0.01  # minimum exploration probability
+        decay_rate = 0.001  # exponential decay rate for exploration prob
+        decay_step = 0  # Decay rate for ϵ-greedy policy
 
-            # action selection
-            # ϵ-greedy policy
+        # action selection
+        # ϵ-greedy policy
 
-            # action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
-            # action_accept = np.random.choice(action_accept_num, 1, replace=False)
+        # action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
+        # action_accept = np.random.choice(action_accept_num, 1, replace=False)
 
-            exp_exp_tradeoff = np.random.rand()
-            explore_probability = explore_stop + (explore_start - explore_stop) * np.exp(
-                -decay_rate * decay_step
-            )
+        exp_exp_tradeoff = np.random.rand()
+        explore_probability = explore_stop + (explore_start - explore_stop) * np.exp(
+            -decay_rate * decay_step
+        )
 
-            if explore_probability > exp_exp_tradeoff:
-                action_request = np.random.choice()  # 2 values
-                action_accept = np.random.choice()  # 1 value
-            else:
-                action_req = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
+        if explore_probability > exp_exp_tradeoff:
+            action_request_num = len(self.action_request_space)
+            action_accept_num = len(self.action_accept_space)
+            learning_rate = 0.01
+            action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
+            action_accept = np.random.randint(action_request[1], action_request[0],
+                                              1)  # 1 value between 2 request actions
+            # action_request = np.random.choice()  # 2 values
+            # action_accept = np.random.choice()  # 1 value
+        else:
+            action_request = np.argmax(DQNNet.model.predict(np.expand_dims(state, axis=0)))
+            # action_accept =
 
-            # minimize purchase from the powerline
-            # receiving states: pv , load, p2, rsoc
-            # powerline_energy = power_flow_to_battery - load ?
-            # reward = powerline_energy
-            # reward = p2
+        # minimize purchase from the powerline
+        # receiving states: pv , load, p2, rsoc
+        # powerline_energy = power_flow_to_battery - load ?
+        # reward = powerline_energy
+        # reward = p2
 
-            return next_state, reward
-            # return reward
+        # return next_state, reward
 
-    def step(self, state, action, timestep):
+    def step(self, state, action_req, action_acc):
         current_pv = state[0]
         current_load = state[1]
         current_p2 = state[2]
         current_rsoc = state[3]
+        current_rsoc_ave = state[4]
 
-        # RSOC -- Bat_cur -> w0, w1
-        if self.action_set[action] < 0:  # == -1:   # discharge
-            next_rsoc = current_rsoc + (self.coeff_d * self.action_set[action] - self.decay) * timestep
-            next_rsoc = np.maximum(next_rsoc, 20.)
 
-        elif self.action_set[action] > 0:  # == 1:   # charge
-            next_rsoc = current_rsoc + (self.coeff_c * self.action_set[action] - self.decay) * timestep
-            next_rsoc = np.minimum(next_rsoc, 100.)
+        # return reward
 
-        else:  # idle
-            next_rsoc = current_rsoc - self.decay * timestep
-            next_rsoc = np.maximum(next_rsoc, 20.)
-
-        next_rsoc = np.array([next_rsoc])
-
-        battery_charge_power = self.battery_voltage * self.action_set[action]  # battery_output
-        p2_sim = current_pv - battery_charge_power
-        cost = -p2_sim
-
-        # reward function
-        reward = np.minimum(-cost, 0.)
-        # reward = -cost
-
-        return next_rsoc, reward, p2_sim, battery_charge_power
-
-"""
