@@ -7,7 +7,8 @@ created by: Qiong
 """
 
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense
@@ -217,21 +218,19 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
 
 # DQN, with/without Prioritized Replay
 class DQNPrioritizedReplay:
-    def __init__(
-            self,
-            n_actions,
-            n_features,
-            learning_rate=0.005,
-            reward_decay=0.9,
-            e_greedy=0.9,
-            replace_target_iter=500,
-            memory_size=10000,
-            batch_size=32,
-            e_greedy_increment=None,
-            output_graph=False,
-            prioritized=True,
-            sess=None,
-    ):
+    def __init__(self,
+                 n_actions,
+                 n_features,
+                 learning_rate=0.005,
+                 reward_decay=0.9,
+                 e_greedy=0.95,
+                 replace_target_iter=500,
+                 memory_size=10000,
+                 batch_size=256,
+                 e_greedy_increment=None,
+                 output_graph=False,
+                 prioritized=True,
+                 sess=None):
         self.n_actions = n_actions
         self.n_features = n_features
         self.lr = learning_rate
@@ -243,14 +242,14 @@ class DQNPrioritizedReplay:
         self.epsilon_increment = e_greedy_increment
         self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
 
-        self.prioritized = prioritized    # decide to use double q or not
+        self.prioritized = prioritized    # decide to use prioritize experience replay or not
 
         self.learn_step_counter = 0
 
         self._build_net()
-        t_params = tf.compat.v1.get_collection('target_net_params')
-        e_params = tf.compat.v1.get_collection('eval_net_params')
-        self.replace_target_op = [tf.compat.v1.assign(t, e) for t, e in zip(t_params, e_params)]
+        t_params = tf.get_collection('target_net_params')
+        e_params = tf.get_collection('eval_net_params')
+        self.replace_target_op = [tf.assign(t, e) for t, e in zip(t_params, e_params)]
 
         if self.prioritized:
             self.memory = Memory(capacity=memory_size)
@@ -258,54 +257,54 @@ class DQNPrioritizedReplay:
             self.memory = np.zeros((self.memory_size, n_features*2+2))
 
         if sess is None:
-            self.sess = tf.compat.v1.Session()
-            self.sess.run(tf.compat.v1.global_variables_initializer())
+            self.sess = tf.Session()
+            self.sess.run(tf.global_variables_initializer())
         else:
             self.sess = sess
 
         if output_graph:
-            tf.compat.v1.summary.FileWriter("logs/", self.sess.graph)
+            tf.summary.FileWriter("logs/", self.sess.graph)
 
         self.cost_his = []
 
     def _build_net(self):
         def build_layers(s, c_names, n_l1, w_initializer, b_initializer, trainable):
-            with tf.compat.v1.variable_scope('l1'):
-                w1 = tf.compat.v1.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names, trainable=trainable)
-                b1 = tf.compat.v1.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names,  trainable=trainable)
-                l1 = tf.compat.v1.nn.relu(tf.compat.v1.matmul(s, w1) + b1)
+            with tf.variable_scope('l1'):
+                w1 = tf.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names, trainable=trainable)
+                b1 = tf.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names,  trainable=trainable)
+                l1 = tf.nn.relu(tf.matmul(s, w1) + b1)
 
-            with tf.compat.v1.variable_scope('l2'):
-                w2 = tf.compat.v1.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names,  trainable=trainable)
-                b2 = tf.compat.v1.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names,  trainable=trainable)
-                out = tf.compat.v1.matmul(l1, w2) + b2
+            with tf.variable_scope('l2'):
+                w2 = tf.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names,  trainable=trainable)
+                b2 = tf.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names,  trainable=trainable)
+                out = tf.matmul(l1, w2) + b2
             return out
 
         # ------------------ build evaluate_net ------------------
-        self.s = tf.compat.v1.placeholder(tf.float32, [None, self.n_features], name='s')  # input
-        self.q_target = tf.compat.v1.placeholder(tf.float32, [None, self.n_actions], name='Q_target')  # for calculating loss
+        self.s = tf.placeholder(tf.float32, [None, self.n_features], name='s')  # input
+        self.q_target = tf.placeholder(tf.float32, [None, self.n_actions], name='Q_target')  # for calculating loss
         if self.prioritized:
-            self.ISWeights = tf.compat.v1.placeholder(tf.float32, [None, 1], name='IS_weights')
-        with tf.compat.v1.variable_scope('eval_net'):
+            self.ISWeights = tf.placeholder(tf.float32, [None, 1], name='IS_weights')
+        with tf.variable_scope('eval_net'):
             c_names, n_l1, w_initializer, b_initializer = \
-                ['eval_net_params', tf.compat.v1.GraphKeys.GLOBAL_VARIABLES], 20, \
-                tf.compat.v1.random_normal_initializer(0., 0.3), tf.compat.v1.constant_initializer(0.1)  # config of layers
+                ['eval_net_params', tf.GraphKeys.GLOBAL_VARIABLES], 20, \
+                tf.random_normal_initializer(0., 0.3), tf.constant_initializer(0.1)  # config of layers
 
             self.q_eval = build_layers(self.s, c_names, n_l1, w_initializer, b_initializer, True)
 
-        with tf.compat.v1.variable_scope('loss'):
+        with tf.variable_scope('loss'):
             if self.prioritized:
                 self.abs_errors = tf.math.reduce_sum(tf.math.abs(self.q_target - self.q_eval), axis=1)    # for updating Sumtree
                 self.loss = tf.math.reduce_mean(self.ISWeights * tf.math.squared_difference(self.q_target, self.q_eval))
             else:
                 self.loss = tf.math.reduce_mean(tf.math.squared_difference(self.q_target, self.q_eval))
-        with tf.compat.v1.variable_scope('train'):
-            self._train_op = tf.compat.v1.train.RMSPropOptimizer(self.lr).minimize(self.loss)
+        with tf.variable_scope('train'):
+            self._train_op = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
 
         # ------------------ build target_net ------------------
-        self.s_ = tf.compat.v1.placeholder(tf.float32, [None, self.n_features], name='s_')    # input
-        with tf.compat.v1.variable_scope('target_net'):
-            c_names = ['target_net_params', tf.compat.v1.GraphKeys.GLOBAL_VARIABLES]
+        self.s_ = tf.placeholder(tf.float32, [None, self.n_features], name='s_')    # input
+        with tf.variable_scope('target_net'):
+            c_names = ['target_net_params', tf.GraphKeys.GLOBAL_VARIABLES]
             self.q_next = build_layers(self.s_, c_names, n_l1, w_initializer, b_initializer, False)
 
     def store_transition(self, s, a, r, s_):

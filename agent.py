@@ -8,18 +8,16 @@
 import logging.config
 import time
 
-# from main import batteryLevel
 import numpy as np
 import random
 
 logger = logging.getLogger(__name__)
 
-import global_var as gl
-import config as conf
+# import global_var as gl
+# import config as conf
 
-import os
-
-os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+# import os
+# os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 from createScenario import CreateScenario
 
@@ -134,11 +132,7 @@ class APIS():
     """
 
     def CreateSce(self, action_request, action_accept):
-        # batteryLeve, init actions
-        # batteryLevel = ["excess", "sufficient", "scarce", "short"]
-        # newSce = CreateScenario(batteryLevel=self.batteryLevel, action=action)
         newSce = CreateScenario(action_request=action_request, action_accept=action_accept)
-        # newSce.batteryLevel
         newSce.write_json()
 
         # if __name__ == "__main__":
@@ -148,18 +142,10 @@ class APIS():
 
 
 # House Model, step function (reward)
+"""
 class House():
 
     def __init__(self, action_size):
-        """
-        coeff_d - discharge coefficient
-        coeff_c - charge coefficient
-
-        actions space is 3, where
-        a = -1, battery discharge
-        a = 0,  battery in idle
-        a = 1,  battery charge
-        """
 
         self.action_set = np.linspace(-35, 35, num=action_size, endpoint=True)
         self.initial_rsoc = 30.
@@ -234,3 +220,5 @@ class House():
         # reward = -cost
 
         return next_rsoc, reward, p2_sim, battery_charge_power
+
+"""
