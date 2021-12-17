@@ -172,6 +172,7 @@ while gl.sema:  # True, alter for different time periods
 
 ############################
 env = House()
+env.seed(21)
 
 MEMORY_SIZE = 10000
 

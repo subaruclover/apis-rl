@@ -10,6 +10,8 @@ import time
 
 import numpy as np
 import random
+import gym
+from gym.utils import seeding
 
 logger = logging.getLogger(__name__)
 
@@ -149,6 +151,10 @@ class House():
         # list of possible actions
         # reward
 
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
+
     def step(self, state, action_request, action_accept):
 
         # Exploration hyperparameters for epsilon greedy strategy
@@ -208,12 +214,12 @@ class House():
         ups_output_power = np.array([0])
         p2 = np.array([0])
         rsoc = np.array([50])
-        wg = 0
-        wb = -4.5
-
+        # wg = np.array([0])
+        # wb = np.array([-4.5])
         rsoc_ave = np.array([50])  # average rsoc in the same community
 
         # self.state = np.array([self.state])
         self.state = np.concatenate([pvc_charge_power, ups_output_power, p2, rsoc, rsoc_ave], axis=-1)
 
-        return np.array(self.state, dtype=np.float32)
+        # return np.array(self.state, dtype=np.float32)
+        return np.array(self.state)
