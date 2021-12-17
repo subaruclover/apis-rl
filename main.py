@@ -61,7 +61,7 @@ load_list = []
 p2_list = []
 
 # need to refresh the output data every 5s? time.sleep()
-while not gl.sema:  # True, alter for different time periods
+while gl.sema:  # True, alter for different time periods
     # # refresh every 5 seconds
     # time.sleep(5)
     # read variables from /get/log url
@@ -110,7 +110,7 @@ while not gl.sema:  # True, alter for different time periods
     # print(rsoc_ave)
     # state = np.concatenate((x_e001, rsoc_ave), axis=-1)
 
-    state_size = (4,)
+    state_size = (5,)
     action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9], 8 options
     action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
     action_request_num = len(action_request_space)
@@ -175,16 +175,17 @@ env = House()
 
 MEMORY_SIZE = 10000
 
+
 sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
-        n_actions=3, n_features=5, memory_size=MEMORY_SIZE,
+        n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=False,
     )
 
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
-        n_actions=3, n_features=2, memory_size=MEMORY_SIZE,
+        n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
     )
 sess.run(tf.global_variables_initializer())
@@ -204,7 +205,7 @@ def train(RL):
             observation_, reward, done, info = env.step(action)
 
             if done:
-                reward = 10
+                reward = p2_e001
 
             RL.store_transition(observation, action, reward, observation_)
 
@@ -225,17 +226,17 @@ def train(RL):
     return np.vstack((episodes, steps))
 
 
-his_natural = train(RL_natural)
+# his_natural = train(RL_natural)
 his_prio = train(RL_prio)
 
 # compare based on first success
-plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-plt.legend(loc='best')
-plt.ylabel('total training time')
-plt.xlabel('episode')
-plt.grid()
-plt.show()
+# plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
+# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
+# plt.legend(loc='best')
+# plt.ylabel('total training time')
+# plt.xlabel('episode')
+# plt.grid()
+# plt.show()
 
 """
 

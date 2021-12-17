@@ -83,10 +83,6 @@ class APIS():
         # request and accept level: between [0, 1]
         self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
         self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
-        # self.actions_request = sorted(random.sample(self.action_request_space, 2))  # 2 values
-        # self.actions_accept = random.sample(self.action_request_space, 1)  # 1 value
-        # action : 2 request (sorted), 1 accept, concat as a list of action (3 values)
-        # actions: [0, 1] and sort
 
         # self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
 
@@ -145,13 +141,14 @@ class APIS():
 
 class House():
 
-    def __init__(self, action_size):
+    def __init__(self):
 
         self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
         self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
 
         # list of possible actions
         # reward
+
     def step(self, state, action_request, action_accept):
 
         # Exploration hyperparameters for epsilon greedy strategy
@@ -192,13 +189,31 @@ class House():
 
         # return next_state, reward
 
-    def step(self, state, action_req, action_acc):
+    def step1(self, state, action_request, action_accept):
         current_pv = state[0]
         current_load = state[1]
         current_p2 = state[2]
         current_rsoc = state[3]
         current_rsoc_ave = state[4]
 
-
         # return reward
 
+    def reset(self):
+        # reset the states according to standard.json file (../apis-emulator/jsontmp)
+        # all values are the same to each house
+        # super().reset(seed=seed)
+
+        # init state
+        pvc_charge_power = np.array([0])
+        ups_output_power = np.array([0])
+        p2 = np.array([0])
+        rsoc = np.array([50])
+        wg = 0
+        wb = -4.5
+
+        rsoc_ave = np.array([50])  # average rsoc in the same community
+
+        # self.state = np.array([self.state])
+        self.state = np.concatenate([pvc_charge_power, ups_output_power, p2, rsoc, rsoc_ave], axis=-1)
+
+        return np.array(self.state, dtype=np.float32)
