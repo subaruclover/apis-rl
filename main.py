@@ -209,30 +209,33 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    for i_episode in range(1):
+    for i_episode in range(10):
         observation = env.reset()
         start_time = time.time()
         while True:  # not gl.sema:
 
             actions = RL.choose_actions(observation)
-            action_request = np.array(actions[0], actions[-1])
-            action_accept = actions[1]
+            action_request = [actions[0], actions[2]]
+            action_accept = [actions[1]]
 
             observation_, reward, info = env.step1(observation, action_request, action_accept)
+            agent.CreateSce(action_request, action_accept)
 
-            if time.sleep(5):  # done:
-                reward = p2_e001
+            time.sleep(5)
+
+            # if time.sleep(5):  # done:
+            #     reward = p2_e001
 
             RL.store_transition(observation, actions, reward, observation_)
 
             if total_steps > MEMORY_SIZE:
                 RL.learn()
 
-            if time.sleep(5):  # done:
-                print('episode ', i_episode, ' finished')
-                steps.append(total_steps)
-                episodes.append(i_episode)
-                break
+            # if time.sleep(5):  # done:
+            print('episode ', i_episode, ' finished')
+            steps.append(total_steps)
+            episodes.append(i_episode)
+            break
 
             observation = observation_
             total_steps += 1

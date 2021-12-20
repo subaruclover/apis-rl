@@ -216,7 +216,7 @@ class House():
         # return next_state, reward
 
     def step1(self, state, action_request, action_accept):
-        # how actions changes the states
+        # how actions changes the states?
 
         # current_pv = state[0]
         # current_load = state[1]
@@ -269,7 +269,7 @@ class House():
         self.state = np.concatenate([current_all_e001, np.array([current_rsoc_ave])], axis=-1)
 
         reward = current_p2_e001
-        done = time.sleep(5)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
+        # done = time.sleep(5)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
 
         return np.array(self.state, dtype=np.float32), reward,  {}  # done
 
