@@ -209,10 +209,11 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
+    # EPI = 15
 
-    house_id = input('input the house id: ')
+    # house_id = input('input the house id: ')
 
-    for i_episode in range(100):
+    for i_episode in range(150):
 
         observation = env.reset()
         start_time = time.time()
@@ -253,19 +254,22 @@ def train(RL):
             total_steps += 1
 
         end_time = time.time()
-        print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60))  # * gl.acc
+        print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
     return np.vstack((episodes, steps)), RL.memory
 
 
+house_id = input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 his_prio, prio_memory = train(RL_prio)
 
+prio_memory_store = [prio_memory.tree.data[i][8] for i in range(150)]
+
 # compare based on first success
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-plt.plot(natural_memory[:, 8], 'b', label='natural DQN')
+plt.plot(natural_memory[:150, 8], 'b', label='natural DQN')
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-plt.plot(prio_memory[:, 8], 'r', label='DQN with prioritized replay')
+plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')
 plt.ylabel('reward (p2)')
 plt.xlabel('episode')
