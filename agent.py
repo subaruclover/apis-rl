@@ -215,8 +215,25 @@ class House():
 
         # return next_state, reward
 
-    def step1(self, state, action_request, action_accept):
+    def step1(self, action_request, action_accept, house_id):
         # how actions changes the states?
+        """
+        Perform one step in the environment following the action.
+        actions = np.argsort(-actions_value)[:3] e.g. [7, 5, 2]
+
+            @param action_request: [actions[0], actions[2]]
+                   action_accept: [actions[1]]
+             where actions[0]  "4320.0-": "excess",
+                   actions[1]  "-2880.0": "short",
+                   actions[2]  "3360.0-4320.0": "sufficient",
+                               "2880.0-3360.0": "scarce",
+
+                   ids: house id, string
+
+            @return: (for one house) (pvc_, load_, p2_, rsoc_, rsoc_ave_), reward, done
+             where reward is set to p2?
+             but when the goal is reached (time up), done is True
+        """
 
         # current_pv = state[0]
         # current_load = state[1]
@@ -224,7 +241,7 @@ class House():
         # current_rsoc = state[3]
         # current_rsoc_ave = state[4]
 
-        current_pvc_e001, current_load_e001, current_p2_e001, current_rsoc_e001, current_rsoc_ave = self.state
+        # pvc_e001, load_e001, p2_e001, rsoc_e001, rsoc_ave = self.state
         # current_pvc = gl.oesunits[ids]["emu"]["pvc_charge_power"]
         # current_rsoc = core.rsocUpdate()
 
@@ -247,31 +264,65 @@ class House():
             rsoc_list.append(rsoc[ids])
             # refresh every 60 seconds
             # print("\n")
-            # time.sleep(60)
+            # time.sleep(60)  # <-- wait for time pass and renew the actions?
+
+            # actions! --> change states
+            # action_request: [actions[0], actions[2]], action_accept:  [actions[1]]
+
 
             # States  pvc_charge_power[ids], for house E001
             if ids == "E001":
-                current_pvc_e001 = np.array([pvc_charge_power["E001"]])
-                current_load_e001 = np.array([ups_output_power["E001"]])
-                current_p2_e001 = np.array([p2["E001"]])
-                current_rsoc_e001 = np.array([rsoc["E001"]])
+                pvc_e001_ = np.array([pvc_charge_power["E001"]])
+                load_e001_ = np.array([ups_output_power["E001"]])
+                p2_e001_ = np.array([p2["E001"]])
+                rsoc_e001_ = np.array([rsoc["E001"]])
 
-                current_all_e001 = np.concatenate([current_pvc_e001,
-                                                   current_load_e001,
-                                                   current_p2_e001,
-                                                   current_rsoc_e001], axis=-1)
-                # print(current_all_e001, type(current_all_e001))  # [39.14 575.58 734.    29.98] E001
+                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_], axis=-1)
+
+            if ids == "E002":
+                pvc_e002_ = np.array([pvc_charge_power["E002"]])
+                load_e002_ = np.array([ups_output_power["E002"]])
+                p2_e002_ = np.array([p2["E002"]])
+                rsoc_e002_ = np.array([rsoc["E002"]])
+
+                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_], axis=-1)
+
+            if ids == "E003":
+                pvc_e003_ = np.array([pvc_charge_power["E003"]])
+                load_e003_ = np.array([ups_output_power["E003"]])
+                p2_e003_ = np.array([p2["E003"]])
+                rsoc_e003_ = np.array([rsoc["E003"]])
+
+                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_], axis=-1)
+
+            if ids == "E004":
+                pvc_e004_ = np.array([pvc_charge_power["E004"]])
+                load_e004_ = np.array([ups_output_power["E002"]])
+                p2_e004_ = np.array([p2["E004"]])
+                rsoc_e004_ = np.array([rsoc["E004"]])
+
+                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_], axis=-1)
 
         # print(rsoc)
         # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
-        current_rsoc_ave = np.mean(rsoc_list)  # get average rsoc of this community
+        rsoc_ave_ = np.mean(rsoc_list)  # get average rsoc of this community
         # print(rsoc_ave)
-        self.state = np.concatenate([current_all_e001, np.array([current_rsoc_ave])], axis=-1)
 
-        reward = current_p2_e001
+        if house_id == "E001":
+            state_ = np.concatenate([all_e001_, np.array([rsoc_ave_])], axis=-1)
+        elif house_id == "E002":
+            state_ = np.concatenate([all_e002_, np.array([rsoc_ave_])], axis=-1)
+        elif house_id == "E003":
+            state_ = np.concatenate([all_e003_, np.array([rsoc_ave_])], axis=-1)
+        elif house_id == "E004":
+            state_ = np.concatenate([all_e004_, np.array([rsoc_ave_])], axis=-1)
+        else:
+            print("wrong house id, input again")
+
+        reward = p2_e001_
         # done = time.sleep(5)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
 
-        return np.array(self.state, dtype=np.float32), reward,  {}  # done
+        return np.array(state_, dtype=np.float32), reward,  {}  # done
 
     def reset(self):
         # reset the states according to standard.json file (../apis-emulator/jsontmp)

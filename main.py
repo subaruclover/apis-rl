@@ -209,19 +209,31 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    for i_episode in range(10):
+
+    house_id = input('input the house id: ')
+
+    for i_episode in range(100):
+
         observation = env.reset()
         start_time = time.time()
+
         while True:  # not gl.sema:
 
             actions = RL.choose_actions(observation)
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
-            observation_, reward, info = env.step1(observation, action_request, action_accept)
             agent.CreateSce(action_request, action_accept)
 
-            time.sleep(5)
+            # house_id = input('input the house id: ')
+            observation_, reward, info = env.step1(action_request, action_accept, house_id)
+
+            actions_space = np.linspace(0.2, 0.9, 8).tolist()
+            print("Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
+                                                                                  actions_space[action_request[1]],
+                                                                                  actions_space[action_accept[0]]))
+
+            time.sleep(60)
 
             # if time.sleep(5):  # done:
             #     reward = p2_e001
@@ -235,22 +247,25 @@ def train(RL):
             print('episode ', i_episode, ' finished')
             steps.append(total_steps)
             episodes.append(i_episode)
-            break
+            break  #
 
             observation = observation_
             total_steps += 1
 
         end_time = time.time()
         print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60))
-    return np.vstack((episodes, steps))
+
+    return np.vstack((episodes, steps)), RL.memory
 
 
-his_natural = train(RL_natural)
-his_prio = train(RL_prio)
+his_natural, natural_memory = train(RL_natural)
+his_prio, prio_memory = train(RL_prio)
 
 # compare based on first success
-plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
+# plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
+plt.plot(natural_memory[:, 8], 'b', label='natural DQN')
+# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
+plt.plot(prio_memory[:, 8], 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')
 plt.ylabel('total training time')
 plt.xlabel('episode')
