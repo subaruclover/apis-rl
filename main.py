@@ -253,7 +253,7 @@ def train(RL):
             total_steps += 1
 
         end_time = time.time()
-        print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60))
+        print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60))  # * gl.acc
 
     return np.vstack((episodes, steps)), RL.memory
 
@@ -267,7 +267,7 @@ plt.plot(natural_memory[:, 8], 'b', label='natural DQN')
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
 plt.plot(prio_memory[:, 8], 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')
-plt.ylabel('total training time')
+plt.ylabel('reward (p2)')
 plt.xlabel('episode')
 plt.grid()
 plt.show()
