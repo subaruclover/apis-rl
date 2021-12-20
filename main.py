@@ -3,10 +3,9 @@ DQN training, single run, house E001
 
 created by: Qiong
 """
-
-import os
-
 import tensorflow.compat.v1 as tf
+tf.disable_eager_execution()
+import os
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
@@ -21,7 +20,7 @@ import config as conf
 import requests, json
 
 import numpy as np
-
+from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
 
@@ -206,21 +205,22 @@ def combine_actions(RL, observation):
 
 
 def train(RL):
+    print("training start")
     total_steps = 0
     steps = []
     episodes = []
-    for i_episode in range(15):
+    for i_episode in range(1):
         observation = env.reset()
         start_time = time.time()
-        while True:
+        while True:  # not gl.sema:
 
             actions = RL.choose_actions(observation)
             action_request = np.array(actions[0], actions[-1])
             action_accept = actions[1]
 
-            observation_, reward, done, info = env.step1(action_request, action_accept)
+            observation_, reward, info = env.step1(observation, action_request, action_accept)
 
-            if done:
+            if time.sleep(5):  # done:
                 reward = p2_e001
 
             RL.store_transition(observation, actions, reward, observation_)
@@ -228,7 +228,7 @@ def train(RL):
             if total_steps > MEMORY_SIZE:
                 RL.learn()
 
-            if done:
+            if time.sleep(5):  # done:
                 print('episode ', i_episode, ' finished')
                 steps.append(total_steps)
                 episodes.append(i_episode)
@@ -243,16 +243,16 @@ def train(RL):
 
 
 his_natural = train(RL_natural)
-# his_prio = train(RL_prio)
+his_prio = train(RL_prio)
 
 # compare based on first success
-# plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-# plt.legend(loc='best')
-# plt.ylabel('total training time')
-# plt.xlabel('episode')
-# plt.grid()
-# plt.show()
+plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
+plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
+plt.legend(loc='best')
+plt.ylabel('total training time')
+plt.xlabel('episode')
+plt.grid()
+plt.show()
 
 """
 

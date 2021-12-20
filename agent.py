@@ -216,13 +216,15 @@ class House():
         # return next_state, reward
 
     def step1(self, state, action_request, action_accept):
+        # how actions changes the states
+
         # current_pv = state[0]
         # current_load = state[1]
         # current_p2 = state[2]
         # current_rsoc = state[3]
         # current_rsoc_ave = state[4]
 
-        current_pvc, current_load, current_p2, current_rsoc, current_rsoc_ave = self.state
+        current_pvc_e001, current_load_e001, current_p2_e001, current_rsoc_e001, current_rsoc_ave = self.state
         # current_pvc = gl.oesunits[ids]["emu"]["pvc_charge_power"]
         # current_rsoc = core.rsocUpdate()
 
@@ -242,17 +244,10 @@ class House():
             wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
             wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
-            print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
-                  "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
-                  "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
-                  "rsoc of {ids} is {rsoc},".format(ids=ids, rsoc=rsoc[ids])
-                  # "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
-                  # "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
-                  )
             rsoc_list.append(rsoc[ids])
-            # refresh every 5 seconds
+            # refresh every 60 seconds
             # print("\n")
-            # time.sleep(5)
+            # time.sleep(60)
 
             # States  pvc_charge_power[ids], for house E001
             if ids == "E001":
@@ -265,21 +260,18 @@ class House():
                                                    current_load_e001,
                                                    current_p2_e001,
                                                    current_rsoc_e001], axis=-1)
-                print(current_all_e001)  # [39.14 575.58 734.    29.98] E001
-
+                # print(current_all_e001, type(current_all_e001))  # [39.14 575.58 734.    29.98] E001
 
         # print(rsoc)
         # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
-        rsoc_ave = np.mean(rsoc_list)  # get average rsoc of this community
+        current_rsoc_ave = np.mean(rsoc_list)  # get average rsoc of this community
         # print(rsoc_ave)
-        self.state = np.concatenate((current_all_e001, rsoc_ave), axis=-1)
+        self.state = np.concatenate([current_all_e001, np.array([current_rsoc_ave])], axis=-1)
 
         reward = current_p2_e001
-        # done  # time, e.g., one hour
+        done = time.sleep(5)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
 
-
-
-        return reward  #, done
+        return np.array(self.state, dtype=np.float32), reward,  {}  # done
 
     def reset(self):
         # reset the states according to standard.json file (../apis-emulator/jsontmp)
@@ -287,16 +279,16 @@ class House():
         # super().reset(seed=seed)
 
         # init state
-        pvc_charge_power = np.array([0])
-        ups_output_power = np.array([0])
-        p2 = np.array([0])
-        rsoc = np.array([50])
+        pvc_charge_power = np.array([0.])
+        ups_output_power = np.array([0.])
+        p2 = np.array([0.])
+        rsoc = np.array([50.])
         # wg = np.array([0])
         # wb = np.array([-4.5])
-        rsoc_ave = np.array([50])  # average rsoc in the same community
+        rsoc_ave = np.array([50.])  # average rsoc in the same community
 
         # self.state = np.array([self.state])
         self.state = np.concatenate([pvc_charge_power, ups_output_power, p2, rsoc, rsoc_ave], axis=-1)
 
         # return np.array(self.state, dtype=np.float32)
-        return np.array(self.state)
+        return np.array(self.state, dtype=np.float32)

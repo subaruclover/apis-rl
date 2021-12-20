@@ -254,7 +254,7 @@ class DQNPrioritizedReplay:
         if self.prioritized:
             self.memory = Memory(capacity=memory_size)
         else:
-            self.memory = np.zeros((self.memory_size, n_features*2+2))
+            self.memory = np.zeros((self.memory_size, n_features*2+4))  # [s, a, r, s_], #a=3
 
         if sess is None:
             self.sess = tf.Session()
@@ -307,26 +307,17 @@ class DQNPrioritizedReplay:
             c_names = ['target_net_params', tf.GraphKeys.GLOBAL_VARIABLES]
             self.q_next = build_layers(self.s_, c_names, n_l1, w_initializer, b_initializer, False)
 
-    def store_transition(self, s, a, r, s_):
+    def store_transition(self, s, a, r, s_):  # a: action list
         if self.prioritized:    # prioritized replay
-            transition = np.hstack((s, [a, r], s_))
+            transition = np.hstack((s, [a[0], a[1], a[2], r], s_))
             self.memory.store(transition)    # have high priority for newly arrived transition
         else:       # random replay
             if not hasattr(self, 'memory_counter'):
                 self.memory_counter = 0
-            transition = np.hstack((s, [a, r], s_))
+            transition = np.hstack((s, [a[0], a[1], a[2], r], s_))
             index = self.memory_counter % self.memory_size
             self.memory[index, :] = transition
             self.memory_counter += 1
-
-    # def choose_action(self, observation):
-    #     observation = observation[np.newaxis, :]
-    #     if np.random.uniform() < self.epsilon:
-    #         actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
-    #         action = np.argmax(actions_value)
-    #     else:
-    #         action = np.random.randint(0, self.n_actions)
-    #     return action
 
     def choose_actions(self, observation):
         # np.argmax, get the top 3 values?
