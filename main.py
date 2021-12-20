@@ -4,23 +4,24 @@ DQN training, single run, house E001
 created by: Qiong
 """
 
+import os
+
 import tensorflow.compat.v1 as tf
 
-import os
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 import logging.config
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 import time
 import global_var as gl
+import analyser
+import core
 import config as conf
 import requests, json
 
 import numpy as np
-import random
 
-import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
 
@@ -31,12 +32,11 @@ class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
 
-from RL_learn import DQNNet, Memory, DQNPrioritizedReplay #HouseEnv
-# TODO: agent class (env, step(reward setting, etc))
-
+from RL_learn import Memory, DQNPrioritizedReplay
 from agent import APIS, House
 
 agent = APIS()
+
 
 # start_time = time.time()
 
@@ -176,7 +176,6 @@ env.seed(21)
 
 MEMORY_SIZE = 10000
 
-
 sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
@@ -192,6 +191,20 @@ with tf.variable_scope('DQN_with_prioritized_replay'):
 sess.run(tf.global_variables_initializer())
 
 
+def combine_actions(RL, observation):
+    # Do action combination? with \theta probability
+    # choose basic a1 and a2 using softmax/greedy..
+    # create a new action a_combine
+    # add a_combine to Action set A
+    # restrictions of actions?
+    action_request = RL.choose_action(observation)  # need 2
+    action_accept = RL.choose_action(observation)
+
+    combine_action = np.array([action_request, action_accept])
+
+    return combine_action
+
+
 def train(RL):
     total_steps = 0
     steps = []
@@ -201,14 +214,16 @@ def train(RL):
         start_time = time.time()
         while True:
 
-            action = RL.choose_action(observation)
+            actions = RL.choose_actions(observation)
+            action_request = np.array(actions[0], actions[-1])
+            action_accept = actions[1]
 
-            observation_, reward, done, info = env.step(action)
+            observation_, reward, done, info = env.step1(action_request, action_accept)
 
             if done:
                 reward = p2_e001
 
-            RL.store_transition(observation, action, reward, observation_)
+            RL.store_transition(observation, actions, reward, observation_)
 
             if total_steps > MEMORY_SIZE:
                 RL.learn()
@@ -227,8 +242,8 @@ def train(RL):
     return np.vstack((episodes, steps))
 
 
-# his_natural = train(RL_natural)
-his_prio = train(RL_prio)
+his_natural = train(RL_natural)
+# his_prio = train(RL_prio)
 
 # compare based on first success
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')

@@ -15,8 +15,11 @@ from gym.utils import seeding
 
 logger = logging.getLogger(__name__)
 
-# import global_var as gl
-# import config as conf
+import global_var as gl
+import config as conf
+import analyser
+import core
+import requests, json
 
 # import os
 # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
@@ -77,11 +80,27 @@ while not gl.sema:  # True, alter for different time periods
     # command = createJson()
     # run(interval, command)
 """
+# Data loading
+# get log data for states
+host = conf.b_host
+port = conf.b_port
+# url = "http://0.0.0.0:4390/get/log"
+URL = "http://" + host + ":" + str(port) + "/get/log"
 
+# dicts of states for all houses
+pvc_charge_power = {}
+ups_output_power = {}
+p2 = {}  # powermeter.p2, Power consumption to the power storage system [W]
+rsoc = {}
+wg = {}  # meter.wg, DC Grid power [W]
+wb = {}  # meter.wb, Battery Power [W]
+
+pv_list = []
+load_list = []
+p2_list = []
 
 class APIS():
     def __init__(self):
-        # self.action_space = ["excess", "sufficient", "scarce", "short"]
         # request and accept level: between [0, 1]
         self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
         self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
@@ -185,6 +204,7 @@ class House():
             # action_accept = np.random.choice()  # 1 value
         else:
             action_request = np.argmax(DQNNet.model.predict(np.expand_dims(state, axis=0)))
+            # np.argmax -> np.argsort, get top 3 indices
             # action_accept =
 
         # minimize purchase from the powerline
@@ -196,13 +216,70 @@ class House():
         # return next_state, reward
 
     def step1(self, state, action_request, action_accept):
-        current_pv = state[0]
-        current_load = state[1]
-        current_p2 = state[2]
-        current_rsoc = state[3]
-        current_rsoc_ave = state[4]
+        # current_pv = state[0]
+        # current_load = state[1]
+        # current_p2 = state[2]
+        # current_rsoc = state[3]
+        # current_rsoc_ave = state[4]
 
-        # return reward
+        current_pvc, current_load, current_p2, current_rsoc, current_rsoc_ave = self.state
+        # current_pvc = gl.oesunits[ids]["emu"]["pvc_charge_power"]
+        # current_rsoc = core.rsocUpdate()
+
+        output_data = requests.get(URL).text
+        output_data = json.loads(output_data)  # dict
+
+        rsoc_list = []
+
+        for ids, dict_ in output_data.items():  # ids: E001, E002, ... house ID
+            # print('the name of the dictionary is ', ids)
+            # print('the dictionary is ', dict_)
+            # when ids is "E001" (change to other house ID for other houses)
+            pvc_charge_power[ids] = output_data[ids]["emu"]["pvc_charge_power"]
+            ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
+            p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
+            rsoc[ids] = output_data[ids]["emu"]["rsoc"]
+            wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+            wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+
+            print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
+                  "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
+                  "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
+                  "rsoc of {ids} is {rsoc},".format(ids=ids, rsoc=rsoc[ids])
+                  # "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
+                  # "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
+                  )
+            rsoc_list.append(rsoc[ids])
+            # refresh every 5 seconds
+            # print("\n")
+            # time.sleep(5)
+
+            # States  pvc_charge_power[ids], for house E001
+            if ids == "E001":
+                current_pvc_e001 = np.array([pvc_charge_power["E001"]])
+                current_load_e001 = np.array([ups_output_power["E001"]])
+                current_p2_e001 = np.array([p2["E001"]])
+                current_rsoc_e001 = np.array([rsoc["E001"]])
+
+                current_all_e001 = np.concatenate([current_pvc_e001,
+                                                   current_load_e001,
+                                                   current_p2_e001,
+                                                   current_rsoc_e001], axis=-1)
+                print(current_all_e001)  # [39.14 575.58 734.    29.98] E001
+
+
+        # print(rsoc)
+        # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
+        rsoc_ave = np.mean(rsoc_list)  # get average rsoc of this community
+        # print(rsoc_ave)
+        self.state = np.concatenate((current_all_e001, rsoc_ave), axis=-1)
+
+        reward = current_p2_e001
+        # done  # time, e.g., one hour
+
+
+
+        return reward  #, done
 
     def reset(self):
         # reset the states according to standard.json file (../apis-emulator/jsontmp)

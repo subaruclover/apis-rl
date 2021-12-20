@@ -319,14 +319,27 @@ class DQNPrioritizedReplay:
             self.memory[index, :] = transition
             self.memory_counter += 1
 
-    def choose_action(self, observation):
+    # def choose_action(self, observation):
+    #     observation = observation[np.newaxis, :]
+    #     if np.random.uniform() < self.epsilon:
+    #         actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
+    #         action = np.argmax(actions_value)
+    #     else:
+    #         action = np.random.randint(0, self.n_actions)
+    #     return action
+
+    def choose_actions(self, observation):
+        # np.argmax, get the top 3 values?
         observation = observation[np.newaxis, :]
         if np.random.uniform() < self.epsilon:
             actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
-            action = np.argmax(actions_value)
+            # action = np.argmax(actions_value)
+            actions = np.argsort(-actions_value)[:3]
         else:
-            action = np.random.randint(0, self.n_actions)
-        return action
+            # action = np.random.randint(0, self.n_actions)
+            actions = sorted(np.random.choice(self.n_actions, 3, replace=False), reverse=True)  # top 3 values
+
+        return actions
 
     def learn(self):
         if self.learn_step_counter % self.replace_target_iter == 0:
