@@ -203,6 +203,8 @@ def combine_actions(RL, observation):
 
     return combine_action
 
+# TODO: find appropriate gl.acc value (try with 60)
+
 
 def train(RL):
     print("training start")
@@ -215,6 +217,8 @@ def train(RL):
 
     for i_episode in range(150):
 
+        # TODO: agent needs to get value from the env, not given
+        # reset with the env?
         observation = env.reset()
         start_time = time.time()
 
@@ -263,7 +267,7 @@ house_id = input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 his_prio, prio_memory = train(RL_prio)
 
-prio_memory_store = [prio_memory.tree.data[i][8] for i in range(150)]
+prio_memory_store = [prio_memory.tree.data[i][8] for i in range(150)]  # reward(p2)
 
 # compare based on first success
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')

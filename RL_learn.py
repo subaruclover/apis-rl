@@ -228,7 +228,7 @@ class DQNPrioritizedReplay:
                  memory_size=10000,
                  batch_size=256,
                  e_greedy_increment=None,
-                 output_graph=False,
+                 output_graph=True,  # False,
                  prioritized=True,
                  sess=None):
         self.n_actions = n_actions
@@ -262,6 +262,7 @@ class DQNPrioritizedReplay:
         else:
             self.sess = sess
 
+        # TODO: output_grahp=True
         if output_graph:
             tf.summary.FileWriter("logs/", self.sess.graph)
 
@@ -320,6 +321,8 @@ class DQNPrioritizedReplay:
             self.memory_counter += 1
 
     def choose_actions(self, observation):
+        # TODO
+        # fixed the first action, select the second <- softmax, repeat for 3rd
         # np.argmax, get the top 3 values?
         observation = observation[np.newaxis, :]
         if np.random.uniform() < self.epsilon:

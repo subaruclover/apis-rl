@@ -216,6 +216,8 @@ class House():
         # return next_state, reward
 
     def step1(self, action_request, action_accept, house_id):
+        # TODO
+        # each house learn seprate,/ take as one
         # how actions changes the states?
         """
         Perform one step in the environment following the action.
