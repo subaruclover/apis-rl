@@ -242,7 +242,7 @@ class DQNPrioritizedReplay:
         self.epsilon_increment = e_greedy_increment
         self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
 
-        self.prioritized = prioritized    # decide to use prioritize experience replay or not
+        self.prioritized = prioritized  # decide to use prioritize experience replay or not
 
         self.learn_step_counter = 0
 
@@ -254,7 +254,7 @@ class DQNPrioritizedReplay:
         if self.prioritized:
             self.memory = Memory(capacity=memory_size)
         else:
-            self.memory = np.zeros((self.memory_size, n_features*2+4))  # [s, a, r, s_], #a=3
+            self.memory = np.zeros((self.memory_size, n_features * 2 + 4))  # [s, a, r, s_], #a=3
 
         if sess is None:
             self.sess = tf.Session()
@@ -264,6 +264,8 @@ class DQNPrioritizedReplay:
 
         # TODO: output_grahp=True
         if output_graph:
+            # $ tensorboard --logdir=logs
+            # http://localhost:6006/
             tf.summary.FileWriter("logs/", self.sess.graph)
 
         self.cost_his = []
@@ -271,13 +273,17 @@ class DQNPrioritizedReplay:
     def _build_net(self):
         def build_layers(s, c_names, n_l1, w_initializer, b_initializer, trainable):
             with tf.variable_scope('l1'):
-                w1 = tf.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names, trainable=trainable)
-                b1 = tf.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names,  trainable=trainable)
+                w1 = tf.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names,
+                                     trainable=trainable)
+                b1 = tf.get_variable('b1', [1, n_l1], initializer=b_initializer, collections=c_names,
+                                     trainable=trainable)
                 l1 = tf.nn.relu(tf.matmul(s, w1) + b1)
 
             with tf.variable_scope('l2'):
-                w2 = tf.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names,  trainable=trainable)
-                b2 = tf.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names,  trainable=trainable)
+                w2 = tf.get_variable('w2', [n_l1, self.n_actions], initializer=w_initializer, collections=c_names,
+                                     trainable=trainable)
+                b2 = tf.get_variable('b2', [1, self.n_actions], initializer=b_initializer, collections=c_names,
+                                     trainable=trainable)
                 out = tf.matmul(l1, w2) + b2
             return out
 
@@ -295,7 +301,8 @@ class DQNPrioritizedReplay:
 
         with tf.variable_scope('loss'):
             if self.prioritized:
-                self.abs_errors = tf.math.reduce_sum(tf.math.abs(self.q_target - self.q_eval), axis=1)    # for updating Sumtree
+                self.abs_errors = tf.math.reduce_sum(tf.math.abs(self.q_target - self.q_eval),
+                                                     axis=1)  # for updating Sumtree
                 self.loss = tf.math.reduce_mean(self.ISWeights * tf.math.squared_difference(self.q_target, self.q_eval))
             else:
                 self.loss = tf.math.reduce_mean(tf.math.squared_difference(self.q_target, self.q_eval))
@@ -303,16 +310,16 @@ class DQNPrioritizedReplay:
             self._train_op = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
 
         # ------------------ build target_net ------------------
-        self.s_ = tf.placeholder(tf.float32, [None, self.n_features], name='s_')    # input
+        self.s_ = tf.placeholder(tf.float32, [None, self.n_features], name='s_')  # input
         with tf.variable_scope('target_net'):
             c_names = ['target_net_params', tf.GraphKeys.GLOBAL_VARIABLES]
             self.q_next = build_layers(self.s_, c_names, n_l1, w_initializer, b_initializer, False)
 
     def store_transition(self, s, a, r, s_):  # a: action list
-        if self.prioritized:    # prioritized replay
+        if self.prioritized:  # prioritized replay
             transition = np.hstack((s, [a[0], a[1], a[2], r], s_))
-            self.memory.store(transition)    # have high priority for newly arrived transition
-        else:       # random replay
+            self.memory.store(transition)  # have high priority for newly arrived transition
+        else:  # random replay
             if not hasattr(self, 'memory_counter'):
                 self.memory_counter = 0
             transition = np.hstack((s, [a[0], a[1], a[2], r], s_))
@@ -336,10 +343,12 @@ class DQNPrioritizedReplay:
         return actions
 
     def learn(self):
+        # check to replace target parameters
         if self.learn_step_counter % self.replace_target_iter == 0:
             self.sess.run(self.replace_target_op)
             print('\ntarget_params_replaced\n')
 
+        # sample batch memory from all memory
         if self.prioritized:
             tree_idx, batch_memory, ISWeights = self.memory.sample(self.batch_size)
         else:
@@ -347,10 +356,11 @@ class DQNPrioritizedReplay:
             batch_memory = self.memory[sample_index, :]
 
         q_next, q_eval = self.sess.run(
-                [self.q_next, self.q_eval],
-                feed_dict={self.s_: batch_memory[:, -self.n_features:],
-                           self.s: batch_memory[:, :self.n_features]})
+            [self.q_next, self.q_eval],
+            feed_dict={self.s_: batch_memory[:, -self.n_features:],  # fixed params
+                       self.s: batch_memory[:, :self.n_features]})  # newest params
 
+        # change q_target w.r.t q_eval's action
         q_target = q_eval.copy()
         batch_index = np.arange(self.batch_size, dtype=np.int32)
         eval_act_index = batch_memory[:, self.n_features].astype(int)
@@ -358,12 +368,13 @@ class DQNPrioritizedReplay:
 
         q_target[batch_index, eval_act_index] = reward + self.gamma * np.max(q_next, axis=1)
 
+        # train eval network
         if self.prioritized:
             _, abs_errors, self.cost = self.sess.run([self._train_op, self.abs_errors, self.loss],
-                                         feed_dict={self.s: batch_memory[:, :self.n_features],
-                                                    self.q_target: q_target,
-                                                    self.ISWeights: ISWeights})
-            self.memory.batch_update(tree_idx, abs_errors)     # update priority
+                                                     feed_dict={self.s: batch_memory[:, :self.n_features],
+                                                                self.q_target: q_target,
+                                                                self.ISWeights: ISWeights})
+            self.memory.batch_update(tree_idx, abs_errors)  # update priority
         else:
             _, self.cost = self.sess.run([self._train_op, self.loss],
                                          feed_dict={self.s: batch_memory[:, :self.n_features],
@@ -373,3 +384,10 @@ class DQNPrioritizedReplay:
 
         self.epsilon = self.epsilon + self.epsilon_increment if self.epsilon < self.epsilon_max else self.epsilon_max
         self.learn_step_counter += 1
+
+    def plot_cost(self):
+        import matplotlib.pyplot as plt
+        plt.plot(np.arange(len(self.cost_his)), self.cost_his)
+        plt.ylabel('Cost')
+        plt.xlabel('training steps')
+        plt.show()

@@ -179,7 +179,7 @@ sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.00005, sess=sess, prioritized=False,
+        e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
     )
 
 with tf.variable_scope('DQN_with_prioritized_replay'):
@@ -215,7 +215,7 @@ def train(RL):
 
     # house_id = input('input the house id: ')
 
-    for i_episode in range(150):
+    for i_episode in range(15):
 
         # TODO: agent needs to get value from the env, not given
         # reset with the env?
@@ -267,11 +267,11 @@ house_id = input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 his_prio, prio_memory = train(RL_prio)
 
-prio_memory_store = [prio_memory.tree.data[i][8] for i in range(150)]  # reward(p2)
+prio_memory_store = [prio_memory.tree.data[i][8] for i in range(15)]  # reward(p2)
 
 # compare based on first success
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-plt.plot(natural_memory[:150, 8], 'b', label='natural DQN')
+plt.plot(natural_memory[:15, 8], 'b', label='natural DQN')
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
 plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')

@@ -243,7 +243,7 @@ class House():
         # current_rsoc = state[3]
         # current_rsoc_ave = state[4]
 
-        # pvc_e001, load_e001, p2_e001, rsoc_e001, rsoc_ave = self.state
+        pvc_e001, load_e001, p2_e001, rsoc_e001, rsoc_ave = self.state
         # current_pvc = gl.oesunits[ids]["emu"]["pvc_charge_power"]
         # current_rsoc = core.rsocUpdate()
 
@@ -311,6 +311,7 @@ class House():
         # print(rsoc_ave)
 
         if house_id == "E001":
+
             state_ = np.concatenate([all_e001_, np.array([rsoc_ave_])], axis=-1)
         elif house_id == "E002":
             state_ = np.concatenate([all_e002_, np.array([rsoc_ave_])], axis=-1)
