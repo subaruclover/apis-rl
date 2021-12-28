@@ -239,6 +239,7 @@ def train(RL):
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))
 
+            # change the time step
             time.sleep(60)
 
             # if time.sleep(5):  # done:
