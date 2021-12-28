@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 DQN training, single run, house E001
 
