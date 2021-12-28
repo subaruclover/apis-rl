@@ -215,7 +215,7 @@ def train(RL):
 
     # house_id = input('input the house id: ')
 
-    for i_episode in range(15):
+    for i_episode in range(2):
 
         # TODO: agent needs to get value from the env, not given
         # reset with the env?
@@ -265,15 +265,15 @@ def train(RL):
 
 house_id = input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
-his_prio, prio_memory = train(RL_prio)
+# his_prio, prio_memory = train(RL_prio)
 
-prio_memory_store = [prio_memory.tree.data[i][8] for i in range(15)]  # reward(p2)
+# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(15)]  # reward(p2)
 
 # compare based on first success
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
 plt.plot(natural_memory[:15, 8], 'b', label='natural DQN')
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
+# plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')
 plt.ylabel('reward (p2)')
 plt.xlabel('episode')
