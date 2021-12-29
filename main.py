@@ -204,8 +204,6 @@ def combine_actions(RL, observation):
 
     return combine_action
 
-# TODO: find appropriate gl.acc value (try with 60)
-
 
 def train(RL):
     print("training start")
