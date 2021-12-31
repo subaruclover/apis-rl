@@ -14,5 +14,4 @@ build
 logs
 /venv
 *.pyc
-
-
+requirements.txt
