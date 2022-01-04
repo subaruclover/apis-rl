@@ -158,6 +158,9 @@ class CreateScenario():
             # }
 
         }
+
+        # TODO: different files for different agent
+        # try : different class for different agents
         self.filename1 = "scenario.json"
         self.filename2 = "scenario2.json"
         self.filename3 = "scenario3.json"
