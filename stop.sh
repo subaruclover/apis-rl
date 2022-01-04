@@ -1,6 +1,6 @@
 echo 'call stop.sh'
 
-# TODO edit stop.sh file : stop for one/all houses
+# TODO edit stop.sh file : stop for one/all houses (main.py main2.py,...)
 get_pids() {
  ps -f -U `whoami` | grep main.py | grep -v 'grep main.py' | grep -v 'stop.sh' | while read _USER_ _PID_ _OTHERS_ ; do
   echo $_PID_
