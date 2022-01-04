@@ -28,7 +28,7 @@ sns.set(style="whitegrid")
 
 # RL_learn functions
 """
-class DQNNet : Deep Q-network Model
+class DQNNet : Deep Q-network Model -> redefined in DQNPrioritizedReplay, therefore no need anymore
 class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
@@ -183,6 +183,7 @@ with tf.variable_scope('natural_DQN'):
         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
     )
+
 
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
