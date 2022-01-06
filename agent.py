@@ -24,7 +24,7 @@ import requests, json
 # import os
 # os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
-from createScenario import CreateScenario
+from createScenario import CreateScenario1, CreateScenario2, CreateScenario3, CreateScenario4
 
 from RL_learn import DQNNet, SumTree, Memory
 
@@ -148,8 +148,24 @@ class APIS():
 
     """
 
-    def CreateSce(self, action_request, action_accept):
-        newSce = CreateScenario(action_request=action_request, action_accept=action_accept)
+    def CreateSce1(self, action_request, action_accept):
+        # Create Scenario for house 1 (E001)
+        newSce = CreateScenario1(action_request=action_request, action_accept=action_accept)
+        newSce.write_json()
+
+    def CreateSce2(self, action_request, action_accept):
+        # Create Scenario for house 1 (E001)
+        newSce = CreateScenario2(action_request=action_request, action_accept=action_accept)
+        newSce.write_json()
+
+    def CreateSce3(self, action_request, action_accept):
+        # Create Scenario for house 1 (E001)
+        newSce = CreateScenario3(action_request=action_request, action_accept=action_accept)
+        newSce.write_json()
+
+    def CreateSce4(self, action_request, action_accept):
+        # Create Scenario for house 1 (E001)
+        newSce = CreateScenario4(action_request=action_request, action_accept=action_accept)
         newSce.write_json()
 
         # if __name__ == "__main__":

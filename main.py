@@ -165,7 +165,7 @@ while gl.sema:  # True, alter for different time periods
     # next_rsoc, batteryLevel, reward
     # batteryLevel_req, batteryLevel_acc = agent.step(action_request, action_accept)
     # batteryLevel = agent.step(state, action_request, action_accept)
-    agent.CreateSce(action_request, action_accept)
+    agent.CreateSce1(action_request, action_accept)
 
     print("req_act: ", action_request_space[action_request[0]], action_request_space[action_request[1]],
           "acc_act: ", action_accept_space[action_accept[0]])
