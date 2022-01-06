@@ -218,7 +218,7 @@ def train(RL):
 
     for i_episode in range(2):
 
-        # TODO: agent needs to get value from the env, not given
+        # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env?
         observation = env.reset()
         start_time = time.time()
@@ -229,7 +229,7 @@ def train(RL):
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
-            agent.CreateSce(action_request, action_accept)
+            agent.CreateSce1(action_request, action_accept)
 
             # house_id = input('input the house id: ')
             observation_, reward, info = env.step1(action_request, action_accept, house_id)
@@ -265,7 +265,7 @@ def train(RL):
     return np.vstack((episodes, steps)), RL.memory
 
 
-house_id = input('input the house id: ')
+house_id = "E001"  # input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 # his_prio, prio_memory = train(RL_prio)
 

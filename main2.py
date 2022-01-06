@@ -6,10 +6,8 @@ created by: Qiong
 
 """
 import tensorflow.compat.v1 as tf
-
 tf.disable_eager_execution()
 import os
-
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 import logging.config
@@ -232,7 +230,7 @@ def train(RL):
     return np.vstack((episodes, steps)), RL.memory
 
 
-house_id = input('input the house id: ')
+house_id = "E002"  # input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 # his_prio, prio_memory = train(RL_prio)
 
