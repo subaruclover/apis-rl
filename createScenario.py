@@ -53,6 +53,10 @@ def run(interval, command):
 # create scenario file and put it under the dir of apis-main/exe
 
 class CreateScenario1():
+    """
+    create scenario for house 1
+    """
+
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
@@ -162,34 +166,25 @@ class CreateScenario1():
 
         }
 
-        # TODO: different files for different agent
         # try : different class for different agents
         self.filename1 = "scenario.json"
-        self.filename2 = "scenario2.json"
-        self.filename3 = "scenario3.json"
-        self.filename4 = "scenario4.json"
         # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
         # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
         # get the parent path -> ../APIS
         self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
         self.desired_dir = self.getpath + "/apis-main/exe/"
         self.full_path1 = os.path.join(self.desired_dir, self.filename1)
-        self.full_path2 = os.path.join(self.desired_dir, self.filename2)
-        self.full_path3 = os.path.join(self.desired_dir, self.filename3)
-        self.full_path4 = os.path.join(self.desired_dir, self.filename4)
 
     def write_json(self):
         with open(self.full_path1, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path2, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path3, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path4, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
 
 
 class CreateScenario2():
+    """
+    create scenario for house 2
+    """
+
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
@@ -199,14 +194,6 @@ class CreateScenario2():
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
         # per hour: TimePeriods[0],...,TimePeriods[23]
-        self.TimePeriods = ["00:00:00-01:00:00", "01:00:00-02:00:00", "02:00:00-03:00:00",
-                            "03:00:00-04:00:00", "04:00:00-05:00:00", "05:00:00-06:00:00",
-                            "06:00:00-07:00:00", "07:00:00-08:00:00", "08:00:00-09:00:00",
-                            "09:00:00-10:00:00", "10:00:00-11:00:00", "11:00:00-12:00:00",
-                            "12:00:00-13:00:00", "13:00:00-14:00:00", "14:00:00-15:00:00",
-                            "15:00:00-16:00:00", "16:00:00-17:00:00", "17:00:00-18:00:00",
-                            "18:00:00-19:00:00", "19:00:00-20:00:00", "20:00:00-21:00:00",
-                            "21:00:00-22:00:00", "22:00:00-23:00:00", "23:00:00-24:00:00"]
         self.batterySize = 4800
         # batteryLevel : 4 levels
         self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
@@ -299,34 +286,22 @@ class CreateScenario2():
 
         }
 
-        # TODO: different files for different agent
         # try : different class for different agents
-        self.filename1 = "scenario.json"
         self.filename2 = "scenario2.json"
-        self.filename3 = "scenario3.json"
-        self.filename4 = "scenario4.json"
-        # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
-        # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
-        # get the parent path -> ../APIS
         self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
         self.desired_dir = self.getpath + "/apis-main/exe/"
-        self.full_path1 = os.path.join(self.desired_dir, self.filename1)
         self.full_path2 = os.path.join(self.desired_dir, self.filename2)
-        self.full_path3 = os.path.join(self.desired_dir, self.filename3)
-        self.full_path4 = os.path.join(self.desired_dir, self.filename4)
 
     def write_json(self):
-        with open(self.full_path1, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
         with open(self.full_path2, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path3, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path4, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
 
 
 class CreateScenario3():
+    """
+    create scenario for house 3
+    """
+
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
@@ -336,14 +311,7 @@ class CreateScenario3():
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
         # per hour: TimePeriods[0],...,TimePeriods[23]
-        self.TimePeriods = ["00:00:00-01:00:00", "01:00:00-02:00:00", "02:00:00-03:00:00",
-                            "03:00:00-04:00:00", "04:00:00-05:00:00", "05:00:00-06:00:00",
-                            "06:00:00-07:00:00", "07:00:00-08:00:00", "08:00:00-09:00:00",
-                            "09:00:00-10:00:00", "10:00:00-11:00:00", "11:00:00-12:00:00",
-                            "12:00:00-13:00:00", "13:00:00-14:00:00", "14:00:00-15:00:00",
-                            "15:00:00-16:00:00", "16:00:00-17:00:00", "17:00:00-18:00:00",
-                            "18:00:00-19:00:00", "19:00:00-20:00:00", "20:00:00-21:00:00",
-                            "21:00:00-22:00:00", "22:00:00-23:00:00", "23:00:00-24:00:00"]
+
         self.batterySize = 4800
         # batteryLevel : 4 levels
         self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
@@ -436,34 +404,22 @@ class CreateScenario3():
 
         }
 
-        # TODO: different files for different agent
         # try : different class for different agents
-        self.filename1 = "scenario.json"
-        self.filename2 = "scenario2.json"
         self.filename3 = "scenario3.json"
-        self.filename4 = "scenario4.json"
-        # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
-        # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
-        # get the parent path -> ../APIS
         self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
         self.desired_dir = self.getpath + "/apis-main/exe/"
-        self.full_path1 = os.path.join(self.desired_dir, self.filename1)
-        self.full_path2 = os.path.join(self.desired_dir, self.filename2)
         self.full_path3 = os.path.join(self.desired_dir, self.filename3)
-        self.full_path4 = os.path.join(self.desired_dir, self.filename4)
 
     def write_json(self):
-        with open(self.full_path1, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path2, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
         with open(self.full_path3, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path4, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
 
 
 class CreateScenario4():
+    """
+    create scenario for house 4
+    """
+
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
@@ -473,14 +429,6 @@ class CreateScenario4():
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
         # per hour: TimePeriods[0],...,TimePeriods[23]
-        self.TimePeriods = ["00:00:00-01:00:00", "01:00:00-02:00:00", "02:00:00-03:00:00",
-                            "03:00:00-04:00:00", "04:00:00-05:00:00", "05:00:00-06:00:00",
-                            "06:00:00-07:00:00", "07:00:00-08:00:00", "08:00:00-09:00:00",
-                            "09:00:00-10:00:00", "10:00:00-11:00:00", "11:00:00-12:00:00",
-                            "12:00:00-13:00:00", "13:00:00-14:00:00", "14:00:00-15:00:00",
-                            "15:00:00-16:00:00", "16:00:00-17:00:00", "17:00:00-18:00:00",
-                            "18:00:00-19:00:00", "19:00:00-20:00:00", "20:00:00-21:00:00",
-                            "21:00:00-22:00:00", "22:00:00-23:00:00", "23:00:00-24:00:00"]
         self.batterySize = 4800
         # batteryLevel : 4 levels
         self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
@@ -573,29 +521,13 @@ class CreateScenario4():
 
         }
 
-        # TODO: different files for different agent
         # try : different class for different agents
-        self.filename1 = "scenario.json"
-        self.filename2 = "scenario2.json"
-        self.filename3 = "scenario3.json"
         self.filename4 = "scenario4.json"
-        # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
-        # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
-        # get the parent path -> ../APIS
         self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
         self.desired_dir = self.getpath + "/apis-main/exe/"
-        self.full_path1 = os.path.join(self.desired_dir, self.filename1)
-        self.full_path2 = os.path.join(self.desired_dir, self.filename2)
-        self.full_path3 = os.path.join(self.desired_dir, self.filename3)
         self.full_path4 = os.path.join(self.desired_dir, self.filename4)
 
     def write_json(self):
-        with open(self.full_path1, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path2, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
-        with open(self.full_path3, 'w', encoding='utf-8') as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=4)
         with open(self.full_path4, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
 

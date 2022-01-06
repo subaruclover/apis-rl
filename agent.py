@@ -28,58 +28,6 @@ from createScenario import CreateScenario1, CreateScenario2, CreateScenario3, Cr
 
 from RL_learn import DQNNet, SumTree, Memory
 
-"""
-# get log data for states
-host = conf.b_host
-port = conf.b_port
-# url = "http://0.0.0.0:4390/get/log"
-
-URL = "http://" + host + ":" + str(port) + "/get/log"
-
-import requests, json
-# response = requests.request("POST", url, data=gl)
-# print(response.text)
-# dicts of states for all houses
-pvc_charge_power = {}
-ups_output_power = {}
-p2 = {}  # powermeter.p2, Power consumption to the power storage system [W]
-wg = {}  # meter.wg, DC Grid power [W]
-wb = {}  # meter.wb, Battery Power [W]
-
-# need to refresh the output data every 5s? time.sleep()
-while not gl.sema:  # True, alter for different time periods
-    # # refresh every 5 seconds
-    # time.sleep(5)
-    # read variables from /get/log url
-    # print(output_data.text)
-    output_data = requests.get(URL).text
-    output_data = json.loads(output_data)  # dict
-
-    for ids, dict_ in output_data.items():  # ids: E001, E002, ... house ID
-        # print('the name of the dictionary is ', ids)
-        # print('the dictionary is ', dict_)
-        pvc_charge_power[ids] = output_data[ids]["emu"]["pvc_charge_power"]
-        ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
-        p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
-        wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
-        wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
-
-        # print("pv of {ids} is {pv},".format(ids=ids, pv=pvc_charge_power[ids]),
-        #       "load of {ids} is {load},".format(ids=ids, load=ups_output_power[ids]),
-        #       "p2 of {ids} is {p2},".format(ids=ids, p2=p2[ids]),
-        #       "wg of {ids} is {wg},".format(ids=ids, wg=wg[ids]),
-        #       "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
-        #       )
-
-    # refresh every 5 seconds
-    # print("\n")
-    time.sleep(5)
-
-    # scenario files
-    # interval = 60 * 60  # every 60s
-    # command = createJson()
-    # run(interval, command)
-"""
 # Data loading
 # get log data for states
 host = conf.b_host
@@ -99,7 +47,12 @@ pv_list = []
 load_list = []
 p2_list = []
 
+
 class APIS():
+    """
+    build APIS agent scenarios
+    """
+
     def __init__(self):
         # request and accept level: between [0, 1]
         self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
@@ -107,64 +60,23 @@ class APIS():
 
         # self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
 
-    """
-    # list of possible actions
-    # reward
-    def step(self, state, action_request, action_accept):
-
-        # Exploration hyperparameters for epsilon greedy strategy
-        explore_start = 1.0  # exploration probability at start
-        explore_stop = 0.01  # minimum exploration probability
-        decay_rate = 0.001  # exponential decay rate for exploration prob
-        decay_step = 0  # Decay rate for ϵ-greedy policy
-
-        # action selection
-        # ϵ-greedy policy
-
-        # action_request = sorted(np.random.choice(action_request_num, 2, replace=False), reverse=True)  # 2 values
-        # action_accept = np.random.choice(action_accept_num, 1, replace=False)
-
-        exp_exp_tradeoff = np.random.rand()
-        explore_probability = explore_stop + (explore_start - explore_stop) * np.exp(
-            -decay_rate * decay_step
-        )
-
-        if explore_probability > exp_exp_tradeoff:
-            action_request = np.random.choice()  # 2 values
-            action_accept = np.random.choice()  # 1 value
-        else:
-            action_req = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
-
-        # minimize purchase from the powerline
-        # receiving states: pv , load, p2, rsoc
-        # powerline_energy = power_flow_to_battery - load ?
-        # reward = powerline_energy
-        # reward = p2
-
-        return next_state, reward
-        # return reward
-
-    # def reset(self):
-
-    """
-
     def CreateSce1(self, action_request, action_accept):
         # Create Scenario for house 1 (E001)
         newSce = CreateScenario1(action_request=action_request, action_accept=action_accept)
         newSce.write_json()
 
     def CreateSce2(self, action_request, action_accept):
-        # Create Scenario for house 1 (E001)
+        # Create Scenario for house 2 (E002)
         newSce = CreateScenario2(action_request=action_request, action_accept=action_accept)
         newSce.write_json()
 
     def CreateSce3(self, action_request, action_accept):
-        # Create Scenario for house 1 (E001)
+        # Create Scenario for house 3 (E003)
         newSce = CreateScenario3(action_request=action_request, action_accept=action_accept)
         newSce.write_json()
 
     def CreateSce4(self, action_request, action_accept):
-        # Create Scenario for house 1 (E001)
+        # Create Scenario for house 4 (E004)
         newSce = CreateScenario4(action_request=action_request, action_accept=action_accept)
         newSce.write_json()
 
@@ -177,6 +89,9 @@ class APIS():
 # House Model, step function (reward)
 
 class House():
+    """
+    agent (step functions)
+    """
 
     def __init__(self):
 
@@ -327,7 +242,6 @@ class House():
         # print(rsoc_ave)
 
         if house_id == "E001":
-
             state_ = np.concatenate([all_e001_, np.array([rsoc_ave_])], axis=-1)
         elif house_id == "E002":
             state_ = np.concatenate([all_e002_, np.array([rsoc_ave_])], axis=-1)
@@ -344,10 +258,12 @@ class House():
         return np.array(state_, dtype=np.float32), reward,  {}  # done
 
     def reset(self):
-        # reset the states according to standard.json file (../apis-emulator/jsontmp)
-        # all values are the same to each house
-        # super().reset(seed=seed)
-
+        """
+        reset the states according to standard.json file (../apis-emulator/jsontmp)
+        all values are the same to each house
+        super().reset(seed=seed)
+        """
+        # TODO: not set with this standard file (reset shall be based on the last value)
         # init state
         pvc_charge_power = np.array([0.])
         ups_output_power = np.array([0.])
