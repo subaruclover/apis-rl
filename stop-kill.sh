@@ -2,7 +2,7 @@ echo 'call stop-kill.sh'
 
 NUM_OF_SIGTERM=300
 
-# TODO edit stop.sh file : stop for one/all houses (main.py main2.py,...)
+# stop for one/all houses (main.py main2.py,...)
 get_pids() {
  ps -f -U `whoami` | grep main | grep python | while read _USER_ _PID_ _OTHERS_; do
   echo $_PID_
