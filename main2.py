@@ -234,11 +234,12 @@ house_id = "E002"  # input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 # his_prio, prio_memory = train(RL_prio)
 
-# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(15)]  # reward(p2)
+# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24)]  # reward(p2)
 
 # compare based on first success
-# plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-plt.plot(natural_memory[:15, 8], 'b', label='natural DQN')
+plt.title("E002")
+plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN')
+plt.plot(natural_memory[:2, 8], 'b', label='natural DQN p2')
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
 # plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')
