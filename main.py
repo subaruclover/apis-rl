@@ -28,7 +28,7 @@ sns.set(style="whitegrid")
 
 # RL_learn functions
 """
-class DQNNet : Deep Q-network Model
+class DQNNet : Deep Q-network Model -> redefined in DQNPrioritizedReplay, therefore no need anymore
 class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
@@ -165,7 +165,7 @@ while gl.sema:  # True, alter for different time periods
     # next_rsoc, batteryLevel, reward
     # batteryLevel_req, batteryLevel_acc = agent.step(action_request, action_accept)
     # batteryLevel = agent.step(state, action_request, action_accept)
-    agent.CreateSce(action_request, action_accept)
+    agent.CreateSce1(action_request, action_accept)
 
     print("req_act: ", action_request_space[action_request[0]], action_request_space[action_request[1]],
           "acc_act: ", action_accept_space[action_accept[0]])
@@ -183,6 +183,7 @@ with tf.variable_scope('natural_DQN'):
         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
     )
+
 
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
@@ -217,7 +218,7 @@ def train(RL):
 
     for i_episode in range(2):
 
-        # TODO: agent needs to get value from the env, not given
+        # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env?
         observation = env.reset()
         start_time = time.time()
@@ -228,7 +229,7 @@ def train(RL):
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
-            agent.CreateSce(action_request, action_accept)
+            agent.CreateSce1(action_request, action_accept)
 
             # house_id = input('input the house id: ')
             observation_, reward, info = env.step1(action_request, action_accept, house_id)
@@ -264,17 +265,18 @@ def train(RL):
     return np.vstack((episodes, steps)), RL.memory
 
 
-house_id = input('input the house id: ')
+house_id = "E001"  # input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
+##
 # his_prio, prio_memory = train(RL_prio)
-
-# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(15)]  # reward(p2)
+# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24)]  # reward(p2)
 
 # compare based on first success
-# plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-plt.plot(natural_memory[:15, 8], 'b', label='natural DQN')
+plt.title("E001")
+plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
+plt.plot(natural_memory[:2, 8], 'g', label='natural DQN p2')
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-# plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
+# plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay p2')
 plt.legend(loc='best')
 plt.ylabel('reward (p2)')
 plt.xlabel('episode')

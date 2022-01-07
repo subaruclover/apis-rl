@@ -1,5 +1,8 @@
-# create by Qiong
-# create scenario files for updating the energy exchange rules
+"""
+Create scenario files for updating the energy exchange rules
+Each class stands for one house (for individual scenario files)
+Create by Qiong
+"""
 
 import json
 import time
@@ -49,7 +52,11 @@ def run(interval, command):
 
 # create scenario file and put it under the dir of apis-main/exe
 
-class CreateScenario():
+class CreateScenario1():
+    """
+    create scenario for house 1
+    """
+
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
@@ -158,30 +165,371 @@ class CreateScenario():
             # }
 
         }
+
+        # try : different class for different agents
         self.filename1 = "scenario.json"
-        self.filename2 = "scenario2.json"
-        self.filename3 = "scenario3.json"
-        self.filename4 = "scenario4.json"
         # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
         # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
         # get the parent path -> ../APIS
         self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
         self.desired_dir = self.getpath + "/apis-main/exe/"
         self.full_path1 = os.path.join(self.desired_dir, self.filename1)
-        self.full_path2 = os.path.join(self.desired_dir, self.filename2)
-        self.full_path3 = os.path.join(self.desired_dir, self.filename3)
-        self.full_path4 = os.path.join(self.desired_dir, self.filename4)
 
     def write_json(self):
         with open(self.full_path1, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
+
+
+class CreateScenario2():
+    """
+    create scenario for house 2
+    """
+
+    def __init__(self,  action_request, action_accept):
+
+        # self.action_space = [0.8, 0.5, 0.4]
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # set time periods for scenario files
+        # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+        self.timePeriods = ["00:00:00-24:00:00"]
+        # per hour: TimePeriods[0],...,TimePeriods[23]
+        self.batterySize = 4800
+        # batteryLevel : 4 levels
+        self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
+        self.data = {
+            "#": "place this file at the path defined by 'scenarioFile' in config file",
+            "refreshingPeriodMsec": 5000,
+
+            "acceptSelection": {
+                "strategy": "pointAndAmount"
+            },
+
+            self.timePeriods[0]: {
+                "batteryStatus": {  # batteryLevels
+                    # list of actions
+                    str(self.batterySize * self.action_request_space[action_request[0]]) + "-": self.batteryLevel[0],
+                    str(str(self.batterySize * self.action_accept_space[action_accept[0]]) + "-" + str(self.batterySize * self.action_request_space[action_request[0]])): self.batteryLevel[1],
+                    str(str(self.batterySize * self.action_request_space[action_request[1]]) + "-" + str(self.batterySize * self.action_accept_space[action_accept[0]])): self.batteryLevel[2],
+                    "-" + str(self.batterySize * self.action_request_space[action_request[1]]): self.batteryLevel[3]
+                },
+                "request": {
+                    self.batteryLevel[0]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_request_space[action_request[0]],  # 0.8,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[1]: {},
+                    self.batteryLevel[2]: {},
+                    self.batteryLevel[3]: {"charge": {
+                        "limitWh": self.batterySize * self.action_request_space[action_request[1]],  # 0.4,
+                        "pointPerWh": 10
+                    }}
+                },
+                "accept": {
+                    self.batteryLevel[0]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[1]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[2]: {"charge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[3]: {"charge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }}
+                }
+            },
+
+            # self.timePeriods[1]: {
+            #     "batteryStatus": {
+            #         str(self.batterySize * 0.7) + "-": self.batteryLevel[0],
+            #         str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.7)): self.batteryLevel[1],
+            #         str(str(self.batterySize * 0.3) + "-" + str(self.batterySize * 0.5)): self.batteryLevel[2],
+            #         "-" + str(self.batterySize * 0.3): self.batteryLevel[3]
+            #     },
+            #     "request": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.7,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {},
+            #         self.batteryLevel[2]: {},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.3,
+            #             "pointPerWh": 10
+            #         }}
+            #     },
+            #     "accept": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[2]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }}
+            #     }
+            # }
+
+        }
+
+        # try : different class for different agents
+        self.filename2 = "scenario2.json"
+        self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
+        self.desired_dir = self.getpath + "/apis-main/exe/"
+        self.full_path2 = os.path.join(self.desired_dir, self.filename2)
+
+    def write_json(self):
         with open(self.full_path2, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
+
+
+class CreateScenario3():
+    """
+    create scenario for house 3
+    """
+
+    def __init__(self,  action_request, action_accept):
+
+        # self.action_space = [0.8, 0.5, 0.4]
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # set time periods for scenario files
+        # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+        self.timePeriods = ["00:00:00-24:00:00"]
+        # per hour: TimePeriods[0],...,TimePeriods[23]
+
+        self.batterySize = 4800
+        # batteryLevel : 4 levels
+        self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
+        self.data = {
+            "#": "place this file at the path defined by 'scenarioFile' in config file",
+            "refreshingPeriodMsec": 5000,
+
+            "acceptSelection": {
+                "strategy": "pointAndAmount"
+            },
+
+            self.timePeriods[0]: {
+                "batteryStatus": {  # batteryLevels
+                    # list of actions
+                    str(self.batterySize * self.action_request_space[action_request[0]]) + "-": self.batteryLevel[0],
+                    str(str(self.batterySize * self.action_accept_space[action_accept[0]]) + "-" + str(self.batterySize * self.action_request_space[action_request[0]])): self.batteryLevel[1],
+                    str(str(self.batterySize * self.action_request_space[action_request[1]]) + "-" + str(self.batterySize * self.action_accept_space[action_accept[0]])): self.batteryLevel[2],
+                    "-" + str(self.batterySize * self.action_request_space[action_request[1]]): self.batteryLevel[3]
+                },
+                "request": {
+                    self.batteryLevel[0]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_request_space[action_request[0]],  # 0.8,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[1]: {},
+                    self.batteryLevel[2]: {},
+                    self.batteryLevel[3]: {"charge": {
+                        "limitWh": self.batterySize * self.action_request_space[action_request[1]],  # 0.4,
+                        "pointPerWh": 10
+                    }}
+                },
+                "accept": {
+                    self.batteryLevel[0]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[1]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[2]: {"charge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[3]: {"charge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }}
+                }
+            },
+
+            # self.timePeriods[1]: {
+            #     "batteryStatus": {
+            #         str(self.batterySize * 0.7) + "-": self.batteryLevel[0],
+            #         str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.7)): self.batteryLevel[1],
+            #         str(str(self.batterySize * 0.3) + "-" + str(self.batterySize * 0.5)): self.batteryLevel[2],
+            #         "-" + str(self.batterySize * 0.3): self.batteryLevel[3]
+            #     },
+            #     "request": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.7,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {},
+            #         self.batteryLevel[2]: {},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.3,
+            #             "pointPerWh": 10
+            #         }}
+            #     },
+            #     "accept": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[2]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }}
+            #     }
+            # }
+
+        }
+
+        # try : different class for different agents
+        self.filename3 = "scenario3.json"
+        self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
+        self.desired_dir = self.getpath + "/apis-main/exe/"
+        self.full_path3 = os.path.join(self.desired_dir, self.filename3)
+
+    def write_json(self):
         with open(self.full_path3, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
+
+
+class CreateScenario4():
+    """
+    create scenario for house 4
+    """
+
+    def __init__(self,  action_request, action_accept):
+
+        # self.action_space = [0.8, 0.5, 0.4]
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # set time periods for scenario files
+        # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
+        self.timePeriods = ["00:00:00-24:00:00"]
+        # per hour: TimePeriods[0],...,TimePeriods[23]
+        self.batterySize = 4800
+        # batteryLevel : 4 levels
+        self.batteryLevel = ["excess", "sufficient", "scarce", "short"]
+        self.data = {
+            "#": "place this file at the path defined by 'scenarioFile' in config file",
+            "refreshingPeriodMsec": 5000,
+
+            "acceptSelection": {
+                "strategy": "pointAndAmount"
+            },
+
+            self.timePeriods[0]: {
+                "batteryStatus": {  # batteryLevels
+                    # list of actions
+                    str(self.batterySize * self.action_request_space[action_request[0]]) + "-": self.batteryLevel[0],
+                    str(str(self.batterySize * self.action_accept_space[action_accept[0]]) + "-" + str(self.batterySize * self.action_request_space[action_request[0]])): self.batteryLevel[1],
+                    str(str(self.batterySize * self.action_request_space[action_request[1]]) + "-" + str(self.batterySize * self.action_accept_space[action_accept[0]])): self.batteryLevel[2],
+                    "-" + str(self.batterySize * self.action_request_space[action_request[1]]): self.batteryLevel[3]
+                },
+                "request": {
+                    self.batteryLevel[0]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_request_space[action_request[0]],  # 0.8,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[1]: {},
+                    self.batteryLevel[2]: {},
+                    self.batteryLevel[3]: {"charge": {
+                        "limitWh": self.batterySize * self.action_request_space[action_request[1]],  # 0.4,
+                        "pointPerWh": 10
+                    }}
+                },
+                "accept": {
+                    self.batteryLevel[0]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[1]: {"discharge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[2]: {"charge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }},
+                    self.batteryLevel[3]: {"charge": {
+                        "limitWh": self.batterySize * self.action_accept_space[action_accept[0]],  # 0.5,
+                        "pointPerWh": 10
+                    }}
+                }
+            },
+
+            # self.timePeriods[1]: {
+            #     "batteryStatus": {
+            #         str(self.batterySize * 0.7) + "-": self.batteryLevel[0],
+            #         str(str(self.batterySize * 0.5) + "-" + str(self.batterySize * 0.7)): self.batteryLevel[1],
+            #         str(str(self.batterySize * 0.3) + "-" + str(self.batterySize * 0.5)): self.batteryLevel[2],
+            #         "-" + str(self.batterySize * 0.3): self.batteryLevel[3]
+            #     },
+            #     "request": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.7,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {},
+            #         self.batteryLevel[2]: {},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.3,
+            #             "pointPerWh": 10
+            #         }}
+            #     },
+            #     "accept": {
+            #         self.batteryLevel[0]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[1]: {"discharge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[2]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }},
+            #         self.batteryLevel[3]: {"charge": {
+            #             "limitWh": self.batterySize * 0.5,
+            #             "pointPerWh": 10
+            #         }}
+            #     }
+            # }
+
+        }
+
+        # try : different class for different agents
+        self.filename4 = "scenario4.json"
+        self.getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
+        self.desired_dir = self.getpath + "/apis-main/exe/"
+        self.full_path4 = os.path.join(self.desired_dir, self.filename4)
+
+    def write_json(self):
         with open(self.full_path4, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, ensure_ascii=False, indent=4)
-
 
 # if __name__ == "__main__":
 #     interval = 60 * 60  # every 60 * 60s

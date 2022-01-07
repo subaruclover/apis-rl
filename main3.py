@@ -1,12 +1,17 @@
+#!/usr/bin/env python
 """
 DQN training, single run, house E003
 
 created by: Qiong
+
 """
+import tensorflow.compat.v1 as tf
+tf.disable_eager_execution()
 import os
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 import logging.config
+
 logger = logging.getLogger(__name__)
 
 import time
@@ -25,8 +30,10 @@ class DQNNet : Deep Q-network Model
 class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
-from RL_learn import DQNNet, Memory, BatteryEnv
+from RL_learn import Memory, DQNPrioritizedReplay
+from agent import APIS, House
 
+agent = APIS()
 # start_time = time.time()
 
 ##############################
@@ -50,7 +57,7 @@ load_list = []
 p2_list = []
 
 # need to refresh the output data every 5s? time.sleep()
-while not gl.sema:  # True, alter for different time periods
+while gl.sema:  # True, alter for different time periods
     # # refresh every 5 seconds
     # time.sleep(5)
     # read variables from /get/log url
@@ -77,14 +84,14 @@ while not gl.sema:  # True, alter for different time periods
               "wb of {ids} is {wb},".format(ids=ids, wb=wb[ids])
               )
 
-    # refresh every 5 seconds
-    # print("\n")
-    # time.sleep(5)
+        # refresh every 5 seconds
+        # print("\n")
+        # time.sleep(5)
 
-    # scenario files
-    # interval = 60 * 60  # every 60s
-    # command = createJson()
-    # run(interval, command)
+        # scenario files
+        # interval = 60 * 60  # every 60s
+        # command = createJson()
+        # run(interval, command)
 
         # States  pvc_charge_power[ids], for house E003
         if ids == "E003":
@@ -96,7 +103,7 @@ while not gl.sema:  # True, alter for different time periods
             x_e003 = np.concatenate([pv_e003, load_e003, p2_e003, rsoc_e003], axis=-1)
             print(x_e003)
 
-        state_size = (4, )
+        state_size = (4,)
         action_feature = 3  # batteryStatus, request, accept
         learning_rate = 0.01
 
@@ -127,3 +134,100 @@ while not gl.sema:  # True, alter for different time periods
 
     time.sleep(5)
 
+############################
+env = House()
+env.seed(21)
+
+MEMORY_SIZE = 10000
+
+sess = tf.Session()
+with tf.variable_scope('natural_DQN'):
+    RL_natural = DQNPrioritizedReplay(
+        n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
+    )
+
+
+with tf.variable_scope('DQN_with_prioritized_replay'):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+    )
+sess.run(tf.global_variables_initializer())
+
+
+def train(RL):
+    print("training start")
+    total_steps = 0
+    steps = []
+    episodes = []
+    # EPI = 15
+
+    # house_id = input('input the house id: ')
+
+    for i_episode in range(2):
+
+        # TODO: (when reset) agent needs to get value from the env, not given
+        # reset with the env?
+        observation = env.reset()
+        start_time = time.time()
+
+        while True:  # not gl.sema:
+
+            actions = RL.choose_actions(observation)
+            action_request = [actions[0], actions[2]]
+            action_accept = [actions[1]]
+
+            agent.CreateSce3(action_request, action_accept)
+
+            # house_id = input('input the house id: ')
+            observation_, reward, info = env.step1(action_request, action_accept, house_id)
+
+            actions_space = np.linspace(0.2, 0.9, 8).tolist()
+            print("Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
+                                                                                  actions_space[action_request[1]],
+                                                                                  actions_space[action_accept[0]]))
+
+            # change the time step
+            time.sleep(60)
+
+            # if time.sleep(5):  # done:
+            #     reward = p2_e001
+
+            RL.store_transition(observation, actions, reward, observation_)
+
+            if total_steps > MEMORY_SIZE:
+                RL.learn()
+
+            # if time.sleep(5):  # done:
+            print('episode ', i_episode, ' finished')
+            steps.append(total_steps)
+            episodes.append(i_episode)
+            break  #
+
+            observation = observation_
+            total_steps += 1
+
+        end_time = time.time()
+        print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
+
+    return np.vstack((episodes, steps)), RL.memory
+
+
+house_id = "E003"  # input('input the house id: ')
+his_natural, natural_memory = train(RL_natural)
+
+# his_prio, prio_memory = train(RL_prio)
+# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24)]  # reward(p2)
+
+# compare based on first success
+plt.title("E003")
+plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN p2')
+plt.plot(natural_memory[:2, 8], 'b', label='natural DQN')
+# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
+# plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
+plt.legend(loc='best')
+plt.ylabel('reward (p2)')
+plt.xlabel('episode')
+plt.grid()
+plt.show()
