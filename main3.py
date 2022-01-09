@@ -165,7 +165,7 @@ def train(RL):
 
     # house_id = input('input the house id: ')
 
-    for i_episode in range(2):
+    for i_episode in range(24):
 
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env?
@@ -223,7 +223,7 @@ his_natural, natural_memory = train(RL_natural)
 # compare based on first success
 plt.title("E003")
 plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN p2')
-plt.plot(natural_memory[:2, 8], 'b', label='natural DQN')
+plt.plot(natural_memory[:24, 8], 'b', label='natural DQN')
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
 # plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')
