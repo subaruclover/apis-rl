@@ -4,11 +4,12 @@ DQN training, single run, house E001
 
 created by: Qiong
 
+TODO: done condition:
 Check if this could work:
 although the APIS emulator is an online version simulator,
 can we use an offline RL (update its policy only) method?
 i.e. load the data here (from apis-emulator/data/input/Sample directory),
-choose the data we would use (e.g. E001~E004, one year, 2020/4/1 ~ 2021/3/31)
+choose the data we would use (e.g. E001~E004, one year, 2020/4/1 ~ 2021/3/31, or some other time period)
 set 24 data points for each day, and update their RSOCs with SonyCSL's APIS
 
 Note that sample data have 48 data points each day (record every 30mins), we only need 24 for testing
@@ -235,11 +236,12 @@ def train(RL):
 
         while True:  # not gl.sema:
 
+            # choose actions
             actions = RL.choose_actions(observation)
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
-            # TODO: maybe this should be written in the step functions!!!
+            # TODO: this should be written in the step functions!!!
             # agent.CreateSce1(action_request, action_accept)
             # it takes quite a while to create new scenario files
 
