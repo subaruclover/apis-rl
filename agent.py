@@ -48,15 +48,17 @@ load_list = []
 p2_list = []
 
 
-class APIS():
+class APIS(object):
     """
     build APIS agent scenarios
     """
 
-    def __init__(self):
+    def __init__(self, action_request, action_accept):
         # request and accept level: between [0, 1]
         self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
         self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
+        self.action_request = action_request
+        self.action_accept = action_accept
 
         # self.n_actions = len(self.action_request_space) + len(self.action_accept_space)
 
@@ -90,15 +92,18 @@ class APIS():
 
 class House():
     """
+    maybe need different House classes (env) for different houses
     agent:
         step functions
         reset
     """
 
-    def __init__(self):
+    def __init__(self, action_request, action_accept):
 
-        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
-        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        # self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # self.agent = agent
+        self.agent = APIS()
 
         # list of possible actions
         # reward
@@ -150,7 +155,7 @@ class House():
 
     def step1(self, action_request, action_accept, house_id):
         # TODO: set the step function properly !!
-        # each house learn seprately / take as one
+        # each house learn separately / take as one
         # how actions changes the states?
         """
         Perform one step in the environment following the action.
@@ -169,6 +174,10 @@ class House():
              where reward is set to p2?
              but when the goal is reached (time up), done is True
         """
+        # for house E001: with the actions (act_req, act_acc):
+        self.agent.CreateSce1(self.agent.action_request, self.agent.action_accept)
+        # TODO: Then get the state_ with the action lists (with the APIS api itself)
+
 
         # current_pv = state[0]
         # current_load = state[1]
