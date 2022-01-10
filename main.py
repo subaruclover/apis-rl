@@ -34,10 +34,9 @@ class BatteryEnv: my battery model -> replaced with APIS battery model
 """
 
 from RL_learn import Memory, DQNPrioritizedReplay
-from agent import APIS, House
+from agent import APIS, House  # Env
 
 agent = APIS()
-
 
 # start_time = time.time()
 
@@ -220,7 +219,7 @@ def train(RL):
 
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env?
-        observation = env.reset()
+        observation = env.reset(house_id)
         start_time = time.time()
 
         while True:  # not gl.sema:
@@ -229,6 +228,7 @@ def train(RL):
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
+            # TODO: maybe this should be written in the step functions!!!
             agent.CreateSce1(action_request, action_accept)  # it takes quite a while to create new scenario files
 
             # house_id = input('input the house id: ')
