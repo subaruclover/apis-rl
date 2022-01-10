@@ -34,10 +34,9 @@ class BatteryEnv: my battery model -> replaced with APIS battery model
 """
 
 from RL_learn import Memory, DQNPrioritizedReplay
-from agent import APIS, House
+from agent import APIS, House  # Env
 
 agent = APIS()
-
 
 # start_time = time.time()
 

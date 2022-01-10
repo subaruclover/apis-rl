@@ -26,7 +26,7 @@ import requests, json
 
 from createScenario import CreateScenario1, CreateScenario2, CreateScenario3, CreateScenario4
 
-from RL_learn import DQNNet, SumTree, Memory
+# from RL_learn import DQNNet, SumTree, Memory
 
 # Data loading
 # get log data for states
@@ -86,11 +86,13 @@ class APIS():
         #     run(interval, command)
 
 
-# House Model, step function (reward)
+# House Model (Env), step function (reward)
 
 class House():
     """
-    agent (step functions)
+    agent:
+        step functions
+        reset
     """
 
     def __init__(self):
@@ -257,7 +259,7 @@ class House():
 
         return np.array(state_, dtype=np.float32), reward,  {}  # done
 
-    def reset(self):
+    def reset(self, house_id):
         """
         reset the states according to standard.json file (../apis-emulator/jsontmp)
         all values are the same to each house
@@ -266,16 +268,82 @@ class House():
         # TODO: not set with this standard file (reset shall be based on the last value)
         # what is the best way???
         # init state
-        pvc_charge_power = np.array([0.])
-        ups_output_power = np.array([0.])
-        p2 = np.array([0.])
-        rsoc = np.array([50.])
-        # wg = np.array([0])
-        # wb = np.array([-4.5])
-        rsoc_ave = np.array([50.])  # average rsoc in the same community
+
+        # pvc_charge_power = np.array([0.])
+        # ups_output_power = np.array([0.])
+        # p2 = np.array([0.])
+        # rsoc = np.array([50.])
+        # # wg = np.array([0])
+        # # wb = np.array([-4.5])
+        # rsoc_ave = np.array([50.])  # average rsoc in the same community
+
+        output_data = requests.get(URL).text
+        output_data = json.loads(output_data)  # dict
+
+        rsoc_list = []
+
+        for ids, dict_ in output_data.items():  # ids: E001, E002, ... house ID
+
+            pvc_charge_power[ids] = output_data[ids]["emu"]["pvc_charge_power"]
+            ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
+            p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
+            rsoc[ids] = output_data[ids]["emu"]["rsoc"]
+            wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+            wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+
+            rsoc_list.append(rsoc[ids])
+
+            # States  pvc_charge_power[ids], for house E001
+            if ids == "E001":
+                pvc_e001_ = np.array([pvc_charge_power["E001"]])
+                load_e001_ = np.array([ups_output_power["E001"]])
+                p2_e001_ = np.array([p2["E001"]])
+                rsoc_e001_ = np.array([rsoc["E001"]])
+
+                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_], axis=-1)
+
+            if ids == "E002":
+                pvc_e002_ = np.array([pvc_charge_power["E002"]])
+                load_e002_ = np.array([ups_output_power["E002"]])
+                p2_e002_ = np.array([p2["E002"]])
+                rsoc_e002_ = np.array([rsoc["E002"]])
+
+                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_], axis=-1)
+
+            if ids == "E003":
+                pvc_e003_ = np.array([pvc_charge_power["E003"]])
+                load_e003_ = np.array([ups_output_power["E003"]])
+                p2_e003_ = np.array([p2["E003"]])
+                rsoc_e003_ = np.array([rsoc["E003"]])
+
+                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_], axis=-1)
+
+            if ids == "E004":
+                pvc_e004_ = np.array([pvc_charge_power["E004"]])
+                load_e004_ = np.array([ups_output_power["E002"]])
+                p2_e004_ = np.array([p2["E004"]])
+                rsoc_e004_ = np.array([rsoc["E004"]])
+
+                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_], axis=-1)
+
+        # print(rsoc)
+        # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
+        rsoc_ave_ = np.mean(rsoc_list)  # get average rsoc of this community
+        # print(rsoc_ave)
+
+        if house_id == "E001":
+            self.state = np.concatenate([all_e001_, np.array([rsoc_ave_])], axis=-1)
+        elif house_id == "E002":
+            self.state = np.concatenate([all_e002_, np.array([rsoc_ave_])], axis=-1)
+        elif house_id == "E003":
+            self.state = np.concatenate([all_e003_, np.array([rsoc_ave_])], axis=-1)
+        elif house_id == "E004":
+            self.state = np.concatenate([all_e004_, np.array([rsoc_ave_])], axis=-1)
+        else:
+            print("wrong house id, input again")
 
         # self.state = np.array([self.state])
-        self.state = np.concatenate([pvc_charge_power, ups_output_power, p2, rsoc, rsoc_ave], axis=-1)
+        # self.state = np.concatenate([pvc_charge_power, ups_output_power, p2, rsoc, rsoc_ave], axis=-1)
 
         # return np.array(self.state, dtype=np.float32)
         return np.array(self.state, dtype=np.float32)
