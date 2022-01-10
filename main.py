@@ -229,7 +229,8 @@ def train(RL):
             action_accept = [actions[1]]
 
             # TODO: maybe this should be written in the step functions!!!
-            agent.CreateSce1(action_request, action_accept)  # it takes quite a while to create new scenario files
+            # agent.CreateSce1(action_request, action_accept)
+            # it takes quite a while to create new scenario files
 
             # house_id = input('input the house id: ')
             observation_, reward, info = env.step1(action_request, action_accept, house_id)

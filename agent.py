@@ -26,7 +26,7 @@ import requests, json
 
 from createScenario import CreateScenario1, CreateScenario2, CreateScenario3, CreateScenario4
 
-# from RL_learn import DQNNet, SumTree, Memory
+from RL_learn import DQNNet, SumTree, Memory
 
 # Data loading
 # get log data for states
@@ -103,7 +103,7 @@ class House():
         # self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
         # self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
         # self.agent = agent
-        self.agent = APIS()
+        self.agent = APIS(action_request, action_accept)
 
         # list of possible actions
         # reward
