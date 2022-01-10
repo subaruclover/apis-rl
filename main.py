@@ -229,7 +229,7 @@ def train(RL):
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
-            agent.CreateSce1(action_request, action_accept)
+            agent.CreateSce1(action_request, action_accept)  # it takes quite a while to create new scenario files
 
             # house_id = input('input the house id: ')
             observation_, reward, info = env.step1(action_request, action_accept, house_id)
@@ -240,7 +240,7 @@ def train(RL):
                                                                                   actions_space[action_accept[0]]))
 
             # change the time step
-            time.sleep(60)
+            # time.sleep(60)
 
             # if time.sleep(5):  # done:
             #     reward = p2_e001
@@ -250,11 +250,11 @@ def train(RL):
             if total_steps > MEMORY_SIZE:
                 RL.learn()
 
-            # if time.sleep(5):  # done:
-            print('episode ', i_episode, ' finished')
-            steps.append(total_steps)
-            episodes.append(i_episode)
-            break  #
+            if time.sleep(60):  # done:
+                print('episode ', i_episode, ' finished')
+                steps.append(total_steps)
+                episodes.append(i_episode)
+                break  #
 
             observation = observation_
             total_steps += 1
