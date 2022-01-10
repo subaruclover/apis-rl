@@ -264,6 +264,7 @@ class House():
         super().reset(seed=seed)
         """
         # TODO: not set with this standard file (reset shall be based on the last value)
+        # what is the best way???
         # init state
         pvc_charge_power = np.array([0.])
         ups_output_power = np.array([0.])
