@@ -4,6 +4,15 @@ DQN training, single run, house E001
 
 created by: Qiong
 
+Check if this could work:
+although the APIS emulator is an online version simulator,
+can we use an offline RL (update its policy only) method?
+i.e. load the data here (from apis-emulator/data/input/Sample directory),
+choose the data we would use (e.g. E001~E004, one year, 2020/4/1 ~ 2021/3/31)
+set 24 data points for each day, and update their RSOCs with SonyCSL's APIS
+
+Note that sample data have 48 data points each day (record every 30mins), we only need 24 for testing
+
 """
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
@@ -36,7 +45,7 @@ class BatteryEnv: my battery model -> replaced with APIS battery model
 from RL_learn import Memory, DQNPrioritizedReplay
 from agent import APIS, House  # Env
 
-agent = APIS()
+# agent = APIS()
 
 # start_time = time.time()
 
@@ -61,6 +70,7 @@ load_list = []
 p2_list = []
 
 # need to refresh the output data every 5s? time.sleep()
+"""
 while gl.sema:  # True, alter for different time periods
     # # refresh every 5 seconds
     # time.sleep(5)
@@ -169,9 +179,10 @@ while gl.sema:  # True, alter for different time periods
     print("req_act: ", action_request_space[action_request[0]], action_request_space[action_request[1]],
           "acc_act: ", action_accept_space[action_accept[0]])
     time.sleep(60)  # 5s
+"""
 
 ############################
-env = House()
+env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 
 MEMORY_SIZE = 10000
@@ -233,7 +244,8 @@ def train(RL):
             # it takes quite a while to create new scenario files
 
             # house_id = input('input the house id: ')
-            observation_, reward, info = env.step1(action_request, action_accept, house_id)
+            # TODO: add done (how to make it offline? with the current online simulation)
+            observation_, reward, done, info = env.step1(action_request, action_accept, house_id)
 
             actions_space = np.linspace(0.2, 0.9, 8).tolist()
             print("Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],

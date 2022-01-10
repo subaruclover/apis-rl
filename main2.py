@@ -194,7 +194,7 @@ def train(RL):
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
-            agent.CreateSce2(action_request, action_accept)
+            # agent.CreateSce2(action_request, action_accept)
 
             # house_id = input('input the house id: ')
             observation_, reward, info = env.step1(action_request, action_accept, house_id)
