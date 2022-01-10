@@ -219,7 +219,7 @@ def train(RL):
 
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env?
-        observation = env.reset()
+        observation = env.reset(house_id)
         start_time = time.time()
 
         while True:  # not gl.sema:
