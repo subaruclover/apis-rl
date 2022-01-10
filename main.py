@@ -263,7 +263,7 @@ def train(RL):
             if total_steps > MEMORY_SIZE:
                 RL.learn()
 
-            if time.sleep(60):  # done:
+            if done:  # time.sleep(60)
                 print('episode ', i_episode, ' finished')
                 steps.append(total_steps)
                 episodes.append(i_episode)
