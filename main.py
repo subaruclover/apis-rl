@@ -183,6 +183,7 @@ while gl.sema:  # True, alter for different time periods
 """
 
 ############################
+# give a set of init actions
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 
