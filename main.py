@@ -230,7 +230,7 @@ def train(RL):
     for i_episode in range(24):
 
         # TODO: (when reset) agent needs to get value from the env, not given
-        # reset with the env?
+        # reset with the env
         observation = env.reset(house_id)
         start_time = time.time()
 

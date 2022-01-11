@@ -260,6 +260,7 @@ class House():
         else:
             print("wrong house id, input again")
 
+        # reward: different p2 for each house? / average p2 for all?
         reward = p2_e001_
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
