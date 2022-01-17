@@ -265,7 +265,7 @@ class House():
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
-        # hour, day set for the sequecial data from input data files
+
         if hour < 24: # 24 hours each day, 24 data points each day
             hour += 1
             state_ = np.concatenate([all_house_id_ + hour, :], rsoc_ave_)
