@@ -8,6 +8,8 @@ TODO: done condition:
 Check if this could work:
 although the APIS emulator is an online version simulator,
 can we use an offline RL (update its policy only) method?
+- No, there is no such a function.
+
 i.e. load the data here (from apis-emulator/data/input/Sample directory),
 choose the data we would use (e.g. E001~E004, one year, 2020/4/1 ~ 2021/3/31, or some other time period)
 set 24 data points for each day, and update their RSOCs with SonyCSL's APIS
