@@ -26,7 +26,7 @@ import requests, json
 
 from createScenario import CreateScenario1, CreateScenario2, CreateScenario3, CreateScenario4
 
-# from RL_learn import DQNNet, SumTree, Memory
+from RL_learn import DQNNet, SumTree, Memory
 
 # Data loading
 # get log data for states
@@ -103,7 +103,7 @@ class House():
         # self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
         # self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
         # self.agent = agent
-        self.agent = APIS()
+        self.agent = APIS(action_request, action_accept)
 
         # list of possible actions
         # reward
@@ -177,7 +177,7 @@ class House():
         # for house E001: with the actions (act_req, act_acc):
         self.agent.CreateSce1(self.agent.action_request, self.agent.action_accept)
         # TODO: Then get the state_ with the action lists (with the APIS api itself)
-
+        # TODO: Shall we add delay for updating the actions for new Scenarios??
 
         # current_pv = state[0]
         # current_load = state[1]
@@ -185,9 +185,7 @@ class House():
         # current_rsoc = state[3]
         # current_rsoc_ave = state[4]
 
-        pvc_e001, load_e001, p2_e001, rsoc_e001, rsoc_ave = self.state
-        # current_pvc = gl.oesunits[ids]["emu"]["pvc_charge_power"]
-        # current_rsoc = core.rsocUpdate()
+        # pvc_e001, load_e001, p2_e001, rsoc_e001, rsoc_ave = self.state
 
         output_data = requests.get(URL).text
         output_data = json.loads(output_data)  # dict
@@ -212,7 +210,6 @@ class House():
 
             # actions! --> change states
             # action_request: [actions[0], actions[2]], action_accept:  [actions[1]]
-
 
             # States  pvc_charge_power[ids], for house E001
             if ids == "E001":
@@ -263,10 +260,25 @@ class House():
         else:
             print("wrong house id, input again")
 
+        # reward: different p2 for each house? / average p2 for all?
         reward = p2_e001_
-        # done = time.sleep(5)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
+        # TODO: terminal condition: done
+        # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
+        # done: for one day; pesudo code: (hour, day)
 
-        return np.array(state_, dtype=np.float32), reward,  {}  # done
+        if hour < 24: # 24 hours each day, 24 data points each day
+            hour += 1
+            state_ = np.concatenate([all_house_id_ + hour, :], rsoc_ave_)
+        else:
+            done = True
+            day += 1
+            hour = 0
+            if day < len(all_data) / 24:  # all_data: total length of data -> offline??
+                state_ = np.concatenate([all_house_id_, :], rsoc_ave_)
+            else:
+                break
+
+        return np.array(state_, dtype=np.float32), reward, done, {}  # done
 
     def reset(self, house_id):
         """

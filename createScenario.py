@@ -167,7 +167,7 @@ class CreateScenario1():
         }
 
         # try : different class for different agents
-        self.filename1 = "scenario.json"
+        self.filename1 = "scenario1.json"
         # self.desired_dir = "/home/doya/Documents/APIS/apis-main/exe/"
         # self.desired_dir = "/Users/Huang/Documents/APIS/apis-main/exe/"
         # get the parent path -> ../APIS
