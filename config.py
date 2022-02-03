@@ -13,6 +13,7 @@ debug = False
 
 # input data
 dataSet = "Sample"
+# dataSet = "Oist"
 
 # sleep time between execution loops
 # sleeptime = 1  =>  1s of emulator = gl.acc seconds of real time

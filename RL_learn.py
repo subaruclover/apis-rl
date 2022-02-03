@@ -7,6 +7,7 @@ created by: Qiong
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 # import tensorflow as tf
 import tensorflow.compat.v1 as tf
 
@@ -16,7 +17,7 @@ from tensorflow.keras.initializers import glorot_uniform
 from tensorflow.keras.optimizers import Adam
 
 
-# Deep Q-Network Model
+# Deep Q-Network Model, Rewrite in DQNPrioritizedReplay
 class DQNNet():
 
     def __init__(self, state_size, action_size, learning_rate):
@@ -151,9 +152,9 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
 
     """
 
-    PER_e = 0.01
-    PER_a = 0.6
-    PER_b = 0.4
+    PER_e = 0.01  # small amount to avoid zero priority
+    PER_a = 0.6  # [0~1] convert the importance of TD error to priority (0: no IS)
+    PER_b = 0.4  # importance-sampling, from initial value increasing to 1
     PER_b_increment_per_sampling = 0.01
     absolute_error_upper = 1.0  # Clipped abs error
 
@@ -188,7 +189,7 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
 
         priority_segment = self.tree.tree[0] / n
 
-        self.PER_b = np.min([1.0, self.PER_b + self.PER_b_increment_per_sampling])
+        self.PER_b = np.min([1.0, self.PER_b + self.PER_b_increment_per_sampling])  # max = 1
 
         prob_min = np.min(self.tree.tree[-self.tree.capacity:]) / self.tree.tree[0]
         max_weight = (prob_min * n) ** (-self.PER_b)
@@ -207,7 +208,7 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
 
     def batch_update(self, tree_idx, abs_errors):
 
-        # To avoid 0 probability
+        # convert to abs and avoid 0 probability
         abs_errors += self.PER_e
         clipped_errors = np.minimum(abs_errors, self.absolute_error_upper)
         ps = np.power(clipped_errors, self.PER_a)
@@ -262,7 +263,7 @@ class DQNPrioritizedReplay:
         else:
             self.sess = sess
 
-        # TODO: output_grahp=True
+        # output_grahp=True
         if output_graph:
             # $ tensorboard --logdir=logs
             # http://localhost:6006/
@@ -338,7 +339,7 @@ class DQNPrioritizedReplay:
             actions = np.argsort(-actions_value)[:3]
         else:
             # action = np.random.randint(0, self.n_actions)
-            actions = sorted(np.random.choice(self.n_actions, 3, replace=False), reverse=True)  # top 3 values
+            actions = sorted(np.random.choice(self.n_actions, 3, replace=False), reverse=True)  # top 3 values from random
 
         return actions
 
@@ -385,8 +386,7 @@ class DQNPrioritizedReplay:
         self.epsilon = self.epsilon + self.epsilon_increment if self.epsilon < self.epsilon_max else self.epsilon_max
         self.learn_step_counter += 1
 
-    def plot_cost(self):
-        import matplotlib.pyplot as plt
+    def plot_cost(self):        
         plt.plot(np.arange(len(self.cost_his)), self.cost_his)
         plt.ylabel('Cost')
         plt.xlabel('training steps')

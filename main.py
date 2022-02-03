@@ -189,22 +189,23 @@ while gl.sema:  # True, alter for different time periods
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 
-MEMORY_SIZE = 10000
+MEMORY_SIZE = 100  # 10000
 
 sess = tf.Session()
+
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
     )
 
-
-with tf.variable_scope('DQN_with_prioritized_replay'):
-    RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
-    )
-sess.run(tf.global_variables_initializer())
+#
+# with tf.variable_scope('DQN_with_prioritized_replay'):
+#     RL_prio = DQNPrioritizedReplay(
+#         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+#     )
+sess.run(tf.global_variables_initializer())  # DQN
 
 
 def combine_actions(RL, observation):
@@ -230,7 +231,7 @@ def train(RL):
 
     # house_id = input('input the house id: ')
 
-    for i_episode in range(24):
+    for i_episode in range(24):  # 1 EPI: (1day, 24hrs) 24 min, action updated every hour (1 min)
 
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env
@@ -251,6 +252,7 @@ def train(RL):
             # house_id = input('input the house id: ')
             # TODO: add done (how to make it offline? with the current online simulation)
             observation_, reward, done, info = env.step1(action_request, action_accept, house_id)
+            # observation_, reward, info = env.step1(action_request, action_accept, house_id)
 
             actions_space = np.linspace(0.2, 0.9, 8).tolist()
             print("Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
@@ -268,7 +270,7 @@ def train(RL):
             if total_steps > MEMORY_SIZE:
                 RL.learn()
 
-            if done:  # time.sleep(60)
+            if done: #time.sleep(60):# done:  #
                 print('episode ', i_episode, ' finished')
                 steps.append(total_steps)
                 episodes.append(i_episode)
@@ -287,12 +289,14 @@ house_id = "E001"  # input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 ##
 # his_prio, prio_memory = train(RL_prio)
-# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24)]  # reward(p2)
+# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(1)]  # reward(p2)
 
 # compare based on first success
 plt.title("E001")
 plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
 plt.plot(natural_memory[:24, 8], 'g', label='natural DQN p2')
+
+
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
 # plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay p2')
 plt.legend(loc='best')

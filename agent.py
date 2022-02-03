@@ -155,8 +155,8 @@ class House():
 
     def step1(self, action_request, action_accept, house_id):
         # TODO: set the step function properly !!
-        # each house learn separately / take as one
-        # how actions changes the states?
+        # each house learn separately / take as one => step1, step2, step3, step4 for different houses
+        # how actions changes the states? => follow the apis itself!
         """
         Perform one step in the environment following the action.
         actions = np.argsort(-actions_value)[:3] e.g. [7, 5, 2]
@@ -265,22 +265,35 @@ class House():
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
+
+        while not gl.sema:
+            done = False
+            time.sleep(60)
+            done = True
+            break
+        # done =
         
         # maybe could not use functions in this way (day, hour has to be within one file)
         # input data only has pv and load value, p2,rsoc will be updated within the apis module
-        if hour < 24: # 24 hours each day, 24 data points each day
-            hour += 1
-            state_ = np.concatenate([all_house_id_ + hour, :], rsoc_ave_ ) 
-        else:
-            done = True
-            day += 1
-            hour = 0
-            if day < len(all_data) / 24:  # all_data: total length of data -> offline??
-                state_ = np.concatenate([all_house_id_, :], rsoc_ave_)
-            else:
-                break
+        # if hour < 24: # 24 hours each day, 24 data points each day
+        #     hour += 1
+        #     state_ = np.concatenate([all_house_id_ + hour, :], rsoc_ave_ ) 
+        # else:
+        #     done = True
+        #     day += 1
+        #     hour = 0
+        #     if day < len(all_data) / 24:  # all_data: total length of data -> offline??
+        #         state_ = np.concatenate([all_house_id_, :], rsoc_ave_)
+        #     else:
+        #         break
 
         return np.array(state_, dtype=np.float32), reward, done, {}  # done
+
+   # """
+   # def step2(self):
+   #      # house 2
+   #      return np.array(state_, dtype=np.float32), reward, {}  # done
+   # """
 
     def reset(self, house_id):
         """
