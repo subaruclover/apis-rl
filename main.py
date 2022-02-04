@@ -223,7 +223,7 @@ def combine_actions(RL, observation):
 
 
 def train(RL):
-    print("training start")
+    print("House E001, training start")
     total_steps = 0
     steps = []
     episodes = []
@@ -255,7 +255,7 @@ def train(RL):
             # observation_, reward, info = env.step1(action_request, action_accept, house_id)
 
             actions_space = np.linspace(0.2, 0.9, 8).tolist()
-            print("Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
+            print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))
 

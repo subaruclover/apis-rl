@@ -33,7 +33,7 @@ class BatteryEnv: my battery model -> replaced with APIS battery model
 from RL_learn import  Memory, DQNPrioritizedReplay
 from agent import APIS, House
 
-agent = APIS()
+# agent = APIS()
 
 # start_time = time.time()
 
@@ -57,12 +57,11 @@ pv_list = []
 load_list = []
 p2_list = []
 
-
 ############################
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 
-MEMORY_SIZE = 100
+MEMORY_SIZE = 100  # 10000
 
 sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
@@ -82,7 +81,7 @@ sess.run(tf.global_variables_initializer())
 
 
 def train(RL):
-    print("training start")
+    print("House E002, training start")
     total_steps = 0
     steps = []
     episodes = []
@@ -106,15 +105,15 @@ def train(RL):
             # agent.CreateSce2(action_request, action_accept)
 
             # house_id = input('input the house id: ')
-            observation_, reward, info = env.step2(action_request, action_accept, house_id)
+            observation_, reward, done, info = env.step2(action_request, action_accept, house_id)
 
             actions_space = np.linspace(0.2, 0.9, 8).tolist()
-            print("Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
+            print("House E002, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))
 
             # change the time step
-            time.sleep(60)
+            # time.sleep(60)
 
             # if time.sleep(5):  # done:
             #     reward = p2_e001
@@ -124,11 +123,11 @@ def train(RL):
             if total_steps > MEMORY_SIZE:
                 RL.learn()
 
-            # if time.sleep(5):  # done:
-            print('episode ', i_episode, ' finished')
-            steps.append(total_steps)
-            episodes.append(i_episode)
-            break  #
+            if done:
+                print('episode ', i_episode, ' finished')
+                steps.append(total_steps)
+                episodes.append(i_episode)
+                break  #
 
             observation = observation_
             total_steps += 1
