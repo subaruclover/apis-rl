@@ -189,7 +189,7 @@ while gl.sema:  # True, alter for different time periods
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 
-MEMORY_SIZE = 100  # 10000
+MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 

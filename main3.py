@@ -60,7 +60,7 @@ p2_list = []
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 
-MEMORY_SIZE = 100  # 10000
+MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
