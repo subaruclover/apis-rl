@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 # import tensorflow as tf
 import tensorflow.compat.v1 as tf
 
+np.random.seed(1)
+tf.set_random_seed(1)
+
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense
 from tensorflow.keras.initializers import glorot_uniform

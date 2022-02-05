@@ -30,7 +30,7 @@ class DQNNet : Deep Q-network Model
 class Memory : Memory model
 class BatteryEnv: my battery model -> replaced with APIS battery model
 """
-from RL_learn import  Memory, DQNPrioritizedReplay
+from RL_learn import Memory, DQNPrioritizedReplay
 from agent import APIS, House
 
 # agent = APIS()
@@ -64,18 +64,19 @@ env.seed(21)
 MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
-with tf.variable_scope('natural_DQN'):
-    RL_natural = DQNPrioritizedReplay(
-        n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
-    )
 
-
-# with tf.variable_scope('DQN_with_prioritized_replay'):
-#     RL_prio = DQNPrioritizedReplay(
+# with tf.variable_scope('natural_DQN'):
+#     RL_natural = DQNPrioritizedReplay(
 #         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+#         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
 #     )
+
+
+with tf.variable_scope('DQN_with_prioritized_replay'):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=5, memory_size=5000,
+        e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+    )
 
 sess.run(tf.global_variables_initializer())
 
@@ -85,11 +86,11 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    # EPI = 15
+    EPI = 24*30
 
     # house_id = input('input the house id: ')
 
-    for i_episode in range(24):
+    for i_episode in range(EPI):
 
         # TODO: agent needs to get value from the env, not given
         # reset with the env?
@@ -139,17 +140,17 @@ def train(RL):
 
 
 house_id = "E002"  # input('input the house id: ')
-his_natural, natural_memory = train(RL_natural)
-# his_prio, prio_memory = train(RL_prio)
+# his_natural, natural_memory = train(RL_natural)
+his_prio, prio_memory = train(RL_prio)
 
-# prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24)]  # reward(p2)
+prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24*30)]  # reward(p2)
 
 # compare based on first success
 plt.title("E002")
-plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN')
-plt.plot(natural_memory[:24, 8], 'b', label='natural DQN p2')
-# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-# plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
+# plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN')
+# plt.plot(natural_memory[:24, 8], 'b', label='natural DQN p2')
+plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
+plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
 plt.legend(loc='best')
 plt.ylabel('reward (p2)')
 plt.xlabel('episode')
