@@ -5,6 +5,8 @@ DQN training, single run, house E003
 created by: Qiong
 
 """
+import pickle
+
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 import os
@@ -142,6 +144,9 @@ house_id = "E003"  # input('input the house id: ')
 
 his_prio, prio_memory = train(RL_prio)
 prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24*30)]  # reward(p2)
+#  save reward to json file
+with open("saved/prio_reward_e003.data", "wb") as fp:
+    pickle.dump(prio_memory_store, fp)
 
 # compare based on first success
 plt.title("E003")
@@ -149,8 +154,8 @@ plt.title("E003")
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN p2')
 # plt.plot(natural_memory[:24, 8], 'b', label='natural DQN p2')
 
-plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
+# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='b', label='DQN with prioritized replay')
+plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay')
 plt.legend(loc='best')
 plt.ylabel('reward (p2)')
 plt.xlabel('episode')

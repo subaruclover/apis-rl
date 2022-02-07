@@ -5,6 +5,8 @@ DQN training, single run, house E002
 created by: Qiong
 
 """
+import pickle
+
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 # import tensorflow as tf
@@ -69,14 +71,14 @@ sess = tf.Session()
 
 # with tf.variable_scope('natural_DQN'):
 #     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
+#         n_actions=8, n_features=7, memory_size=MEMORY_SIZE,
 #         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
 #     )
 
 
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=5, memory_size=5000,
+        n_actions=8, n_features=7, memory_size=5000,
         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
     )
 
@@ -144,17 +146,19 @@ def train(RL):
 house_id = "E002"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
 his_prio, prio_memory = train(RL_prio)
-
 prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24*30)]  # reward(p2)
+#  save reward to json file
+with open("saved/prio_reward_e002.data", "wb") as fp:
+    pickle.dump(prio_memory_store, fp)
 
 # compare based on first success
 plt.title("E002")
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN')
 # plt.plot(natural_memory[:24, 8], 'b', label='natural DQN p2')
-plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='r', label='DQN with prioritized replay')
-plt.plot(prio_memory_store, 'r', label='DQN with prioritized replay')
+# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='b', label='DQN with prioritized replay')
+plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay')
 plt.legend(loc='best')
 plt.ylabel('reward (p2)')
-plt.xlabel('episode')
+plt.xlabel('episode (hour)')
 plt.grid()
 plt.show()
