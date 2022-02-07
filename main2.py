@@ -7,6 +7,8 @@ created by: Qiong
 """
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
+# import tensorflow as tf
+# print("tf version", tf.__version__)
 import os
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 

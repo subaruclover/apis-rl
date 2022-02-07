@@ -196,16 +196,16 @@ sess = tf.Session()
 
 # with tf.variable_scope('natural_DQN'):
 #     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
+#         n_actions=8, n_features=7, memory_size=MEMORY_SIZE,
 #         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
 #     )
 
 #
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=5, memory_size=5000,
+        n_actions=8, n_features=7, memory_size=5000,
         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
-    )
+    )  # n_features: 7 states
 sess.run(tf.global_variables_initializer())  # DQN
 
 
