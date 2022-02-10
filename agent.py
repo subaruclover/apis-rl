@@ -43,7 +43,7 @@ rsoc = {}
 wg = {}  # meter.wg, DC Grid power [W]
 wb = {}  # meter.wb, Battery Power [W]
 ig = {}  # meter.ig, DC Grid current [A]
-vg = {}
+vg = {}  # meter.vg, DC Grid voltage [V]
 
 pv_list = []
 load_list = []
@@ -181,12 +181,6 @@ class House():
         # TODO: Then get the state_ with the action lists (with the APIS api itself)
         # TODO: Shall we add delay for updating the actions for new Scenarios??
 
-        # current_pv = state[0]
-        # current_load = state[1]
-        # current_p2 = state[2]
-        # current_rsoc = state[3]
-        # current_rsoc_ave = state[4]
-
         # pvc_e001, load_e001, p2_e001, rsoc_e001, rsoc_ave = self.state
 
         output_data = requests.get(URL).text
@@ -202,10 +196,10 @@ class House():
             ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
             p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
             rsoc[ids] = output_data[ids]["emu"]["rsoc"]
-            wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+            # wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
             ig[ids] = output_data[ids]["dcdc"]["meter"]["ig"]
-            vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
-            wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+            # vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
+            # wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
             rsoc_list.append(rsoc[ids])
             # refresh every 60 seconds
@@ -221,40 +215,36 @@ class House():
                 load_e001_ = np.array([ups_output_power["E001"]])
                 p2_e001_ = np.array([p2["E001"]])
                 rsoc_e001_ = np.array([rsoc["E001"]])
-                wg_e001_ = np.array([wg["E001"]])
                 ig_e001_ = np.array([ig["E001"]])
 
-                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, wg_e001_, ig_e001_], axis=-1)
+                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, ig_e001_], axis=-1)
 
             if ids == "E002":
                 pvc_e002_ = np.array([pvc_charge_power["E002"]])
                 load_e002_ = np.array([ups_output_power["E002"]])
                 p2_e002_ = np.array([p2["E002"]])
                 rsoc_e002_ = np.array([rsoc["E002"]])
-                wg_e002_ = np.array([wg["E002"]])
                 ig_e002_ = np.array([ig["E002"]])
 
-                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, wg_e002_, ig_e002_], axis=-1)
+                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, ig_e002_], axis=-1)
 
             if ids == "E003":
                 pvc_e003_ = np.array([pvc_charge_power["E003"]])
                 load_e003_ = np.array([ups_output_power["E003"]])
                 p2_e003_ = np.array([p2["E003"]])
                 rsoc_e003_ = np.array([rsoc["E003"]])
-                wg_e003_ = np.array([wg["E003"]])
                 ig_e003_ = np.array([ig["E003"]])
 
-                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, wg_e003_, ig_e003_], axis=-1)
+                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, ig_e003_], axis=-1)
 
             if ids == "E004":
                 pvc_e004_ = np.array([pvc_charge_power["E004"]])
                 load_e004_ = np.array([ups_output_power["E002"]])
                 p2_e004_ = np.array([p2["E004"]])
                 rsoc_e004_ = np.array([rsoc["E004"]])
-                wg_e004_ = np.array([wg["E004"]])
                 ig_e004_ = np.array([ig["E004"]])
 
-                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, wg_e004_, ig_e004_], axis=-1)
+                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, ig_e004_], axis=-1)
 
         # print(rsoc)
         # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
@@ -338,10 +328,10 @@ class House():
             ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
             p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
             rsoc[ids] = output_data[ids]["emu"]["rsoc"]
-            wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+            # wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
             ig[ids] = output_data[ids]["dcdc"]["meter"]["ig"]
-            vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
-            wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+            # vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
+            # wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
             rsoc_list.append(rsoc[ids])
 
@@ -351,40 +341,36 @@ class House():
                 load_e001_ = np.array([ups_output_power["E001"]])
                 p2_e001_ = np.array([p2["E001"]])
                 rsoc_e001_ = np.array([rsoc["E001"]])
-                wg_e001_ = np.array([wg["E001"]])
                 ig_e001_ = np.array([ig["E001"]])
 
-                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, wg_e001_, ig_e001_], axis=-1)
+                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, ig_e001_], axis=-1)
 
             if ids == "E002":
                 pvc_e002_ = np.array([pvc_charge_power["E002"]])
                 load_e002_ = np.array([ups_output_power["E002"]])
                 p2_e002_ = np.array([p2["E002"]])
                 rsoc_e002_ = np.array([rsoc["E002"]])
-                wg_e002_ = np.array([wg["E002"]])
                 ig_e002_ = np.array([ig["E002"]])
 
-                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, wg_e002_, ig_e002_], axis=-1)
+                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, ig_e002_], axis=-1)
 
             if ids == "E003":
                 pvc_e003_ = np.array([pvc_charge_power["E003"]])
                 load_e003_ = np.array([ups_output_power["E003"]])
                 p2_e003_ = np.array([p2["E003"]])
                 rsoc_e003_ = np.array([rsoc["E003"]])
-                wg_e003_ = np.array([wg["E003"]])
                 ig_e003_ = np.array([ig["E003"]])
 
-                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, wg_e003_, ig_e003_], axis=-1)
+                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, ig_e003_], axis=-1)
 
             if ids == "E004":
                 pvc_e004_ = np.array([pvc_charge_power["E004"]])
                 load_e004_ = np.array([ups_output_power["E002"]])
                 p2_e004_ = np.array([p2["E004"]])
                 rsoc_e004_ = np.array([rsoc["E004"]])
-                wg_e004_ = np.array([wg["E004"]])
                 ig_e004_ = np.array([ig["E004"]])
 
-                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, wg_e004_, ig_e004_], axis=-1)
+                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, ig_e004_], axis=-1)
 
         # print(rsoc)
         # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
@@ -452,10 +438,10 @@ class House():
             ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
             p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
             rsoc[ids] = output_data[ids]["emu"]["rsoc"]
-            wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+            # wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
             ig[ids] = output_data[ids]["dcdc"]["meter"]["ig"]
-            vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
-            wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+            # vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
+            # wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
             rsoc_list.append(rsoc[ids])
 
@@ -465,40 +451,36 @@ class House():
                 load_e001_ = np.array([ups_output_power["E001"]])
                 p2_e001_ = np.array([p2["E001"]])
                 rsoc_e001_ = np.array([rsoc["E001"]])
-                wg_e001_ = np.array([wg["E001"]])
                 ig_e001_ = np.array([ig["E001"]])
 
-                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, wg_e001_, ig_e001_], axis=-1)
+                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, ig_e001_], axis=-1)
 
             if ids == "E002":
                 pvc_e002_ = np.array([pvc_charge_power["E002"]])
                 load_e002_ = np.array([ups_output_power["E002"]])
                 p2_e002_ = np.array([p2["E002"]])
                 rsoc_e002_ = np.array([rsoc["E002"]])
-                wg_e002_ = np.array([wg["E002"]])
                 ig_e002_ = np.array([ig["E002"]])
 
-                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, wg_e002_, ig_e002_], axis=-1)
+                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, ig_e002_], axis=-1)
 
             if ids == "E003":
                 pvc_e003_ = np.array([pvc_charge_power["E003"]])
                 load_e003_ = np.array([ups_output_power["E003"]])
                 p2_e003_ = np.array([p2["E003"]])
                 rsoc_e003_ = np.array([rsoc["E003"]])
-                wg_e003_ = np.array([wg["E003"]])
                 ig_e003_ = np.array([ig["E003"]])
 
-                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, wg_e003_, ig_e003_], axis=-1)
+                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, ig_e003_], axis=-1)
 
             if ids == "E004":
                 pvc_e004_ = np.array([pvc_charge_power["E004"]])
                 load_e004_ = np.array([ups_output_power["E002"]])
                 p2_e004_ = np.array([p2["E004"]])
                 rsoc_e004_ = np.array([rsoc["E004"]])
-                wg_e004_ = np.array([wg["E004"]])
                 ig_e004_ = np.array([ig["E004"]])
 
-                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, wg_e004_, ig_e004_], axis=-1)
+                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, ig_e004_], axis=-1)
 
         # print(rsoc)
         # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
@@ -566,10 +548,10 @@ class House():
             ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
             p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
             rsoc[ids] = output_data[ids]["emu"]["rsoc"]
-            wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+            # wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
             ig[ids] = output_data[ids]["dcdc"]["meter"]["ig"]
-            vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
-            wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+            # vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
+            # wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
             rsoc_list.append(rsoc[ids])
 
@@ -579,40 +561,36 @@ class House():
                 load_e001_ = np.array([ups_output_power["E001"]])
                 p2_e001_ = np.array([p2["E001"]])
                 rsoc_e001_ = np.array([rsoc["E001"]])
-                wg_e001_ = np.array([wg["E001"]])
                 ig_e001_ = np.array([ig["E001"]])
 
-                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, wg_e001_, ig_e001_], axis=-1)
+                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, ig_e001_], axis=-1)
 
             if ids == "E002":
                 pvc_e002_ = np.array([pvc_charge_power["E002"]])
                 load_e002_ = np.array([ups_output_power["E002"]])
                 p2_e002_ = np.array([p2["E002"]])
                 rsoc_e002_ = np.array([rsoc["E002"]])
-                wg_e002_ = np.array([wg["E002"]])
                 ig_e002_ = np.array([ig["E002"]])
 
-                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, wg_e002_, ig_e002_], axis=-1)
+                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, ig_e002_], axis=-1)
 
             if ids == "E003":
                 pvc_e003_ = np.array([pvc_charge_power["E003"]])
                 load_e003_ = np.array([ups_output_power["E003"]])
                 p2_e003_ = np.array([p2["E003"]])
                 rsoc_e003_ = np.array([rsoc["E003"]])
-                wg_e003_ = np.array([wg["E003"]])
                 ig_e003_ = np.array([ig["E003"]])
 
-                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, wg_e003_, ig_e003_], axis=-1)
+                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, ig_e003_], axis=-1)
 
             if ids == "E004":
                 pvc_e004_ = np.array([pvc_charge_power["E004"]])
                 load_e004_ = np.array([ups_output_power["E002"]])
                 p2_e004_ = np.array([p2["E004"]])
                 rsoc_e004_ = np.array([rsoc["E004"]])
-                wg_e004_ = np.array([wg["E004"]])
                 ig_e004_ = np.array([ig["E004"]])
 
-                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, wg_e004_, ig_e004_], axis=-1)
+                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, ig_e004_], axis=-1)
 
         # print(rsoc)
         # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
@@ -672,10 +650,10 @@ class House():
             ups_output_power[ids] = output_data[ids]["emu"]["ups_output_power"]
             p2[ids] = output_data[ids]["dcdc"]["powermeter"]["p2"]
             rsoc[ids] = output_data[ids]["emu"]["rsoc"]
-            wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
+            # wg[ids] = output_data[ids]["dcdc"]["meter"]["wg"]
             ig[ids] = output_data[ids]["dcdc"]["meter"]["ig"]
-            vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
-            wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
+            # vg[ids] = output_data[ids]["dcdc"]["meter"]["vg"]
+            # wb[ids] = output_data[ids]["dcdc"]["meter"]["wb"]
 
             rsoc_list.append(rsoc[ids])
 
@@ -685,40 +663,36 @@ class House():
                 load_e001_ = np.array([ups_output_power["E001"]])
                 p2_e001_ = np.array([p2["E001"]])
                 rsoc_e001_ = np.array([rsoc["E001"]])
-                wg_e001_ = np.array([wg["E001"]])
                 ig_e001_ = np.array([ig["E001"]])
 
-                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, wg_e001_, ig_e001_], axis=-1)
+                all_e001_ = np.concatenate([pvc_e001_, load_e001_, p2_e001_, rsoc_e001_, ig_e001_], axis=-1)
 
             if ids == "E002":
                 pvc_e002_ = np.array([pvc_charge_power["E002"]])
                 load_e002_ = np.array([ups_output_power["E002"]])
                 p2_e002_ = np.array([p2["E002"]])
                 rsoc_e002_ = np.array([rsoc["E002"]])
-                wg_e002_ = np.array([wg["E002"]])
                 ig_e002_ = np.array([ig["E002"]])
 
-                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, wg_e002_, ig_e002_], axis=-1)
+                all_e002_ = np.concatenate([pvc_e002_, load_e002_, p2_e002_, rsoc_e002_, ig_e002_], axis=-1)
 
             if ids == "E003":
                 pvc_e003_ = np.array([pvc_charge_power["E003"]])
                 load_e003_ = np.array([ups_output_power["E003"]])
                 p2_e003_ = np.array([p2["E003"]])
                 rsoc_e003_ = np.array([rsoc["E003"]])
-                wg_e003_ = np.array([wg["E003"]])
                 ig_e003_ = np.array([ig["E003"]])
 
-                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, wg_e003_, ig_e003_], axis=-1)
+                all_e003_ = np.concatenate([pvc_e003_, load_e003_, p2_e003_, rsoc_e003_, ig_e003_], axis=-1)
 
             if ids == "E004":
                 pvc_e004_ = np.array([pvc_charge_power["E004"]])
                 load_e004_ = np.array([ups_output_power["E002"]])
                 p2_e004_ = np.array([p2["E004"]])
                 rsoc_e004_ = np.array([rsoc["E004"]])
-                wg_e004_ = np.array([wg["E004"]])
                 ig_e004_ = np.array([ig["E004"]])
 
-                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, wg_e004_, ig_e004_], axis=-1)
+                all_e004_ = np.concatenate([pvc_e004_, load_e004_, p2_e004_, rsoc_e004_, ig_e004_], axis=-1)
 
         # print(rsoc)
         # {'E001': 29.98, 'E002': 29.99, 'E003': 29.98, 'E004': 29.99}
