@@ -222,6 +222,8 @@ def combine_actions(RL, observation):
 
     return combine_action
 
+# TODO: separate data into training set (5 month) + testing set
+
 
 def train(RL):
     print("House E001, training start")
