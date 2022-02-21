@@ -75,7 +75,7 @@ sess = tf.Session()
 #
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=5, memory_size=5000,
+        n_actions=8, n_features=5, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
     )
 sess.run(tf.global_variables_initializer())
@@ -143,7 +143,7 @@ house_id = "E003"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
 
 his_prio, prio_memory = train(RL_prio)
-prio_memory_store = [prio_memory.tree.data[i][8] for i in range(24*30)]  # reward(p2)
+prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*30)]  # reward(p2)
 #  save reward to json file
 with open("saved/prio_reward_e003.data", "wb") as fp:
     pickle.dump(prio_memory_store, fp)
