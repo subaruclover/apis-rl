@@ -90,7 +90,7 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    EPI = 24*30
+    EPI = 24*30*2
 
     # house_id = input('input the house id: ')
 
@@ -146,7 +146,10 @@ def train(RL):
 house_id = "E002"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
 his_prio, prio_memory = train(RL_prio)
-prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*30)]  # reward(p2)
+prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*30*2)]  # reward(p2)
+#  save memo to json file
+with open("saved/prio_memo_e002.data", "wb") as fp:
+    pickle.dump(prio_memory, fp)
 #  save reward to json file
 with open("saved/prio_reward_e002.data", "wb") as fp:
     pickle.dump(prio_memory_store, fp)

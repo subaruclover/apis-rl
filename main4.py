@@ -86,7 +86,7 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    EPI = 24*30
+    EPI = 24*30*2
     # house_id = input('input the house id: ')
 
     for i_episode in range(EPI):
@@ -141,7 +141,10 @@ house_id = "E004"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
 
 his_prio, prio_memory = train(RL_prio)
-prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*30)]  # reward(p2)
+prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*30*2)]  # reward(p2)
+#  save memo to json file
+with open("saved/prio_memo_e004.data", "wb") as fp:
+    pickle.dump(prio_memory, fp)
 #  save reward to json file
 with open("saved/prio_reward_e004.data", "wb") as fp:
     pickle.dump(prio_memory_store, fp)
@@ -156,6 +159,6 @@ plt.title("E004")
 plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay')
 plt.legend(loc='best')
 plt.ylabel('reward (p2)')
-plt.xlabel('episode')
+plt.xlabel('episode (hour)')
 plt.grid()
 plt.show()
