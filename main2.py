@@ -65,20 +65,21 @@ p2_list = []
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 
+
 MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 
 # with tf.variable_scope('natural_DQN'):
 #     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=7, memory_size=MEMORY_SIZE,
+#         n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
 #         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
 #     )
 
 
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=7, memory_size=MEMORY_SIZE,
+        n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
     )
 
@@ -112,7 +113,8 @@ def train(RL):
             # house_id = input('input the house id: ')
             observation_, reward, done, info = env.step2(action_request, action_accept, house_id)
 
-            actions_space = np.linspace(0.2, 0.9, 8).tolist()
+            # actions_space = np.linspace(0.2, 0.9, 8).tolist()
+            actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
             print("House E002, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))

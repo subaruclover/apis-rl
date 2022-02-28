@@ -57,8 +57,10 @@ class APIS(object):
 
     def __init__(self, action_request, action_accept):
         # request and accept level: between [0, 1]
-        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
-        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()  # [0.2~0.9]
+        # self.action_request_space = np.linspace(0.3, 0.9, 7).tolist()  # [0.3~0.9], battery mode rsoc > 30%
+        # self.action_accept_space = np.linspace(0.3, 0.9, 7).tolist()  # [0.3~0.9]
+        # self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        # self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
         self.action_request = action_request
         self.action_accept = action_accept
 
@@ -177,7 +179,8 @@ class House():
              but when the goal is reached (time up), done is True
         """
         # for house E001: with the actions (act_req, act_acc):
-        self.agent.CreateSce1(self.agent.action_request, self.agent.action_accept)
+        # self.agent.CreateSce1(self.agent.action_request, self.agent.action_accept)
+        self.agent.CreateSce1(action_request, action_accept)
         # TODO: Then get the state_ with the action lists (with the APIS api itself)
         # TODO: Shall we add delay for updating the actions for new Scenarios??
 
@@ -313,7 +316,7 @@ class House():
              but when the goal is reached (time up), done is True
         """
         # for house E002: with the actions (act_req, act_acc):
-        self.agent.CreateSce2(self.agent.action_request, self.agent.action_accept)
+        self.agent.CreateSce2(action_request, action_accept)
 
         output_data = requests.get(URL).text
         output_data = json.loads(output_data)  # dict
@@ -423,7 +426,7 @@ class House():
              but when the goal is reached (time up), done is True
         """
         # for house E003: with the actions (act_req, act_acc):
-        self.agent.CreateSce3(self.agent.action_request, self.agent.action_accept)
+        self.agent.CreateSce3(action_request, action_accept)
 
         output_data = requests.get(URL).text
         output_data = json.loads(output_data)  # dict
@@ -533,7 +536,7 @@ class House():
              but when the goal is reached (time up), done is True
         """
         # for house E004: with the actions (act_req, act_acc):
-        self.agent.CreateSce4(self.agent.action_request, self.agent.action_accept)
+        self.agent.CreateSce4(action_request, action_accept)
 
         output_data = requests.get(URL).text
         output_data = json.loads(output_data)  # dict

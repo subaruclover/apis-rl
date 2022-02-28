@@ -342,6 +342,7 @@ class DQNPrioritizedReplay:
             actions = np.argsort(-actions_value)[:3]
         else:
             # action = np.random.randint(0, self.n_actions)
+            print("random actions")
             actions = sorted(np.random.choice(self.n_actions, 3, replace=False), reverse=True)  # top 3 values from random
 
         return actions

@@ -189,6 +189,7 @@ while gl.sema:  # True, alter for different time periods
 # give a set of init actions (action 5, 6, 7 for act_req and act_acc)
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
+print(env.seed(21))
 
 MEMORY_SIZE = 10000  # 10000
 
@@ -196,16 +197,16 @@ sess = tf.Session()
 
 # with tf.variable_scope('natural_DQN'):
 #     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=7, memory_size=MEMORY_SIZE,
+#         n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
 #         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
 #     )
 
 #
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=7, memory_size=MEMORY_SIZE,
+        n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
-    )  # n_features: 7 states
+    )  # n_features: 6 states
 sess.run(tf.global_variables_initializer())  # DQN
 
 
@@ -257,7 +258,7 @@ def train(RL):
             observation_, reward, done, info = env.step1(action_request, action_accept, house_id)
             # observation_, reward, info = env.step1(action_request, action_accept, house_id)
 
-            actions_space = np.linspace(0.2, 0.9, 8).tolist()
+            actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
             print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))
@@ -267,6 +268,8 @@ def train(RL):
 
             # if time.sleep(5):  # done:
             #     reward = p2_e001
+            # if done:
+            #     reward =
 
             RL.store_transition(observation, actions, reward, observation_)
 
