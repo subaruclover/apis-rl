@@ -120,7 +120,7 @@ def train(RL):
 
             RL.store_transition(observation, actions, reward, observation_)
 
-            if total_steps > MEMORY_SIZE:
+            if total_steps > MEMORY_SIZE:  # change total_steps -> EPI, otherwise always random action
                 RL.learn()
 
             if done:

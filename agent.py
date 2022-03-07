@@ -273,7 +273,7 @@ class House():
 
         while not gl.sema:
             done = False
-            time.sleep(60)
+            time.sleep(1)
             done = True
             break
         # done =

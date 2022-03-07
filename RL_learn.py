@@ -244,7 +244,7 @@ class DQNPrioritizedReplay:
         self.memory_size = memory_size
         self.batch_size = batch_size
         self.epsilon_increment = e_greedy_increment
-        self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
+        self.epsilon = 0.95  # 0 if e_greedy_increment is not None else self.epsilon_max
 
         self.prioritized = prioritized  # decide to use prioritize experience replay or not
 
@@ -335,11 +335,12 @@ class DQNPrioritizedReplay:
         # TODO
         # fixed the first action, select the second <- softmax, repeat for 3rd
         # np.argmax, get the top 3 values?
+        print(self.epsilon)
         observation = observation[np.newaxis, :]
         if np.random.uniform() < self.epsilon:
             actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
             # action = np.argmax(actions_value)
-            actions = np.argsort(-actions_value)[:3]
+            actions = sorted(np.argsort(np.squeeze(-actions_value))[:3], reverse=True)
         else:
             # action = np.random.randint(0, self.n_actions)
             print("random actions")
