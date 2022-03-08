@@ -37,17 +37,25 @@ from agent import APIS, House
 # agent = APIS()
 
 # action
-i = 0
-decay = 0
-while i < 10:
-    exp_tradeoff = np.random.rand()
-    explore_prob = 0.01 + (1.0 - 0.01) * np.exp(-0.001 * decay)
-    if explore_prob > exp_tradeoff:
-        action = np.random.randint(0, 7)
-    else:
-        action = 15
-    decay += 1
-    i += 1
+for i in range(2):
+
+    e = 0
+    decay = 0
+    while e < 10:
+        exp_tradeoff = np.random.rand()
+        explore_prob = 0.01 + (1.0 - 0.01) * np.exp(-0.001 * decay)
+        if explore_prob > exp_tradeoff:
+            action = np.random.randint(0, 7)
+            done = True
+        else:
+            action = 15
+            done = True
+
+        if done:
+            break
+
+        decay += 1
+        e += 1
 
 
 

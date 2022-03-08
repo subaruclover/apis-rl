@@ -331,17 +331,30 @@ class DQNPrioritizedReplay:
             self.memory[index, :] = transition
             self.memory_counter += 1
 
+    def choose_action_simple(self, observation):
+        observation = observation[np.newaxis, :]
+        # action selection
+        if np.random.uniform() < self.epsilon:
+            # choose best action
+            actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
+            action = np.argmax(actions_value)
+        else:
+            # choose random action
+            action = np.random.choice(self.n_actions)
+        return action
+
     def choose_actions(self, observation):
         # TODO
         # fixed the first action, select the second <- softmax, repeat for 3rd
         # np.argmax, get the top 3 values?
-        print(self.epsilon)
+        print("epsilon value:", self.epsilon)
         observation = observation[np.newaxis, :]
-        if np.random.uniform() < self.epsilon:
+        if np.random.uniform() < self.epsilon:  # act greedy
             actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
             # action = np.argmax(actions_value)
+            print("act greedy")
             actions = sorted(np.argsort(np.squeeze(-actions_value))[:3], reverse=True)
-        else:
+        else:  # act non-greedy, random actions
             # action = np.random.randint(0, self.n_actions)
             print("random actions")
             actions = sorted(np.random.choice(self.n_actions, 3, replace=False), reverse=True)  # top 3 values from random

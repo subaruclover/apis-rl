@@ -195,11 +195,11 @@ MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 
-# with tf.variable_scope('natural_DQN'):
-#     RL_natural = DQNPrioritizedReplay(
-#         n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
-#     )
+with tf.variable_scope('natural_DQN'):
+    RL_natural = DQNPrioritizedReplay(
+        n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
+    )
 
 #
 with tf.variable_scope('DQN_with_prioritized_replay'):
@@ -242,7 +242,7 @@ def train(RL):
         observation = env.reset(house_id)
         start_time = time.time()
 
-        while True:  # not gl.sema:
+        while i_episode <= EPI:  # True:  # not gl.sema: total_steps <= 24 (one day)
 
             # choose actions
             actions = RL.choose_actions(observation)
@@ -255,7 +255,7 @@ def train(RL):
 
             # house_id = input('input the house id: ')
             # TODO: add done (how to make it offline? with the current online simulation)
-            observation_, reward, done, info = env.step1(action_request, action_accept, house_id)
+            observation_, reward, info = env.step1(action_request, action_accept, house_id)
             # observation_, reward, info = env.step1(action_request, action_accept, house_id)
 
             actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
@@ -270,13 +270,22 @@ def train(RL):
             #     reward = p2_e001
             # if done:
             #     reward =
+            time.sleep(60)
+            # while not gl.sema:
+            #     done = False
+            #     time.sleep(1)
+            #     done = True
+            #     break
 
             RL.store_transition(observation, actions, reward, observation_)
 
-            if total_steps > MEMORY_SIZE:
+            print("total step", total_steps)
+            if total_steps > 10:  # MEMORY_SIZE:
                 RL.learn()
+            # RL.learn()
 
-            if done: #time.sleep(60):# done:  #
+            if total_steps == 24:  # done:  # time.sleep(60):# done:  # one day
+                done = True
                 print('episode ', i_episode, ' finished')
                 steps.append(total_steps)
                 episodes.append(i_episode)
@@ -292,7 +301,7 @@ def train(RL):
 
 
 house_id = "E001"  # input('input the house id: ')
-# his_natural, natural_memory = train(RL_natural)
+his_natural, natural_memory = train(RL_natural)
 ##
 his_prio, prio_memory = train(RL_prio)
 prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)

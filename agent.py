@@ -271,11 +271,11 @@ class House():
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
-        while not gl.sema:
-            done = False
-            time.sleep(60)
-            done = True
-            break
+        # while not gl.sema:
+        #     done = False
+        #     time.sleep(1)
+        #     done = True
+        #     break
         # done =
         
         # maybe could not use functions in this way (day, hour has to be within one file)
@@ -292,7 +292,7 @@ class House():
         #     else:
         #         break
 
-        return np.array(state_, dtype=np.float32), reward, done, {}  # done
+        return np.array(state_, dtype=np.float32), reward, {}  # done
 
     def step2(self, action_request, action_accept, house_id):
         # step function for house 2 (used in main2.py)
