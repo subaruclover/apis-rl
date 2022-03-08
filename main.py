@@ -231,79 +231,83 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    EPI = 24*55
+    EPI = 2  # 24*55  # #.of iter
+    N_DAY = 30
 
     # house_id = input('input the house id: ')
 
-    for i_episode in range(EPI):  # 1 EPI: (1day, 24hrs) 24 min, action updated every hour (1 min)
+    for i_episode in range(EPI):
+        # 1 EPI: test one month data first (shorten from one year)
+        # (1day, 24hrs) 24 min, action updated every hour (1 min)
+        print("Episode {} starts".format(i_episode))
+        day = 0
+        hour = 0
+        done = False
 
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env
         observation = env.reset(house_id)
-        start_time = time.time()
 
-        while i_episode <= EPI:  # True:  # not gl.sema: total_steps <= 24 (one day)
+        while day <= N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
 
-            # choose actions
+            # start_time = time.time()
+
+            # choose actions (e-greedy)
             actions = RL.choose_actions(observation)
             action_request = [actions[0], actions[2]]
             action_accept = [actions[1]]
 
-            # TODO: this should be written in the step functions!!!
-            # agent.CreateSce1(action_request, action_accept)
-            # it takes quite a while to create new scenario files
-
             # house_id = input('input the house id: ')
             # TODO: add done (how to make it offline? with the current online simulation)
             observation_, reward, info = env.step1(action_request, action_accept, house_id)
-            # observation_, reward, info = env.step1(action_request, action_accept, house_id)
 
             actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
             print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))
-
-            # change the time step
-            # time.sleep(60)
-
-            # if time.sleep(5):  # done:
-            #     reward = p2_e001
-            # if done:
-            #     reward =
-            time.sleep(60)
-            # while not gl.sema:
-            #     done = False
-            #     time.sleep(1)
-            #     done = True
-            #     break
-
+            # Store the experience in memory
             RL.store_transition(observation, actions, reward, observation_)
 
-            print("total step", total_steps)
+            # print("total step", total_steps)
             if total_steps > 10:  # MEMORY_SIZE:
                 RL.learn()
             # RL.learn()
 
-            if total_steps == 24:  # done:  # time.sleep(60):# done:  # one day
+            if hour < 10:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+                hour += 1
+                observation = observation_
+                total_steps += 1
+                print("total_steps = ", total_steps)
+                time.sleep(1)  # update every hour
+            else:
                 done = True
-                print('episode ', i_episode, ' finished')
-                steps.append(total_steps)
-                episodes.append(i_episode)
-                break  #
+                day += 1
+                print('Day', day, ' finished')
+                hour = 0
 
-            observation = observation_
-            total_steps += 1
+                if day <= N_DAY:
+                    # observation = observation_
+                    steps.append(total_steps)
+                    episodes.append(i_episode)
+                else:
+                    break
 
-        end_time = time.time()
-        print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
+            # observation = observation_
+            # total_steps += 1
+            # print("total_steps = ", total_steps)
 
-    return np.vstack((episodes, steps)), RL.memory
+        # end_time = time.time()
+        # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
+
+    # return np.vstack((episodes, steps)), RL.memory
+    return RL.memory
 
 
 house_id = "E001"  # input('input the house id: ')
 his_natural, natural_memory = train(RL_natural)
 ##
-his_prio, prio_memory = train(RL_prio)
+# his_prio, prio_memory = train(RL_prio)
+prio_memory = train(RL_prio)
 prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
 with open("saved/prio_memo_e001.data", "wb") as fp:

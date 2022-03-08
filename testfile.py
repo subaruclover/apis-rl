@@ -37,6 +37,7 @@ from agent import APIS, House
 # agent = APIS()
 
 # action
+steps = 0
 for i in range(2):
 
     e = 0
@@ -51,7 +52,7 @@ for i in range(2):
             action = 15
             done = True
 
-        if done:
+        if steps > 5:
             break
 
         decay += 1
