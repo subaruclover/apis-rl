@@ -244,7 +244,7 @@ class DQNPrioritizedReplay:
         self.memory_size = memory_size
         self.batch_size = batch_size
         self.epsilon_increment = e_greedy_increment
-        self.epsilon = 0.95  # 0 if e_greedy_increment is not None else self.epsilon_max
+        self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
 
         self.prioritized = prioritized  # decide to use prioritize experience replay or not
 

@@ -34,7 +34,21 @@ class BatteryEnv: my battery model -> replaced with APIS battery model
 from RL_learn import Memory, DQNPrioritizedReplay
 from agent import APIS, House
 
-agent = APIS()
+# agent = APIS()
+
+# action
+i = 0
+decay = 0
+while i < 10:
+    exp_tradeoff = np.random.rand()
+    explore_prob = 0.01 + (1.0 - 0.01) * np.exp(-0.001 * decay)
+    if explore_prob > exp_tradeoff:
+        action = np.random.randint(0, 7)
+    else:
+        action = 15
+    decay += 1
+    i += 1
+
 
 
 # start_time = time.time()
