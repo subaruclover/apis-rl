@@ -231,7 +231,7 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    EPI = 3  # 24*55  # #.of iter
+    EPI = 3   # #.of iter
     N_DAY = 30
 
     # house_id = input('input the house id: ')
@@ -248,7 +248,7 @@ def train(RL):
         # reset with the env
         observation = env.reset(house_id)
 
-        while day <= N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
+        while day < N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
 
             # start_time = time.time()
 
@@ -269,7 +269,7 @@ def train(RL):
             RL.store_transition(observation, actions, reward, observation_)
 
             # print("total step", total_steps)
-            # if total_steps > 100:  # 5000
+            # if total_steps > 100:  # MEMORY_SIZE
             #     RL.learn()
             RL.learn()
 
@@ -285,7 +285,7 @@ def train(RL):
                 print('Day', day, ' finished')
                 hour = 0
 
-                if day <= N_DAY:
+                if day < N_DAY:
                     observation = observation_
                     steps.append(total_steps)
                     episodes.append(i_episode)
