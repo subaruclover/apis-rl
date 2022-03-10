@@ -231,7 +231,7 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    EPI = 2  # 24*55  # #.of iter
+    EPI = 3  # 24*55  # #.of iter
     N_DAY = 30
 
     # house_id = input('input the house id: ')
@@ -273,12 +273,12 @@ def train(RL):
             #     RL.learn()
             RL.learn()
 
-            if hour < 24-1:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+            if hour < 24:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
                 hour += 1
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
-                time.sleep(0.01)  # update every hour
+                time.sleep(60)  # update every hour
             else:
                 done = True
                 day += 1
@@ -286,7 +286,7 @@ def train(RL):
                 hour = 0
 
                 if day <= N_DAY:
-                    # observation = observation_
+                    observation = observation_
                     steps.append(total_steps)
                     episodes.append(i_episode)
                 else:
@@ -306,13 +306,13 @@ def train(RL):
 house_id = "E001"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
 natural_memory = train(RL_natural)
-natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+# natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
 with open("saved/natural_memo_e001.data", "wb") as fp:
     pickle.dump(natural_memory, fp)
 #  save reward to json file
-with open("saved/natural_reward_e001.data", "wb") as fp:
-    pickle.dump(natural_memory_store, fp)
+# with open("saved/natural_reward_e001.data", "wb") as fp:
+#     pickle.dump(natural_memory_store, fp)
 
 ##
 # # his_prio, prio_memory = train(RL_prio)
@@ -326,18 +326,18 @@ with open("saved/natural_reward_e001.data", "wb") as fp:
 #     pickle.dump(prio_memory_store, fp)
 
 # compare based on first success
-plt.title("E001")
+# plt.title("E001")
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
 # plt.plot(natural_memory[:24, 8], 'g', label='natural DQN p2')
 
 
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='b', label='DQN with prioritized replay')
-plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay p2')
-plt.legend(loc='best')
-plt.ylabel('reward (p2)')
-plt.xlabel('episode (hour)')
-plt.grid()
-plt.show()
+# plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay p2')
+# plt.legend(loc='best')
+# plt.ylabel('reward (p2)')
+# plt.xlabel('episode (hour)')
+# plt.grid()
+# plt.show()
 
 """
 
