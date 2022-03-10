@@ -191,7 +191,7 @@ env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
 print(env.seed(21))
 
-MEMORY_SIZE = 10000  # 10000
+MEMORY_SIZE = 5000  # 10000
 
 sess = tf.Session()
 
@@ -269,16 +269,16 @@ def train(RL):
             RL.store_transition(observation, actions, reward, observation_)
 
             # print("total step", total_steps)
-            if total_steps > 10:  # MEMORY_SIZE:
-                RL.learn()
-            # RL.learn()
+            # if total_steps > 100:  # 5000
+            #     RL.learn()
+            RL.learn()
 
-            if hour < 10:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+            if hour < 24-1:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
                 hour += 1
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
-                time.sleep(1)  # update every hour
+                time.sleep(0.01)  # update every hour
             else:
                 done = True
                 day += 1
@@ -304,17 +304,26 @@ def train(RL):
 
 
 house_id = "E001"  # input('input the house id: ')
-his_natural, natural_memory = train(RL_natural)
-##
-# his_prio, prio_memory = train(RL_prio)
-prio_memory = train(RL_prio)
-prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+# his_natural, natural_memory = train(RL_natural)
+natural_memory = train(RL_natural)
+natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
-with open("saved/prio_memo_e001.data", "wb") as fp:
-    pickle.dump(prio_memory, fp)
+with open("saved/natural_memo_e001.data", "wb") as fp:
+    pickle.dump(natural_memory, fp)
 #  save reward to json file
-with open("saved/prio_reward_e001.data", "wb") as fp:
-    pickle.dump(prio_memory_store, fp)
+with open("saved/natural_reward_e001.data", "wb") as fp:
+    pickle.dump(natural_memory_store, fp)
+
+##
+# # his_prio, prio_memory = train(RL_prio)
+# prio_memory = train(RL_prio)
+# prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+# #  save memo to json file
+# with open("saved/prio_memo_e001.data", "wb") as fp:
+#     pickle.dump(prio_memory, fp)
+# #  save reward to json file
+# with open("saved/prio_reward_e001.data", "wb") as fp:
+#     pickle.dump(prio_memory_store, fp)
 
 # compare based on first success
 plt.title("E001")

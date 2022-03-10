@@ -370,9 +370,11 @@ class DQNPrioritizedReplay:
         # sample batch memory from all memory
         if self.prioritized:
             tree_idx, batch_memory, ISWeights = self.memory.sample(self.batch_size)
+            print("batch_memo: ", batch_memory)
         else:
             sample_index = np.random.choice(self.memory_size, size=self.batch_size)
             batch_memory = self.memory[sample_index, :]
+            print("batch_memo: ", batch_memory)
 
         q_next, q_eval = self.sess.run(
             [self.q_next, self.q_eval],
