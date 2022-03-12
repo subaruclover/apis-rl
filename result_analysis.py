@@ -9,10 +9,12 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
 
+"""
 # e001
 # load saved files
 with open("saved/prio_memo_e001.data", "rb") as f1:
     data_e001 = pickle.load(f1)
+
 
 action_req_low_e001 = [data_e001.tree.data[i][8] for i in range(24*55)]  # [6]~[8]
 action_req_high_e001 = [data_e001.tree.data[i][6] for i in range(24*55)]
@@ -70,3 +72,14 @@ action_acc_e004 = [data_e004.tree.data[i][7] for i in range(24*55)]
 grid_current_e004 = [data_e004.tree.data[i][4] for i in range(24*55)]
 
 reward_e004 = [data_e004.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+"""
+
+
+with open("saved/natural_memo_e001.data", "rb") as f1:
+    data_e001 = pickle.load(f1)
+
+reward_e001 = [data_e001[i][9] for i in range(24*30*3)]  # reward(p2)
+
+
+with open("saved/natural_reward_e001.data", "rb") as f1:
+    rewards_e001 = pickle.load(f1)

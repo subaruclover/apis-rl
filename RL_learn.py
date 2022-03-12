@@ -228,7 +228,7 @@ class DQNPrioritizedReplay:
                  learning_rate=0.005,
                  reward_decay=0.9,
                  e_greedy=0.95,
-                 replace_target_iter=500,
+                 replace_target_iter=100,  # 500,
                  memory_size=10000,
                  batch_size=256,
                  e_greedy_increment=None,

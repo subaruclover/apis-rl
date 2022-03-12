@@ -38,6 +38,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set(style="whitegrid")
+import h5py
 
 # RL_learn functions
 """
@@ -195,10 +196,13 @@ MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 
+# EPI = 1, e_greedy_increment=0.01
+# EPI = 3, e_greedy_increment=0.005
+
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
         n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
+        e_greedy_increment=0.005, sess=sess, prioritized=False, output_graph=True,
     )
 
 #
@@ -231,6 +235,7 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
+    reward_list = []
     EPI = 3   # #.of iter
     N_DAY = 30
 
@@ -269,6 +274,7 @@ def train(RL):
             # Store the experience in memory
             RL.store_transition(observation, actions, reward, observation_)
 
+            reward_list.append(reward)
             # print("total step", total_steps)
             # if total_steps > 100:  # MEMORY_SIZE
             #     RL.learn()
@@ -283,8 +289,8 @@ def train(RL):
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
-                # TODO sleep 60 for run time, change all 4 main files
-                time.sleep(0.01)  # update every hour
+
+                time.sleep(60)  # update every hour
             else:
                 done = True
                 day += 1
@@ -305,20 +311,24 @@ def train(RL):
         # end_time = time.time()
         # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
+            # save model every 5 days
+            # if day % 5 == 0:
+            #     RL.save_weights('saved/natural.hdf5')  # save_weights(tf)
+
     # return np.vstack((episodes, steps)), RL.memory
-    return RL.memory
+    return RL.memory, reward_list
 
 
 house_id = "E001"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
-natural_memory = train(RL_natural)
+natural_memory, natural_reward = train(RL_natural)
 # natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
 with open("saved/natural_memo_e001.data", "wb") as fp:
     pickle.dump(natural_memory, fp)
 #  save reward to json file
-# with open("saved/natural_reward_e001.data", "wb") as fp:
-#     pickle.dump(natural_memory_store, fp)
+with open("saved/natural_reward_e001.data", "wb") as fp:
+    pickle.dump(natural_reward, fp)
 
 ##
 # # his_prio, prio_memory = train(RL_prio)
