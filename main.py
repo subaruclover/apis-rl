@@ -189,24 +189,24 @@ while gl.sema:  # True, alter for different time periods
 # give a set of init actions (action 5, 6, 7 for act_req and act_acc)
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(21)
-print(env.seed(21))
+# print(env.seed(21))
 
-MEMORY_SIZE = 5000  # 10000
+MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
-        n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
+        n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
     )
 
 #
-with tf.variable_scope('DQN_with_prioritized_replay'):
-    RL_prio = DQNPrioritizedReplay(
-        n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
-    )  # n_features: 6 states
+# with tf.variable_scope('DQN_with_prioritized_replay'):
+#     RL_prio = DQNPrioritizedReplay(
+#         n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+#     )  # n_features: 6 states
 sess.run(tf.global_variables_initializer())  # DQN
 
 
@@ -261,7 +261,8 @@ def train(RL):
             # TODO: add done (how to make it offline? with the current online simulation)
             observation_, reward, info = env.step1(action_request, action_accept, house_id)
 
-            actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+            # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+            actions_space = np.linspace(0.2, 0.9, 8).tolist()
             print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))
@@ -271,14 +272,18 @@ def train(RL):
             # print("total step", total_steps)
             # if total_steps > 100:  # MEMORY_SIZE
             #     RL.learn()
-            RL.learn()
+            # start learn after 100 steps and the frequency of learning
+            # accumulate some memory before start learning
+            if (total_steps > 100) and (total_steps % 5 == 0):
+                RL.learn()
+            # RL.learn()
 
             if hour < 24:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
                 hour += 1
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
-                time.sleep(60)  # update every hour
+                time.sleep(0.01)  # update every hour
             else:
                 done = True
                 day += 1

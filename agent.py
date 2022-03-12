@@ -397,13 +397,13 @@ class House():
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
-        while not gl.sema:
-            done = False
-            time.sleep(60)
-            done = True
-            break
+        # while not gl.sema:
+        #     done = False
+        #     time.sleep(60)
+        #     done = True
+        #     break
 
-        return np.array(state_, dtype=np.float32), reward, done, {}  # done
+        return np.array(state_, dtype=np.float32), reward, {}  # done
 
     def step3(self, action_request, action_accept, house_id):
         # step function for house 3 (used in main3.py)
@@ -506,13 +506,13 @@ class House():
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
-        while not gl.sema:
-            done = False
-            time.sleep(60)
-            done = True
-            break
+        # while not gl.sema:
+        #     done = False
+        #     time.sleep(60)
+        #     done = True
+        #     break
 
-        return np.array(state_, dtype=np.float32), reward, done, {}  # done
+        return np.array(state_, dtype=np.float32), reward, {}  # done
 
     def step4(self, action_request, action_accept, house_id):
         # step function for house 4 (used in main4.py)
@@ -616,13 +616,13 @@ class House():
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
-        while not gl.sema:
-            done = False
-            time.sleep(60)
-            done = True
-            break
+        # while not gl.sema:
+        #     done = False
+        #     time.sleep(60)
+        #     done = True
+        #     break
 
-        return np.array(state_, dtype=np.float32), reward, done, {}  # done
+        return np.array(state_, dtype=np.float32), reward, {}  # done
 
     def reset(self, house_id):
         """

@@ -60,25 +60,24 @@ p2_list = []
 
 ############################
 env = House(action_request=[7, 5], action_accept=[6])
-env.seed(2)
-print(env.seed(2))
+env.seed(21)
+# print(env.seed(2))
 
 MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 
-# with tf.variable_scope('natural_DQN'):
-#     RL_natural = DQNPrioritizedReplay(
-#         n_actions=7, n_features=5, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
-#     )
-
-#
-with tf.variable_scope('DQN_with_prioritized_replay'):
-    RL_prio = DQNPrioritizedReplay(
-        n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+with tf.variable_scope('natural_DQN'):
+    RL_natural = DQNPrioritizedReplay(
+        n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.00005, sess=sess, prioritized=False, output_graph=True,
     )
+
+# with tf.variable_scope('DQN_with_prioritized_replay'):
+#     RL_prio = DQNPrioritizedReplay(
+#         n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+#     )
 sess.run(tf.global_variables_initializer())
 
 
@@ -87,18 +86,24 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    EPI = 24*55
+    EPI = 3
+    N_DAY = 30
 
     # house_id = input('input the house id: ')
 
     for i_episode in range(EPI):
 
+        print("Episode {} starts".format(i_episode))
+        day = 0
+        hour = 0
+        done = False
+
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env?
-        observation = env.reset(house_id )
+        observation = env.reset(house_id)
         start_time = time.time()
 
-        while True:  # not gl.sema:
+        while day < N_DAY:  # True:  # not gl.sema:
 
             actions = RL.choose_actions(observation)
             action_request = [actions[0], actions[2]]
@@ -107,62 +112,81 @@ def train(RL):
             # agent.CreateSce3(action_request, action_accept)
 
             # house_id = input('input the house id: ')
-            observation_, reward, done, info = env.step3(action_request, action_accept, house_id)
+            observation_, reward, info = env.step3(action_request, action_accept, house_id)
 
-            # actions_space = np.linspace(0.2, 0.9, 8).tolist()
-            actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+            actions_space = np.linspace(0.2, 0.9, 8).tolist()
+            # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
             print("House E003, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
                                                                                   actions_space[action_request[1]],
                                                                                   actions_space[action_accept[0]]))
 
-            # change the time step
-            # time.sleep(60)
-
-            # if time.sleep(5):  # done:
-            #     reward = p2_e001
-
             RL.store_transition(observation, actions, reward, observation_)
 
-            if total_steps > MEMORY_SIZE:
+            # if total_steps > MEMORY_SIZE:
+            if (total_steps > 100) and (total_steps % 5 == 0):
                 RL.learn()
 
-            if done:
-                print('episode ', i_episode, ' finished')
-                steps.append(total_steps)
-                episodes.append(i_episode)
-                break  #
+            if hour < 24:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+                hour += 1
+                observation = observation_
+                total_steps += 1
+                print("total_steps = ", total_steps)
+                time.sleep(0.01)  # update every hour
+            else:
+                done = True
+                day += 1
+                print('Day', day, ' finished')
+                hour = 0
 
-            observation = observation_
-            total_steps += 1
+                if day < N_DAY:
+                    observation = observation_
+                    steps.append(total_steps)
+                    episodes.append(i_episode)
+                else:
+                    break
 
-        end_time = time.time()
-        print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
+            # if done:
+            #     print('episode ', i_episode, ' finished')
+            #     steps.append(total_steps)
+            #     episodes.append(i_episode)
+            #     break
 
-    return np.vstack((episodes, steps)), RL.memory
+            # observation = observation_
+            # total_steps += 1
+
+        # end_time = time.time()
+        # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
+
+    # return np.vstack((episodes, steps)), RL.memory
+    return RL.memory
 
 
 house_id = "E003"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
-
-his_prio, prio_memory = train(RL_prio)
-prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+natural_memory = train(RL_natural)
 #  save memo to json file
-with open("saved/prio_memo_e003.data", "wb") as fp:
-    pickle.dump(prio_memory, fp)
-#  save reward to json file
-with open("saved/prio_reward_e003.data", "wb") as fp:
-    pickle.dump(prio_memory_store, fp)
+with open("saved/natural_memo_e003.data", "wb") as fp:
+    pickle.dump(natural_memory, fp)
+
+# his_prio, prio_memory = train(RL_prio)
+# prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+# #  save memo to json file
+# with open("saved/prio_memo_e003.data", "wb") as fp:
+#     pickle.dump(prio_memory, fp)
+# #  save reward to json file
+# with open("saved/prio_reward_e003.data", "wb") as fp:
+#     pickle.dump(prio_memory_store, fp)
 
 # compare based on first success
-plt.title("E003")
+# plt.title("E003")
 
 # plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='g', label='natural DQN p2')
 # plt.plot(natural_memory[:24, 8], 'b', label='natural DQN p2')
 
 # plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='b', label='DQN with prioritized replay')
-plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay')
-plt.legend(loc='best')
-plt.ylabel('reward (p2)')
-plt.xlabel('episode (hour)')
-plt.grid()
-plt.show()
+# plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay')
+# plt.legend(loc='best')
+# plt.ylabel('reward (p2)')
+# plt.xlabel('episode (hour)')
+# plt.grid()
+# plt.show()

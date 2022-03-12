@@ -61,8 +61,10 @@ class CreateScenario1():
 
         # self.action_space = [0.8, 0.5, 0.4]
         # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-        self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-        self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        # self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        # self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
         # set time periods for scenario files
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
@@ -189,10 +191,10 @@ class CreateScenario2():
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
-        # self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
-        # self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
-        self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-        self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        # self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
         # set time periods for scenario files
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
@@ -308,10 +310,10 @@ class CreateScenario3():
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
-        # self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
-        # self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
-        self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-        self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        # self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
         # set time periods for scenario files
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
@@ -428,10 +430,10 @@ class CreateScenario4():
     def __init__(self,  action_request, action_accept):
 
         # self.action_space = [0.8, 0.5, 0.4]
-        # self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
-        # self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
-        self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-        self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        self.action_request_space = np.linspace(0.2, 0.9, 8).tolist()
+        self.action_accept_space = np.linspace(0.2, 0.9, 8).tolist()
+        # self.action_request_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+        # self.action_accept_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
         # set time periods for scenario files
         # self.timePeriods = ["00:00:00-12:00:00", "12:00:00-24:00:00"]
         self.timePeriods = ["00:00:00-24:00:00"]
