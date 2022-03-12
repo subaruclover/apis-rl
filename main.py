@@ -283,6 +283,7 @@ def train(RL):
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
+                # TODO sleep 60 for run time, change all 4 main files
                 time.sleep(0.01)  # update every hour
             else:
                 done = True
