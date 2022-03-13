@@ -77,9 +77,15 @@ reward_e004 = [data_e004.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 
 with open("saved/natural_memo_e001.data", "rb") as f1:
     data_e001 = pickle.load(f1)
+#
+reward_e001 = [data_e001[i][9] for i in range(24*30)]  # reward(p2)
+ig_e001 = [data_e001[i][4] for i in range(24*30)]
 
-reward_e001 = [data_e001[i][9] for i in range(24*30*3)]  # reward(p2)
-
-
+plt.plot(reward_e001)
+# plt.show()
+#
 with open("saved/natural_reward_e001.data", "rb") as f1:
-    rewards_e001 = pickle.load(f1)
+    rew_e001 = pickle.load(f1)
+
+plt.plot(rew_e001[:])
+plt.show()

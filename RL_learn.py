@@ -331,7 +331,7 @@ class DQNPrioritizedReplay:
             self.memory[index, :] = transition
             self.memory_counter += 1
 
-    def choose_action_simple(self, observation):
+    def choose_action_single(self, observation):
         observation = observation[np.newaxis, :]
         # action selection
         if np.random.uniform() < self.epsilon:
@@ -348,8 +348,11 @@ class DQNPrioritizedReplay:
         # fixed the first action, select the second <- softmax, repeat for 3rd
         # np.argmax, get the top 3 values?
         print("epsilon value:", self.epsilon)
+        # to have batch dimension when feed into tf placeholder
         observation = observation[np.newaxis, :]
+
         if np.random.uniform() < self.epsilon:  # act greedy
+            # forward feed the observation and get q value for every actions
             actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
             # action = np.argmax(actions_value)
             print("act greedy")

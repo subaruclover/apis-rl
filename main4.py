@@ -60,7 +60,7 @@ p2_list = []
 
 ############################
 env = House(action_request=[7, 5], action_accept=[6])
-env.seed(21)
+env.seed(1)
 
 MEMORY_SIZE = 10000  # 10000
 
@@ -69,7 +69,7 @@ sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
         n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.005, sess=sess, prioritized=False, output_graph=True,
+        e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
     )
 
 
@@ -87,7 +87,7 @@ def train(RL):
     steps = []
     episodes = []
     reward_list = []
-    EPI = 3
+    EPI = 1
     N_DAY = 30
 
     # house_id = input('input the house id: ')
@@ -125,15 +125,15 @@ def train(RL):
             reward_list.append(reward)
 
             # if total_steps > MEMORY_SIZE:
-            if (total_steps > 100) and (total_steps % 5 == 0):
+            if (total_steps > 24*3) and (total_steps % 2 == 0):
                 RL.learn()
 
-            if hour < 24:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+            if hour < 24/3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
                 hour += 1
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
-                time.sleep(60)  # update every hour
+                time.sleep(60*3)  # update every hour
             else:
                 done = True
                 day += 1
