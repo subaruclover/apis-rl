@@ -324,10 +324,10 @@ house_id = "E001"  # input('input the house id: ')
 natural_memory, natural_reward = train(RL_natural)
 # natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
-with open("saved/natural_memo_e001.data", "wb") as fp:
+with open("saved/natural_memo_e001_May.data", "wb") as fp:
     pickle.dump(natural_memory, fp)
 #  save reward to json file
-with open("saved/natural_reward_e001.data", "wb") as fp:
+with open("saved/natural_reward_e001_May.data", "wb") as fp:
     pickle.dump(natural_reward, fp)
 
 ##

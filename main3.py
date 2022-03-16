@@ -168,10 +168,10 @@ house_id = "E003"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
 natural_memory, natural_reward = train(RL_natural)
 #  save memo to json file
-with open("saved/natural_memo_e003.data", "wb") as fp:
+with open("saved/natural_memo_e003.data_May", "wb") as fp:
     pickle.dump(natural_memory, fp)
 #  save reward to json file
-with open("saved/natural_reward_e003.data", "wb") as fp:
+with open("saved/natural_reward_e003.data_May", "wb") as fp:
     pickle.dump(natural_reward, fp)
 
 # his_prio, prio_memory = train(RL_prio)

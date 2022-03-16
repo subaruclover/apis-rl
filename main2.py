@@ -175,10 +175,10 @@ natural_memory, natural_reward = train(RL_natural)
 # his_prio, prio_memory = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
-with open("saved/natural_memo_e002.data", "wb") as fp:
+with open("saved/natural_memo_e002_May.data", "wb") as fp:
     pickle.dump(natural_memory, fp)
 #  save reward to json file
-with open("saved/natural_reward_e002.data", "wb") as fp:
+with open("saved/natural_reward_e002_May.data", "wb") as fp:
     pickle.dump(natural_reward, fp)
 
 # with open("saved/prio_memo_e002.data", "wb") as fp:
