@@ -73,7 +73,7 @@ sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
         n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
+        e_greedy_increment=0.005, sess=sess, prioritized=False, output_graph=True,
     )
 
 
@@ -92,7 +92,7 @@ def train(RL):
     steps = []
     episodes = []
     reward_list = []
-    EPI = 1
+    EPI = 3
     N_DAY = 30
 
     # house_id = input('input the house id: ')
@@ -137,7 +137,7 @@ def train(RL):
             reward_list.append(reward)
 
             # if total_steps > MEMORY_SIZE:
-            if (total_steps > 24*3) and (total_steps % 2 == 0):
+            if (total_steps > 24*3) and (total_steps % 4 == 0):
                 RL.learn()
 
             if hour < 24/3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
@@ -175,10 +175,10 @@ natural_memory, natural_reward = train(RL_natural)
 # his_prio, prio_memory = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
-with open("saved/natural_memo_e002_May.data", "wb") as fp:
+with open("saved/natural_memo_e002_May_iter3.data", "wb") as fp:
     pickle.dump(natural_memory, fp)
 #  save reward to json file
-with open("saved/natural_reward_e002_May.data", "wb") as fp:
+with open("saved/natural_reward_e002_May_iter3.data", "wb") as fp:
     pickle.dump(natural_reward, fp)
 
 # with open("saved/prio_memo_e002.data", "wb") as fp:
