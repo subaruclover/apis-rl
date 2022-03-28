@@ -76,7 +76,7 @@ grid_current_e004 = [data_e004.tree.data[i][4] for i in range(24*55)]
 reward_e004 = [data_e004.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 """
 
-"""
+# """
 with open("saved/natural_memo_e001.data", "rb") as f1:
     data_e001 = pickle.load(f1)
 #
@@ -106,7 +106,7 @@ plt.plot(rew_e004[:], 'r-.', label='reward_e004')
 plt.xlabel("every 3 hours")
 plt.legend()
 plt.show()
-"""
+# """
 
 """
 with open("saved/natural_memo_e001.data", "rb") as f1:
@@ -140,8 +140,9 @@ plt.legend()
 plt.show()
 """
 
-
+"""
 output_sum_May_default = "oist_summary_May_default.csv"
+output_sum_May_default_2 = "oist_summary_May_default_2.csv"
 output_sum_May_iter1 = "oist_summary_May_iter1.csv"
 output_sum_May_iter3 = "oist_summary_May_iter3.csv"
 
@@ -150,14 +151,17 @@ output_getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
 output_dir = output_getpath + "/apis-emulator/data/output"
 
 output_file_default = os.path.join(output_dir, output_sum_May_default)
+output_file_default_2 = os.path.join(output_dir, output_sum_May_default_2)
 output_file_iter1 = os.path.join(output_dir, output_sum_May_iter1)
 output_file_iter3 = os.path.join(output_dir, output_sum_May_iter3)
 
 data_default = pd.read_csv(output_file_default)
+data_default_2 = pd.read_csv(output_file_default_2)
 data_iter1 = pd.read_csv(output_file_iter1)
 data_iter3 = pd.read_csv(output_file_iter3)
 
 dcdc_default = data_default['wg'][0:30]
+dcdc_default_2 = data_default_2['wg'][0:30]
 dcdc_iter1 = data_iter1['wg'][0:30]
 dcdc_iter3 = data_iter3['wg'][0:90]
 
@@ -180,15 +184,15 @@ data = [[acin_default_sum, wasted_default_sum],
 [acin_iter1_sum, wasted_iter1_sum]]
 X = np.arange(2)
 
-fig, ax = plt.subplots(1, 1)
-# ax2 = ax.twinx()
-# ax = fig.add_axes([0, 0, 1, 1])
-ax.bar(X + 0.00, data[0], width=0.25)
-ax.bar(X + 0.25, data[1], width=0.25)
-ax.legend(labels=['sum of default', 'sum of DQN'])
-# ax.set_ylabel('Power [W]')
-ax.set_title('purchased and wasted power [W]')
-plt.xticks([0.1, 1.1], ['purchased', 'wasted'])
+# fig, ax = plt.subplots(1, 1)
+# # ax2 = ax.twinx()
+# # ax = fig.add_axes([0, 0, 1, 1])
+# ax.bar(X + 0.00, data[0], width=0.25)
+# ax.bar(X + 0.25, data[1], width=0.25)
+# ax.legend(labels=['sum of default', 'sum of DQN'])
+# # ax.set_ylabel('Power [W]')
+# ax.set_title('purchased and wasted power [W]')
+# plt.xticks([0.1, 1.1], ['purchased', 'wasted'])
 
 # plt.plot(acin_default[0:30], 'm--', label='default purchased power')
 # plt.plot(acin_iter1[0:30], 'g*-', label='DQN purchased power')
@@ -196,13 +200,15 @@ plt.xticks([0.1, 1.1], ['purchased', 'wasted'])
 # plt.plot(ssr_pv_default[0:30], 'r--+', label='default ssr')
 # plt.plot(ssr_pv_iter1[0:30], 'g*-', label='DQN ssr')
 
-# plt.plot(dcdc_default, 'm--', label='default exchanged power')
-# plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1')
+plt.plot(dcdc_default, 'm--', label='default exchanged power')
+plt.plot(dcdc_default_2, 'c--', label='default exchanged power macbook')
+plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1')
 # plt.plot(dcdc_iter3, 'go-', label='DQN exchanged power, iter=3')
 # #
 # plt.xlabel("Days")
 # plt.ylabel("Power [W]")
 # # plt.ylabel("Rate")
 # # plt.ylim(0, 1)
-# plt.legend(loc='upper right')
+plt.legend(loc='upper right')
 plt.show()
+"""
