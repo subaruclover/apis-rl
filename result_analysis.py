@@ -76,7 +76,7 @@ grid_current_e004 = [data_e004.tree.data[i][4] for i in range(24*55)]
 reward_e004 = [data_e004.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 """
 
-# """
+"""
 with open("saved/natural_memo_e001.data", "rb") as f1:
     data_e001 = pickle.load(f1)
 #
@@ -106,7 +106,7 @@ plt.plot(rew_e004[:], 'r-.', label='reward_e004')
 plt.xlabel("every 3 hours")
 plt.legend()
 plt.show()
-# """
+"""
 
 """
 with open("saved/natural_memo_e001.data", "rb") as f1:
@@ -140,30 +140,42 @@ plt.legend()
 plt.show()
 """
 
-"""
+# """
 output_sum_May_default = "oist_summary_May_default.csv"
 output_sum_May_default_2 = "oist_summary_May_default_2.csv"
-output_sum_May_iter1 = "oist_summary_May_iter1.csv"
-output_sum_May_iter3 = "oist_summary_May_iter3.csv"
+oist_summary_May_defa_lin = "oist_summary_May_defa_lin.csv"
 
+output_sum_May_iter1 = "oist_summary_May_iter1_3.csv"
+output_sum_May_iter1_shuf = "oist_summary_May_iter1_shuffle.csv"
+output_sum_May_iter3 = "oist_summary_May_iter3.csv"
+output_sum_May_iter1_1hr = "oist_summary_May_iter1_1hr.csv"
 
 output_getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
 output_dir = output_getpath + "/apis-emulator/data/output"
 
 output_file_default = os.path.join(output_dir, output_sum_May_default)
-output_file_default_2 = os.path.join(output_dir, output_sum_May_default_2)
+# output_file_default_2 = os.path.join(output_dir, output_sum_May_default_2)
+output_file_default_lin = os.path.join(output_dir, oist_summary_May_defa_lin)
 output_file_iter1 = os.path.join(output_dir, output_sum_May_iter1)
+output_file_iter1_shuf = os.path.join(output_dir, output_sum_May_iter1_shuf)
 output_file_iter3 = os.path.join(output_dir, output_sum_May_iter3)
+output_file_iter1_1hr = os.path.join(output_dir, output_sum_May_iter1_1hr)
 
 data_default = pd.read_csv(output_file_default)
-data_default_2 = pd.read_csv(output_file_default_2)
+# data_default_2 = pd.read_csv(output_file_default_2)
+data_default_lin = pd.read_csv(output_file_default_lin)
 data_iter1 = pd.read_csv(output_file_iter1)
+data_iter1_shuf = pd.read_csv(output_file_iter1_shuf)
 data_iter3 = pd.read_csv(output_file_iter3)
+data_iter1_1hr = pd.read_csv(output_file_iter1_1hr)
 
 dcdc_default = data_default['wg'][0:30]
-dcdc_default_2 = data_default_2['wg'][0:30]
+# dcdc_default_2 = data_default_2['wg'][0:30]
+dcdc_default_lin = data_default_lin['wg'][0:30]
 dcdc_iter1 = data_iter1['wg'][0:30]
+dcdc_iter1_shuf = data_iter1_shuf['wg'][0:30]
 dcdc_iter3 = data_iter3['wg'][0:90]
+dcdc_iter1_1hr = data_iter1_1hr['wg'][0:30]
 
 acin_default = data_default['acin']
 acin_iter1 = data_iter1['acin']
@@ -200,10 +212,15 @@ X = np.arange(2)
 # plt.plot(ssr_pv_default[0:30], 'r--+', label='default ssr')
 # plt.plot(ssr_pv_iter1[0:30], 'g*-', label='DQN ssr')
 
-plt.plot(dcdc_default, 'm--', label='default exchanged power')
-plt.plot(dcdc_default_2, 'c--', label='default exchanged power macbook')
-plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1')
+# plt.plot(dcdc_default, 'm--', label='default exchanged power')
+# plt.plot(dcdc_default_2, 'c--', label='default exchanged power macbook')
+# plt.plot(dcdc_default_lin, 'm--', label='default exchanged power')
+#
+plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1, 3hrs')
+plt.plot(dcdc_iter1_shuf, 'b*-', label='DQN exchanged power, shuffle, iter=1, 3hrs')
 # plt.plot(dcdc_iter3, 'go-', label='DQN exchanged power, iter=3')
+# plt.plot(dcdc_iter1_1hr, 'k--', label='DQN exchanged power, iter=1, 1hr')
+
 # #
 # plt.xlabel("Days")
 # plt.ylabel("Power [W]")
@@ -211,4 +228,4 @@ plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1')
 # # plt.ylim(0, 1)
 plt.legend(loc='upper right')
 plt.show()
-"""
+# """
