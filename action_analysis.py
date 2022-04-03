@@ -107,6 +107,25 @@ def get_Wh_data(N_DAYS, hour, wg_data):
     return wg_Wh_hrs
 
 
+# plot functions (for multiple subplots)
+# TODO: put charge/discharge data of all houses in one bar plot (by unit)
+def plot_deal(wg_Wh_hr_data, N_DAYS, houseID):
+    x_axis = np.linspace(0, 23, 24)
+    days = np.linspace(0, N_DAYS - 2, N_DAYS - 1)  # plot 30 days
+
+    fig = plt.figure(figsize=(24, 30))
+
+    for idx, i in enumerate(days.astype(int)):
+        ax = fig.add_subplot(5, 6, idx + 1)
+        ax.bar(x_axis, wg_Wh_hr_data[i], width=0.5)
+        ax.set_xlabel("hour")
+        ax.set_ylabel("amount [Wh]")
+
+    fig.suptitle("Charge/Discharge Wh, {}".format(houseID))
+
+    plt.show()
+
+
 # wg_days_e001 = trim_wg(wg_data=wg_e001)
 # wg_days_e002 = trim_wg(wg_data=wg_e002)
 # wg_days_e003 = trim_wg(wg_data=wg_e003)
@@ -124,31 +143,9 @@ wg_Wh_hr_e001 = get_Wh_data(N_DAYS, hour, wg_e001)
 wg_Wh_hr_e002 = get_Wh_data(N_DAYS, hour, wg_e002)
 wg_Wh_hr_e003 = get_Wh_data(N_DAYS, hour, wg_e003)
 wg_Wh_hr_e004 = get_Wh_data(N_DAYS, hour, wg_e004)
-# plot functions (for multiple subplots)
 
-
-# hourly (data per min: each hour has 60 points; 1 Day = 1440 points)
-# fig, ax = plt.subplots(1, 1)
-# X = np.linspace(0, 23, 24)
-# plt.bar(X, wg_days_e003[0], width=0.25)
-
-
-# plt.plot(dcdc_default_e001['dcdc_meter_wg'])
-
-x_axis = np.linspace(0, 23, 24)
-days = np.linspace(0, N_DAYS-2, N_DAYS-1)  # plot 30 days
-
-fig = plt.figure(figsize=(24, 30))
-
-for idx, i in enumerate(days.astype(int)):
-    ax = fig.add_subplot(5, 6, idx+1)
-    ax.bar(x_axis, wg_Wh_hr_e003[i], width=0.5)
-    ax.set_xlabel("hour")
-    ax.set_ylabel("amount [Wh]")
-
-fig.suptitle("Charge/Discharge Wh, E003")
-# plt.bar(x_axis, wg_Wh_hr_e003[0], width=0.5)
-# plt.xlabel('hour')
-# plt.ylabel('amount [Wh]')
-plt.show()
-
+# plot deal data for each house
+plot_deal(wg_Wh_hr_e001, N_DAYS, "E001")
+plot_deal(wg_Wh_hr_e002, N_DAYS, "E002")
+plot_deal(wg_Wh_hr_e003, N_DAYS, "E003")
+plot_deal(wg_Wh_hr_e004, N_DAYS, "E004")
