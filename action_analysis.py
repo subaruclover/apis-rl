@@ -98,6 +98,12 @@ def get_Wh_data(N_DAYS, hour, wg_data):
         for j in range(hour):
             wg_hr = wg_data_days[i][j * 60: (j + 1) * 60]
             # TODO: separate positive and negative values (charge/discharge)
+            # set two variables for char/dischar respectively
+            # wg_hr_charge = np.sum(wg_hr*1/60) if wg_hr >= 0
+            # wg_hr_discharge = np.sum(wg_hr*1/60) if wg_hr < 0
+            # wg_Wh_hrs_charge.append(wg_hr_charge)
+            # wg_Wh_hrs_discharge.append(wg_hr_discharge)
+            # reshape both char/dischar value, and return both values, plot in one figure
             wg_hr = np.sum(wg_hr * 1 / 60)  # transfer [W] to [Wh]
 
             wg_Wh_hrs.append(wg_hr)
