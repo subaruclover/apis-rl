@@ -17,13 +17,9 @@ import seaborn as sns
 
 sns.set(style="whitegrid")
 
-# output_ind_May_default = "oist_indivLog_May_default.csv"
-output_ind_May_default = "oist_indivLog_May_defa_lin.csv"
-
+output_ind_May_default = "oist_indivLog_May_default.csv"
 # output_ind_May_default_2 = "oist_indivLog_May_default_2.csv"
-# output_ind_May_iter1 = "oist_indivLog_May_iter1.csv"
-output_ind_May_iter1 = "oist_indivLog_May_iter1_1hr.csv"
-# oist_summary_May_iter1_1hr
+output_ind_May_iter1 = "oist_indivLog_May_iter1.csv"
 # output_ind_May_iter3 = "oist_indivLog_May_iter3.csv"
 
 
@@ -45,21 +41,11 @@ dcdc_default_e002 = data_default.loc[data_default['id'] == 'E002']
 dcdc_default_e003 = data_default.loc[data_default['id'] == 'E003']
 dcdc_default_e004 = data_default.loc[data_default['id'] == 'E004']
 
-dcdc_iter1_e001 = data_iter1.loc[data_iter1['id'] == 'E001']
-dcdc_iter1_e002 = data_iter1.loc[data_iter1['id'] == 'E002']
-dcdc_iter1_e003 = data_iter1.loc[data_iter1['id'] == 'E003']
-dcdc_iter1_e004 = data_iter1.loc[data_iter1['id'] == 'E004']
+wg_e001 = dcdc_default_e001['dcdc_meter_wg'].values
+wg_e002 = dcdc_default_e002['dcdc_meter_wg'].values
+wg_e003 = dcdc_default_e003['dcdc_meter_wg'].values
+wg_e004 = dcdc_default_e004['dcdc_meter_wg'].values
 
-# wg_e001 = dcdc_default_e001['dcdc_meter_wg'].values
-# wg_e002 = dcdc_default_e002['dcdc_meter_wg'].values
-# wg_e003 = dcdc_default_e003['dcdc_meter_wg'].values
-# wg_e004 = dcdc_default_e004['dcdc_meter_wg'].values
-
-###
-wg_e001 = dcdc_iter1_e001['dcdc_meter_wg'].values
-wg_e002 = dcdc_iter1_e002['dcdc_meter_wg'].values
-wg_e003 = dcdc_iter1_e003['dcdc_meter_wg'].values
-wg_e004 = dcdc_iter1_e004['dcdc_meter_wg'].values
 
 def trim_wg(wg_data):
     # get grid power by days
@@ -102,7 +88,8 @@ def get_Wh_data(N_DAYS, hour, wg_data):
     # input: wg data for each agent, all days
     # output: [Wh] data for each house, each day
 
-    wg_data_days, wg_Wh_hrs = [], []
+    wg_data_days, wg_Wh_hrs_charge, wg_Wh_hrs_discharge = [], [], []
+    # wg_hr_charge, wg_hr_discharge = np.array([]), np.array([])
 
     for i in range(N_DAYS):
         wg_data_day = wg_data[i * hour * 60: (i + 1) * hour * 60]
@@ -113,24 +100,29 @@ def get_Wh_data(N_DAYS, hour, wg_data):
             wg_hr = wg_data_days[i][j * 60: (j + 1) * 60]
             # TODO: separate positive and negative values (charge/discharge)
             # set two variables for char/dischar respectively
-            # wg_hr_charge = np.sum(wg_hr*1/60) if wg_hr >= 0
-            # wg_hr_discharge = np.sum(wg_hr*1/60) if wg_hr < 0
-            # wg_Wh_hrs_charge.append(wg_hr_charge)
-            # wg_Wh_hrs_discharge.append(wg_hr_discharge)
-            # reshape both char/dischar value, and return both values, plot in one figure
-            wg_hr = np.sum(wg_hr * 1 / 60)  # transfer [W] to [Wh]
 
-            wg_Wh_hrs.append(wg_hr)
+            # wg_hr_charge = np.sum(x * 1 / 60 for x in wg_hr if wg_hr > 0)
+            # wg_hr_discharge = np.sum(x * 1 / 60 for x in wg_hr if wg_hr <= 0)
+            if wg_hr.any() >= 0:
+                wg_hr_charge = np.sum(wg_hr*1/60)  # if wg_hr >= 0
+            elif wg_hr.any < 0:  # wg_hr < 0
+                wg_hr_discharge = np.sum(wg_hr*1/60)  # if wg_hr < 0
 
-    # reshape to (N_DAYS, 24)
-    # wg_Wh_hrs = np.reshape(wg_Wh_hrs, (N_DAYS, hour))
+            wg_Wh_hrs_charge.append(wg_hr_charge)
+            wg_Wh_hrs_discharge.append(wg_hr_discharge)
 
-    return wg_Wh_hrs
+            # wg_hr = np.sum(wg_hr * 1 / 60)  # transfer [W] to [Wh]
+
+    # reshape both char/dischar value, and return both values, plot in one figure
+    wg_Wh_hrs_charge = np.reshape(wg_Wh_hrs_charge, (N_DAYS, hour))
+    wg_Wh_hrs_discharge = np.reshape(wg_Wh_hrs_discharge, (N_DAYS, hour))
+
+    return wg_Wh_hrs_charge, wg_Wh_hrs_discharge
 
 
 # plot functions (for multiple subplots)
 # TODO: put charge/discharge data of all houses in one bar plot (by unit)
-def plot_deal(wg_Wh_hr_data, N_DAYS, houseID):
+def plot_deal(wg_Wh_hr_char_data, wg_Wh_hr_dischar_data, N_DAYS, houseID):
     x_axis = np.linspace(0, 23, 24)
     days = np.linspace(0, N_DAYS - 2, N_DAYS - 1)  # plot 30 days
 
@@ -138,7 +130,26 @@ def plot_deal(wg_Wh_hr_data, N_DAYS, houseID):
 
     for idx, i in enumerate(days.astype(int)):
         ax = fig.add_subplot(5, 6, idx + 1)
-        ax.bar(x_axis, wg_Wh_hr_data[i], width=0.5)
+        ax.bar(x_axis, wg_Wh_hr_char_data[i], width=0.5)
+        ax.bar(x_axis, wg_Wh_hr_dischar_data[i], width=0.5)
+        ax.set_xlabel("hour")
+        ax.set_ylabel("amount [Wh]")
+
+    fig.suptitle("Charge/Discharge Wh, {}".format(houseID))
+
+    plt.show()
+
+
+def plot_deal_2(wg_Wh_hr_char_data, wg_Wh_hr_dischar_data, N_DAYS, houseID):
+    x_axis = np.linspace(0, 23, 24)
+    days = np.linspace(0, N_DAYS - 2, N_DAYS - 1)  # plot 30 days
+
+    fig = plt.figure(figsize=(24, 30))
+
+    for idx, i in enumerate(days.astype(int)):
+        ax = fig.add_subplot(5, 6, idx + 1)
+        ax.bar(x_axis, wg_Wh_hr_char_data[i], width=0.5)
+        ax.bar(x_axis, wg_Wh_hr_dischar_data[i], width=0.5)
         ax.set_xlabel("hour")
         ax.set_ylabel("amount [Wh]")
 
@@ -160,25 +171,13 @@ def plot_deal(wg_Wh_hr_data, N_DAYS, houseID):
 N_DAYS = 31
 hour = 24
 
-wg_Wh_hr_e001 = get_Wh_data(N_DAYS, hour, wg_e001)
-wg_Wh_hr_e002 = get_Wh_data(N_DAYS, hour, wg_e002)
-wg_Wh_hr_e003 = get_Wh_data(N_DAYS, hour, wg_e003)
-wg_Wh_hr_e004 = get_Wh_data(N_DAYS, hour, wg_e004)
+wg_Wh_hr_char_e001, wg_Wh_hr_dischar_e001 = get_Wh_data(N_DAYS, hour, wg_e001)
+wg_Wh_hr_char_e002, wg_Wh_hr_dischar_e002 = get_Wh_data(N_DAYS, hour, wg_e002)
+wg_Wh_hr_char_e003, wg_Wh_hr_dischar_e003 = get_Wh_data(N_DAYS, hour, wg_e003)
+wg_Wh_hr_char_e004, wg_Wh_hr_dischar_e004 = get_Wh_data(N_DAYS, hour, wg_e004)
 
 # plot deal data for each house
-# plot_deal(wg_Wh_hr_e001, N_DAYS, "E001")
-# plot_deal(wg_Wh_hr_e002, N_DAYS, "E002")
-# plot_deal(wg_Wh_hr_e003, N_DAYS, "E003")
-# plot_deal(wg_Wh_hr_e004, N_DAYS, "E004")
-
-# plt.plot(wg_Wh_hr_data, label='houseID')
-
-plt.plot(wg_Wh_hr_e001, 'y-', label='E001 dcdc')
-plt.plot(wg_Wh_hr_e002, 'm*-', label='E002 dcdc')
-plt.plot(wg_Wh_hr_e003, 'g--', label='E003 dcdc')
-plt.plot(wg_Wh_hr_e004, 'bo-', label='E004 dcdc')
-
-# plt.title('E001~E004 dcdc power [Wh], default scenario, by hour')
-plt.title('E001~E004 dcdc power [Wh], DQN scenario, by hour')
-plt.legend(loc='upper right')
-plt.show()
+plot_deal_2(wg_Wh_hr_char_e001, wg_Wh_hr_dischar_e001, N_DAYS, "E001")
+plot_deal_2(wg_Wh_hr_char_e002, wg_Wh_hr_dischar_e002, N_DAYS, "E002")
+plot_deal_2(wg_Wh_hr_char_e003, wg_Wh_hr_dischar_e003, N_DAYS, "E003")
+plot_deal_2(wg_Wh_hr_char_e004, wg_Wh_hr_dischar_e004, N_DAYS, "E004")
