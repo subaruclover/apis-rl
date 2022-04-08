@@ -9,6 +9,8 @@ import pickle
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
+from matplotlib.pyplot import figure
+
 sns.set(style="whitegrid")
 
 """
@@ -76,8 +78,8 @@ grid_current_e004 = [data_e004.tree.data[i][4] for i in range(24*55)]
 reward_e004 = [data_e004.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 """
 
-"""
-with open("saved/natural_memo_e001.data", "rb") as f1:
+# """
+with open("saved/natural_memo_e001_May_iter1_3.data", "rb") as f1:
     data_e001 = pickle.load(f1)
 #
 reward_e001 = [data_e001[i][9] for i in range(24*30)]  # reward(p2)
@@ -86,27 +88,29 @@ ig_e001 = [data_e001[i][4] for i in range(24*30)]
 # plt.plot(reward_e001)
 # plt.show()
 #
-with open("saved/natural_reward_e001.data", "rb") as f1:
+with open("saved/natural_reward_e001_May_iter1_3.data", "rb") as f1:
     rew_e001 = pickle.load(f1)
 
-with open("saved/natural_reward_e002.data", "rb") as f1:
+with open("saved/natural_reward_e002_May_iter1_3.data", "rb") as f1:
     rew_e002 = pickle.load(f1)
 
-with open("saved/natural_reward_e003.data", "rb") as f1:
+with open("saved/natural_reward_e003.data_May_iter1_3", "rb") as f1:
     rew_e003 = pickle.load(f1)
 
-with open("saved/natural_reward_e004.data", "rb") as f1:
+with open("saved/natural_reward_e004_May_iter1_3.data", "rb") as f1:
     rew_e004 = pickle.load(f1)
 
+figure(figsize=(25, 5), dpi=180)
 plt.plot(rew_e001[:], 'g-', label='reward_e001')
-plt.plot(rew_e002[:], 'b*', label='reward_e002')
+plt.plot(rew_e002[:], 'b*-', label='reward_e002')
 plt.plot(rew_e003[:], 'k--', label='reward_e003')
 plt.plot(rew_e004[:], 'r-.', label='reward_e004')
 
+plt.title("reward of E001~E004, iter=1")
 plt.xlabel("every 3 hours")
 plt.legend()
 plt.show()
-"""
+# """
 
 """
 with open("saved/natural_memo_e001.data", "rb") as f1:
@@ -140,7 +144,8 @@ plt.legend()
 plt.show()
 """
 
-# """
+"""
+# plots: dcdc, ac_in, ssr, wasted...
 output_sum_May_default = "oist_summary_May_default.csv"
 output_sum_May_default_2 = "oist_summary_May_default_2.csv"
 oist_summary_May_defa_lin = "oist_summary_May_defa_lin.csv"
@@ -228,4 +233,4 @@ plt.plot(dcdc_iter1_shuf, 'b*-', label='DQN exchanged power, shuffle, iter=1, 3h
 # # plt.ylim(0, 1)
 plt.legend(loc='upper right')
 plt.show()
-# """
+"""

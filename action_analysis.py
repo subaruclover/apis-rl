@@ -13,6 +13,7 @@ import pandas as pd
 import pickle
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.pyplot import figure
 import seaborn as sns
 
 sns.set(style="whitegrid")
@@ -172,13 +173,14 @@ wg_Wh_hr_e004 = get_Wh_data(N_DAYS, hour, wg_e004)
 # plot_deal(wg_Wh_hr_e004, N_DAYS, "E004")
 
 # plt.plot(wg_Wh_hr_data, label='houseID')
-
-plt.plot(wg_Wh_hr_e001, 'y-', label='E001 dcdc')
-plt.plot(wg_Wh_hr_e002, 'm*-', label='E002 dcdc')
-plt.plot(wg_Wh_hr_e003, 'g--', label='E003 dcdc')
-plt.plot(wg_Wh_hr_e004, 'bo-', label='E004 dcdc')
+figure(figsize=(25, 5), dpi=180)
+plt.plot(wg_Wh_hr_e001, 'yo-', label='E001 dcdc')
+plt.plot(wg_Wh_hr_e002, 'm--', label='E002 dcdc')
+plt.plot(wg_Wh_hr_e003, 'g*-', label='E003 dcdc')
+plt.plot(wg_Wh_hr_e004, 'r-.', label='E004 dcdc')
 
 # plt.title('E001~E004 dcdc power [Wh], default scenario, by hour')
-plt.title('E001~E004 dcdc power [Wh], DQN scenario, by hour')
+plt.title('E001~E004 dcdc power [Wh], DQN scenario (update every 3 hours), by hour')
 plt.legend(loc='upper right')
+plt.gca().set_aspect('auto')
 plt.show()
