@@ -16,16 +16,14 @@ sns.set(style="whitegrid")
 """
 # e001
 # load saved files
-with open("saved/prio_memo_e001.data", "rb") as f1:
+with open("saved/natural_memo_e001_May_iter1_3.data", "rb") as f1:
     data_e001 = pickle.load(f1)
 
 
-action_req_low_e001 = [data_e001.tree.data[i][8] for i in range(24*55)]  # [6]~[8]
+# action_req_low_e001 = [data_e001.tree.data[i][8] for i in range(24*55)]  # [6]~[8], prior_data
+action_req_low_e001 = [data_e001.tree.data[i][8] for i in range(24*55)]  # [6]~[8], natural data
 action_req_high_e001 = [data_e001.tree.data[i][6] for i in range(24*55)]
 action_acc_e001 = [data_e001.tree.data[i][7] for i in range(24*55)]
-
-plt.plot(action_req_high_e001[:100], 'g', label='action_req_high')
-plt.show()
 
 # dcdc_current
 grid_current_e001 = [data_e001.tree.data[i][4] for i in range(24*55)]
@@ -37,7 +35,7 @@ reward_e001 = [data_e001.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 
 # e002
 # load saved files
-with open("saved/prio_memo_e002.data", "rb") as f2:
+with open("saved/natural_memo_e002_May_iter1_3.data", "rb") as f2:
     data_e002 = pickle.load(f2)
 
 action_req_low_e002 = [data_e002.tree.data[i][8] for i in range(24*55)]  # [6]~[8]
@@ -51,7 +49,7 @@ reward_e002 = [data_e002.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 
 # e003
 # load saved files
-with open("saved/prio_memo_e003.data", "rb") as f3:
+with open("saved/natural_memo_e003.data_May_iter1_3", "rb") as f3:
     data_e003 = pickle.load(f3)
 
 action_req_low_e003 = [data_e003.tree.data[i][8] for i in range(24*55)]  # [6]~[8]
@@ -65,7 +63,7 @@ reward_e003 = [data_e003.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 
 # e004
 # load saved files
-with open("saved/prio_memo_e004.data", "rb") as f4:
+with open("saved/natural_memo_e004_May_iter1_3.data", "rb") as f4:
     data_e004 = pickle.load(f4)
 
 action_req_low_e004 = [data_e004.tree.data[i][8] for i in range(24*55)]  # [6]~[8]
@@ -76,10 +74,173 @@ action_acc_e004 = [data_e004.tree.data[i][7] for i in range(24*55)]
 grid_current_e004 = [data_e004.tree.data[i][4] for i in range(24*55)]
 
 reward_e004 = [data_e004.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+
+figure(figsize=(25, 5), dpi=180)
+plt.plot(action_req_high_e001[:100], 'g', label='action_req_high')
+
+
+plt.title('E001~E004, action_req, iter=1')
+plt.legend(loc='upper right')
+plt.gca().set_aspect('auto')
+plt.show()
+plt.show()
+
 """
 
 # """
+# e001
+# load saved files
 with open("saved/natural_memo_e001_May_iter1_3.data", "rb") as f1:
+    data_e001 = pickle.load(f1)
+
+
+# action_req_low_e001 = [data_e001.tree.data[i][8] for i in range(24*55)]  # [6]~[8], prior_data
+action_req_low_e001 = [data_e001[i][8] for i in range(24*55)]  # [6]~[8], natural data
+action_req_high_e001 = [data_e001[i][6] for i in range(24*55)]
+action_acc_e001 = [data_e001[i][7] for i in range(24*55)]
+
+# dcdc_current
+grid_current_e001 = [data_e001[i][4] for i in range(24*55)]
+
+# plt.plot(grid_current_e001, 'g', label='grid_current')
+# plt.show()
+
+reward_e001 = [data_e001[i][9] for i in range(24*55)]  # reward(p2)
+
+# e002
+# load saved files
+with open("saved/natural_memo_e002_May_iter1_3.data", "rb") as f2:
+    data_e002 = pickle.load(f2)
+
+action_req_low_e002 = [data_e002[i][8] for i in range(24*55)]  # [6]~[8]
+action_req_high_e002 = [data_e002[i][6] for i in range(24*55)]
+action_acc_e002 = [data_e002[i][7] for i in range(24*55)]
+
+# dcdc_current
+grid_current_e002 =[data_e002[i][4] for i in range(24*55)]
+
+reward_e002 = [data_e002[i][9] for i in range(24*55)]  # reward(p2)
+
+# e003
+# load saved files
+with open("saved/natural_memo_e003.data_May_iter1_3", "rb") as f3:
+    data_e003 = pickle.load(f3)
+
+action_req_low_e003 = [data_e003[i][8] for i in range(24*55)]  # [6]~[8]
+action_req_high_e003 = [data_e003[i][6] for i in range(24*55)]
+action_acc_e003 = [data_e003[i][7] for i in range(24*55)]
+
+# dcdc_current
+grid_current_e003 =[data_e003[i][4] for i in range(24*55)]
+
+reward_e003 = [data_e003[i][9] for i in range(24*55)]  # reward(p2)
+
+# e004
+# load saved files
+with open("saved/natural_memo_e004_May_iter1_3.data", "rb") as f4:
+    data_e004 = pickle.load(f4)
+
+action_req_low_e004 = [data_e004[i][8] for i in range(24*55)]  # [6]~[8]
+action_req_high_e004 = [data_e004[i][6] for i in range(24*55)]
+action_acc_e004 = [data_e004[i][7] for i in range(24*55)]
+
+# dcdc_current
+grid_current_e004 = [data_e004[i][4] for i in range(24*55)]
+
+reward_e004 = [data_e004[i][9] for i in range(24*55)]  # reward(p2)
+
+# action analyze
+actions_space = np.linspace(0.2, 0.9, 8).tolist()
+
+
+def get_int_action_values(action, action_space):
+    actions, actions_value = [], []
+    for i in range(240):  # 8(each day) * 30(days)
+        action_req_hi = int(action[i])
+        actions.append(action_req_hi)
+
+    for i in range(240):
+        action_value = action_space[actions[i]]
+        actions_value.append(action_value)
+
+    # transfer actions_value to 100% unit
+    actions_value = [i * 100 for i in actions_value]
+
+    return actions, actions_value
+
+
+# get actions_value (3 sets for each house)
+actions_req_hi_e001, act_req_high_value_e001 = \
+    get_int_action_values(action_req_high_e001, actions_space)
+actions_req_hi_e002, act_req_high_value_e002 = \
+    get_int_action_values(action_req_high_e002, actions_space)
+actions_req_hi_e003, act_req_high_value_e003 = \
+    get_int_action_values(action_req_high_e003, actions_space)
+actions_req_hi_e004, act_req_high_value_e004 = \
+    get_int_action_values(action_req_high_e004, actions_space)
+
+actions_req_low_e001, act_req_low_value_e001 = \
+    get_int_action_values(action_req_low_e001, actions_space)
+actions_req_low_e002, act_req_low_value_e002 = \
+    get_int_action_values(action_req_low_e002, actions_space)
+actions_req_low_e003, act_req_low_value_e003 = \
+    get_int_action_values(action_req_low_e003, actions_space)
+actions_req_low_e004, act_req_low_value_e004 = \
+    get_int_action_values(action_req_low_e004, actions_space)
+
+actions_acc_e001, act_acc_value_e001 = \
+    get_int_action_values(action_acc_e001, actions_space)
+actions_acc_e002, act_acc_value_e002 = \
+    get_int_action_values(action_acc_e002, actions_space)
+actions_acc_e003, act_acc_value_e003 = \
+    get_int_action_values(action_acc_e003, actions_space)
+actions_acc_e004, act_acc_value_e004 = \
+    get_int_action_values(action_acc_e004, actions_space)
+
+figure(figsize=(25, 5), dpi=180)
+days = 7#30  # 7
+N = 8 * days  # 8(each day) * 7(days)
+x_axis = np.arange(0, N, 1)
+# E001
+plt.plot(act_req_high_value_e001[-N:], 'b')  # , label='action_req_high, E001')
+plt.plot(act_req_low_value_e001[-N:], 'y')  # , label='action_req_low, E001')
+plt.plot(act_acc_value_e001[-N:], 'g')  # , label='action_acc, E001')
+
+plt.fill_between(x_axis, 100 + 0 * x_axis, act_acc_value_e001[-N:], alpha=.3, ec="w", hatch='/', label='Accept Discharge')
+plt.fill_between(x_axis, 100 + 0 * x_axis, act_req_high_value_e001[-N:],  color='b', alpha=.5, label='Request Discharge')
+plt.fill_between(x_axis, 0 * x_axis, act_acc_value_e001[-N:], alpha=.5, ec="w", hatch='\\', label='Accept Charge')
+plt.fill_between(x_axis, 0 * x_axis, act_req_low_value_e001[-N:], color='g', alpha=.5, label='Request Charge')
+
+# plt.fill_between(x_axis, act_req_high_value_e001[-N:], act_req_low_value_e001[-N:], alpha=.4)
+
+# E003
+# plt.plot(act_req_high_value_e003[-N:], 'b')  # , label='action_req_high, E001')
+# plt.plot(act_req_low_value_e003[-N:], 'y')  # , label='action_req_low, E001')
+# plt.plot(act_acc_value_e003[-N:], 'g')  # , label='action_acc, E001')
+
+# plt.fill_between(x_axis, 100 + 0 * x_axis, act_acc_value_e003[-N:], alpha=.3, ec="w", hatch='/', label='Accept Discharge')
+# plt.fill_between(x_axis, 100 + 0 * x_axis, act_req_high_value_e003[-N:],  color='b', alpha=.5, label='Request Discharge')
+# plt.fill_between(x_axis, 0 * x_axis, act_acc_value_e003[-N:], alpha=.5, ec="w", hatch='\\', label='Accept Charge')
+# plt.fill_between(x_axis, 0 * x_axis, act_req_low_value_e003[-N:], color='g', alpha=.5, label='Request Charge')
+
+# plt.fill_between(x_axis, act_req_high_value_e003[-N:], act_req_low_value_e003[-N:], color='g', alpha=.4)
+# plt.fill_between(x_axis, 0 * x_axis, act_req_low_value_e003[-N:], color='g', alpha=.5, label='Request Charge')
+
+# plt.title('{} days of action values, E001, iter=1'.format(days))
+plt.title('Last week ({} days) of action values, E001, iter=1'.format(days))
+plt.xlabel("Every 3 hours")
+plt.ylabel("RSOC [%]")
+plt.xlim(0, N)
+plt.ylim(0, 100)
+plt.yticks(np.arange(0, 110, 10))
+plt.legend(loc='upper right')
+plt.gca().set_aspect('auto')
+plt.show()
+
+# """
+
+"""
+with open("saved/natural_memo_e001_May_iter3.data", "rb") as f1:
     data_e001 = pickle.load(f1)
 #
 reward_e001 = [data_e001[i][9] for i in range(24*30)]  # reward(p2)
@@ -88,16 +249,16 @@ ig_e001 = [data_e001[i][4] for i in range(24*30)]
 # plt.plot(reward_e001)
 # plt.show()
 #
-with open("saved/natural_reward_e001_May_iter1_3.data", "rb") as f1:
+with open("saved/natural_reward_e001_May_iter3.data", "rb") as f1:
     rew_e001 = pickle.load(f1)
 
-with open("saved/natural_reward_e002_May_iter1_3.data", "rb") as f1:
+with open("saved/natural_reward_e002_May_iter3.data", "rb") as f1:
     rew_e002 = pickle.load(f1)
 
-with open("saved/natural_reward_e003.data_May_iter1_3", "rb") as f1:
+with open("saved/natural_reward_e003.data_May_iter3", "rb") as f1:
     rew_e003 = pickle.load(f1)
 
-with open("saved/natural_reward_e004_May_iter1_3.data", "rb") as f1:
+with open("saved/natural_reward_e004_May_iter3.data", "rb") as f1:
     rew_e004 = pickle.load(f1)
 
 figure(figsize=(25, 5), dpi=180)
@@ -106,11 +267,11 @@ plt.plot(rew_e002[:], 'b*-', label='reward_e002')
 plt.plot(rew_e003[:], 'k--', label='reward_e003')
 plt.plot(rew_e004[:], 'r-.', label='reward_e004')
 
-plt.title("reward of E001~E004, iter=1")
+plt.title("reward of E001~E004, iter=3")
 plt.xlabel("every 3 hours")
 plt.legend()
 plt.show()
-# """
+"""
 
 """
 with open("saved/natural_memo_e001.data", "rb") as f1:
