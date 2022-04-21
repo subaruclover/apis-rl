@@ -201,7 +201,7 @@ sess = tf.Session()
 
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
-        n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
+        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
     )
 
@@ -251,7 +251,7 @@ def train(RL):
 
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env
-        observation = env.reset(house_id)
+        observation = env.reset_time(house_id)
 
         while day < N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
 
@@ -264,7 +264,7 @@ def train(RL):
 
             # house_id = input('input the house id: ')
             # TODO: add done (how to make it offline? with the current online simulation)
-            observation_, reward, info = env.step1(action_request, action_accept, house_id)
+            observation_, reward, info = env.step1_time(action_request, action_accept, house_id)
 
             # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
             actions_space = np.linspace(0.2, 0.9, 8).tolist()
@@ -324,10 +324,10 @@ house_id = "E001"  # input('input the house id: ')
 natural_memory, natural_reward = train(RL_natural)
 # natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 #  save memo to json file
-with open("saved/natural_memo_e001_May_iter1_shuf.data", "wb") as fp:
+with open("saved/natural_memo_e001_May_iter1_time.data", "wb") as fp:
     pickle.dump(natural_memory, fp)
 #  save reward to json file
-with open("saved/natural_reward_e001_May_iter1_shuf.data", "wb") as fp:
+with open("saved/natural_reward_e001_May_iter1_time.data", "wb") as fp:
     pickle.dump(natural_reward, fp)
 
 ##

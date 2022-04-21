@@ -87,7 +87,7 @@ plt.show()
 
 """
 
-# """
+"""
 # e001
 # load saved files
 with open("saved/natural_memo_e001_May_iter1_3.data", "rb") as f1:
@@ -95,9 +95,9 @@ with open("saved/natural_memo_e001_May_iter1_3.data", "rb") as f1:
 
 
 # action_req_low_e001 = [data_e001.tree.data[i][8] for i in range(24*55)]  # [6]~[8], prior_data
-action_req_low_e001 = [data_e001[i][8] for i in range(24*55)]  # [6]~[8], natural data
-action_req_high_e001 = [data_e001[i][6] for i in range(24*55)]
-action_acc_e001 = [data_e001[i][7] for i in range(24*55)]
+action_req_low_e001 = [data_e001[i][10] for i in range(24*55)]  # [6]~[8], natural data
+action_req_high_e001 = [data_e001[i][8] for i in range(24*55)]
+action_acc_e001 = [data_e001[i][9] for i in range(24*55)]
 
 # dcdc_current
 grid_current_e001 = [data_e001[i][4] for i in range(24*55)]
@@ -105,49 +105,49 @@ grid_current_e001 = [data_e001[i][4] for i in range(24*55)]
 # plt.plot(grid_current_e001, 'g', label='grid_current')
 # plt.show()
 
-reward_e001 = [data_e001[i][9] for i in range(24*55)]  # reward(p2)
+reward_e001 = [data_e001[i][11] for i in range(24*55)]  # reward(p2)
 
 # e002
 # load saved files
-with open("saved/natural_memo_e002_May_iter1_3.data", "rb") as f2:
+with open("saved/natural_memo_e002_May_iter1_time.data", "rb") as f2:
     data_e002 = pickle.load(f2)
 
-action_req_low_e002 = [data_e002[i][8] for i in range(24*55)]  # [6]~[8]
-action_req_high_e002 = [data_e002[i][6] for i in range(24*55)]
-action_acc_e002 = [data_e002[i][7] for i in range(24*55)]
+action_req_low_e002 = [data_e002[i][10] for i in range(24*55)]  # [6]~[8]
+action_req_high_e002 = [data_e002[i][8] for i in range(24*55)]
+action_acc_e002 = [data_e002[i][9] for i in range(24*55)]
 
 # dcdc_current
 grid_current_e002 =[data_e002[i][4] for i in range(24*55)]
 
-reward_e002 = [data_e002[i][9] for i in range(24*55)]  # reward(p2)
+reward_e002 = [data_e002[i][11] for i in range(24*55)]  # reward(p2)
 
 # e003
 # load saved files
-with open("saved/natural_memo_e003.data_May_iter1_3", "rb") as f3:
+with open("saved/natural_memo_e003_May_iter1_time.data", "rb") as f3:
     data_e003 = pickle.load(f3)
 
-action_req_low_e003 = [data_e003[i][8] for i in range(24*55)]  # [6]~[8]
-action_req_high_e003 = [data_e003[i][6] for i in range(24*55)]
-action_acc_e003 = [data_e003[i][7] for i in range(24*55)]
+action_req_low_e003 = [data_e003[i][10] for i in range(24*55)]  # [6]~[8]
+action_req_high_e003 = [data_e003[i][8] for i in range(24*55)]
+action_acc_e003 = [data_e003[i][9] for i in range(24*55)]
 
 # dcdc_current
 grid_current_e003 =[data_e003[i][4] for i in range(24*55)]
 
-reward_e003 = [data_e003[i][9] for i in range(24*55)]  # reward(p2)
+reward_e003 = [data_e003[i][11] for i in range(24*55)]  # reward(p2)
 
 # e004
 # load saved files
-with open("saved/natural_memo_e004_May_iter1_3.data", "rb") as f4:
+with open("saved/natural_memo_e004_May_iter1_time.data", "rb") as f4:
     data_e004 = pickle.load(f4)
 
-action_req_low_e004 = [data_e004[i][8] for i in range(24*55)]  # [6]~[8]
-action_req_high_e004 = [data_e004[i][6] for i in range(24*55)]
-action_acc_e004 = [data_e004[i][7] for i in range(24*55)]
+action_req_low_e004 = [data_e004[i][10] for i in range(24*55)]  # [6]~[8]
+action_req_high_e004 = [data_e004[i][8] for i in range(24*55)]
+action_acc_e004 = [data_e004[i][9] for i in range(24*55)]
 
 # dcdc_current
 grid_current_e004 = [data_e004[i][4] for i in range(24*55)]
 
-reward_e004 = [data_e004[i][9] for i in range(24*55)]  # reward(p2)
+reward_e004 = [data_e004[i][11] for i in range(24*55)]  # reward(p2)
 
 # action analyze
 actions_space = np.linspace(0.2, 0.9, 8).tolist()
@@ -198,7 +198,7 @@ actions_acc_e004, act_acc_value_e004 = \
     get_int_action_values(action_acc_e004, actions_space)
 
 figure(figsize=(25, 5), dpi=180)
-days = 7#30  # 7
+days = 30  # 7
 N = 8 * days  # 8(each day) * 7(days)
 x_axis = np.arange(0, N, 1)
 # E001
@@ -237,7 +237,7 @@ plt.legend(loc='upper right')
 plt.gca().set_aspect('auto')
 plt.show()
 
-# """
+"""
 
 """
 with open("saved/natural_memo_e001_May_iter3.data", "rb") as f1:
@@ -305,7 +305,7 @@ plt.legend()
 plt.show()
 """
 
-"""
+# """
 # plots: dcdc, ac_in, ssr, wasted...
 output_sum_May_default = "oist_summary_May_default.csv"
 output_sum_May_default_2 = "oist_summary_May_default_2.csv"
@@ -343,8 +343,8 @@ dcdc_iter1_shuf = data_iter1_shuf['wg'][0:30]
 dcdc_iter3 = data_iter3['wg'][0:90]
 dcdc_iter1_1hr = data_iter1_1hr['wg'][0:30]
 
-acin_default = data_default['acin']
-acin_iter1 = data_iter1['acin']
+acin_default = data_default_lin['acin']  # lin
+acin_iter1 = data_iter1_1hr['acin']
 
 wasted_default = data_default['wasted']
 wasted_iter1 = data_iter1['wasted']
@@ -371,9 +371,9 @@ X = np.arange(2)
 # # ax.set_ylabel('Power [W]')
 # ax.set_title('purchased and wasted power [W]')
 # plt.xticks([0.1, 1.1], ['purchased', 'wasted'])
-
-# plt.plot(acin_default[0:30], 'm--', label='default purchased power')
-# plt.plot(acin_iter1[0:30], 'g*-', label='DQN purchased power')
+figure(figsize=(15, 10), dpi=80)
+plt.plot(acin_default[0:30], 'g--', label='default purchased power')
+plt.plot(acin_iter1[0:30], 'r*-', label='DQN purchased power')
 
 # plt.plot(ssr_pv_default[0:30], 'r--+', label='default ssr')
 # plt.plot(ssr_pv_iter1[0:30], 'g*-', label='DQN ssr')
@@ -382,8 +382,10 @@ X = np.arange(2)
 # plt.plot(dcdc_default_2, 'c--', label='default exchanged power macbook')
 # plt.plot(dcdc_default_lin, 'm--', label='default exchanged power')
 #
-plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1, 3hrs')
-plt.plot(dcdc_iter1_shuf, 'b*-', label='DQN exchanged power, shuffle, iter=1, 3hrs')
+#####
+# plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1, 3hrs')
+# plt.plot(dcdc_iter1_shuf, 'b*-', label='DQN exchanged power, shuffle, iter=1, 3hrs')
+####
 # plt.plot(dcdc_iter3, 'go-', label='DQN exchanged power, iter=3')
 # plt.plot(dcdc_iter1_1hr, 'k--', label='DQN exchanged power, iter=1, 1hr')
 
@@ -394,4 +396,4 @@ plt.plot(dcdc_iter1_shuf, 'b*-', label='DQN exchanged power, shuffle, iter=1, 3h
 # # plt.ylim(0, 1)
 plt.legend(loc='upper right')
 plt.show()
-"""
+# """
