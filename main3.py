@@ -67,18 +67,18 @@ MEMORY_SIZE = 10000  # 10000
 
 sess = tf.Session()
 
-with tf.variable_scope('natural_DQN'):
-    RL_natural = DQNPrioritizedReplay(
-        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
-    )
-
-# with tf.variable_scope('DQN_with_prioritized_replay'):
-#     RL_prio = DQNPrioritizedReplay(
-#         n_actions=7, n_features=6, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
+# with tf.variable_scope('natural_DQN'):
+#     RL_natural = DQNPrioritizedReplay(
+#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
 #     )
-sess.run(tf.global_variables_initializer())
+
+with tf.variable_scope('DQN_with_prioritized_replay'):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.008, sess=sess, prioritized=True, output_graph=True,
+    )
+sess.run(tf.global_variables_initializer())  # DQN
 
 
 def train(RL):
@@ -166,22 +166,23 @@ def train(RL):
 
 house_id = "E003"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
-natural_memory, natural_reward = train(RL_natural)
-#  save memo to json file
-with open("saved/natural_memo_e003_May_iter1_time.data", "wb") as fp:
-    pickle.dump(natural_memory, fp)
-#  save reward to json file
-with open("saved/natural_reward_e003_May_iter1_time.data", "wb") as fp:
-    pickle.dump(natural_reward, fp)
+# natural_memory, natural_reward = train(RL_natural)
+# #  save memo to json file
+# with open("saved/natural_memo_e003_May_iter1_time.data", "wb") as fp:
+#     pickle.dump(natural_memory, fp)
+# #  save reward to json file
+# with open("saved/natural_reward_e003_May_iter1_time.data", "wb") as fp:
+#     pickle.dump(natural_reward, fp)
 
 # his_prio, prio_memory = train(RL_prio)
+prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
-# #  save memo to json file
-# with open("saved/prio_memo_e003.data", "wb") as fp:
-#     pickle.dump(prio_memory, fp)
-# #  save reward to json file
-# with open("saved/prio_reward_e003.data", "wb") as fp:
-#     pickle.dump(prio_memory_store, fp)
+# save memo to json file
+with open("saved/prio_memo_e003_May_iter1_time.data", "wb") as fp:
+    pickle.dump(prio_memory, fp)
+# save reward to json file
+with open("saved/prio_reward_e003_May_iter1_time.data", "wb") as fp:
+    pickle.dump(prio_reward, fp)
 
 # compare based on first success
 # plt.title("E003")

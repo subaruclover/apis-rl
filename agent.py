@@ -855,7 +855,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e001_
+        reward = - p2_e001_  # array
+        # print(reward, type(reward))
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
@@ -882,6 +883,7 @@ class House():
         #         break
 
         return np.array(state_, dtype=np.float32), reward, {}  # done
+
 
     def step2_time(self, action_request, action_accept, house_id):
         # step function for house 2 (used in main2.py)

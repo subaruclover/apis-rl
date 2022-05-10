@@ -199,11 +199,11 @@ sess = tf.Session()
 # EPI = 1, e_greedy_increment=0.01
 # EPI = 3, e_greedy_increment=0.005
 
-with tf.variable_scope('natural_DQN'):
-    RL_natural = DQNPrioritizedReplay(
-        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
-    )
+# with tf.variable_scope('natural_DQN'):
+#     RL_natural = DQNPrioritizedReplay(
+#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
+#     )
 
 #
 with tf.variable_scope('DQN_with_prioritized_replay'):
@@ -282,8 +282,8 @@ def train(RL):
             #     RL.learn()
             # start learn after 100 steps and the frequency of learning
             # accumulate some memory before start learning
-            # if (total_steps > 24*3) and (total_steps % 2 == 0):
-            RL.learn()
+            if (total_steps > 24*3) and (total_steps % 2 == 0):
+                RL.learn()
             # RL.learn()
 
             if hour < 24 / 3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
@@ -292,7 +292,7 @@ def train(RL):
                 total_steps += 1
                 print("total_steps = ", total_steps)
 
-                time.sleep(0.01)  # update every 3 hours
+                time.sleep(60*3)  # update every 3 hours
             else:
                 done = True
                 day += 1
@@ -334,11 +334,11 @@ house_id = "E001"  # input('input the house id: ')
 prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file
-with open("saved/prio_memo_e001.data", "wb") as fp:
+with open("saved/prio_memo_e001_May_iter1_time.data", "wb") as fp:
     pickle.dump(prio_memory, fp)
-# # save reward to json file
-# with open("saved/prio_reward_e001.data", "wb") as fp:
-#     pickle.dump(prio_memory_store, fp)
+# save reward to json file
+with open("saved/prio_reward_e001_May_iter1_time.data", "wb") as fp:
+    pickle.dump(prio_reward, fp)
 
 # compare based on first success
 # plt.title("E001")

@@ -201,6 +201,7 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
             index, priority, data = self.tree.get_leaf(value)
             prob = priority / self.tree.tree[0]
             # b_ISWeights[i, 0] = (prob * n) ** (-self.PER_b) / max_weight
+            # print(prob, prob_min)
             b_ISWeights[i, 0] = np.power(prob / prob_min, -self.PER_b)
             b_idx[i] = index
             # b_memory.append([data])
