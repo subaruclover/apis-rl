@@ -126,8 +126,8 @@ def train(RL):
             reward_list.append(reward)
 
             # if total_steps > MEMORY_SIZE:
-            if (total_steps > 24*3) and (total_steps % 2 == 0):
-                RL.learn()
+            # if (total_steps > 24*3) and (total_steps % 2 == 0):
+            RL.learn()
 
             if hour < 24/3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
                 hour += 1

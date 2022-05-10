@@ -206,11 +206,11 @@ with tf.variable_scope('natural_DQN'):
     )
 
 #
-# with tf.variable_scope('DQN_with_prioritized_replay'):
-#     RL_prio = DQNPrioritizedReplay(
-#         n_actions=8, n_features=6, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.00005, sess=sess, prioritized=True, output_graph=True,
-#     )  # n_features: 6 states
+with tf.variable_scope('DQN_with_prioritized_replay'):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.008, sess=sess, prioritized=True, output_graph=True,
+    )  # n_features: 6 states
 sess.run(tf.global_variables_initializer())  # DQN
 
 
@@ -252,6 +252,7 @@ def train(RL):
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env
         observation = env.reset_time(house_id)
+        total_reward = 0
 
         while day < N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
 
@@ -274,14 +275,15 @@ def train(RL):
             # Store the experience in memory
             RL.store_transition(observation, actions, reward, observation_)
 
-            reward_list.append(reward)
+            # reward_list.append(reward)
+            total_reward += reward
             # print("total step", total_steps)
             # if total_steps > 100:  # MEMORY_SIZE
             #     RL.learn()
             # start learn after 100 steps and the frequency of learning
             # accumulate some memory before start learning
-            if (total_steps > 24*3) and (total_steps % 2 == 0):
-                RL.learn()
+            # if (total_steps > 24*3) and (total_steps % 2 == 0):
+            RL.learn()
             # RL.learn()
 
             if hour < 24 / 3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
@@ -290,7 +292,7 @@ def train(RL):
                 total_steps += 1
                 print("total_steps = ", total_steps)
 
-                time.sleep(60*3)  # update every 3 hours
+                time.sleep(0.01)  # update every 3 hours
             else:
                 done = True
                 day += 1
@@ -307,13 +309,10 @@ def train(RL):
             # observation = observation_
             # total_steps += 1
             # print("total_steps = ", total_steps)
-
+        # Track rewards
+        reward_list.append(total_reward)
         # end_time = time.time()
         # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
-
-            # save model every 5 days
-            # if day % 5 == 0:
-            #     RL.save_weights('saved/natural.hdf5')  # save_weights(tf)
 
     # return np.vstack((episodes, steps)), RL.memory
     return RL.memory, reward_list
@@ -321,23 +320,23 @@ def train(RL):
 
 house_id = "E001"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
-natural_memory, natural_reward = train(RL_natural)
-# natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
-#  save memo to json file
-with open("saved/natural_memo_e001_May_iter1_time.data", "wb") as fp:
-    pickle.dump(natural_memory, fp)
-#  save reward to json file
-with open("saved/natural_reward_e001_May_iter1_time.data", "wb") as fp:
-    pickle.dump(natural_reward, fp)
+# natural_memory, natural_reward = train(RL_natural)
+# # natural_memory_store = [natural_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
+# #  save memo to json file
+# with open("saved/natural_memo_e001_May_iter1_time.data", "wb") as fp:
+#     pickle.dump(natural_memory, fp)
+# #  save reward to json file
+# with open("saved/natural_reward_e001_May_iter1_time.data", "wb") as fp:
+#     pickle.dump(natural_reward, fp)
 
 ##
-# # his_prio, prio_memory = train(RL_prio)
-# prio_memory = train(RL_prio)
+# his_prio, prio_memory = train(RL_prio)
+prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
-# #  save memo to json file
-# with open("saved/prio_memo_e001.data", "wb") as fp:
-#     pickle.dump(prio_memory, fp)
-# #  save reward to json file
+# save memo to json file
+with open("saved/prio_memo_e001.data", "wb") as fp:
+    pickle.dump(prio_memory, fp)
+# # save reward to json file
 # with open("saved/prio_reward_e001.data", "wb") as fp:
 #     pickle.dump(prio_memory_store, fp)
 

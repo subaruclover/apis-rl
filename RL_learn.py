@@ -105,9 +105,7 @@ class SumTree():
         self.tree[tree_index] = priority
 
         # Propagate the change through tree
-        while (
-                tree_index != 0
-        ):  # this method is faster than the recursive loop in the reference code
+        while tree_index != 0:  # this method is faster than the recursive loop in the reference code
             tree_index = (tree_index - 1) // 2
             self.tree[tree_index] += change
 
@@ -158,15 +156,13 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
     PER_e = 0.01  # small amount to avoid zero priority
     PER_a = 0.6  # [0~1] convert the importance of TD error to priority (0: no IS)
     PER_b = 0.4  # importance-sampling, from initial value increasing to 1
-    PER_b_increment_per_sampling = 0.01
+    PER_b_increment_per_sampling = 0.001
     absolute_error_upper = 1.0  # Clipped abs error
 
     def __init__(self, capacity):
-
         self.tree = SumTree(capacity)
 
     def store(self, experience):
-
         # Find the max priority
         max_priority = np.max(self.tree.tree[-self.tree.capacity:])
 
@@ -186,8 +182,9 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
         values are retrieved from. Calculate IS weights for each minibatch element
         """
 
-        b_memory = []
-        b_idx = np.empty((n,))
+        # b_memory = []
+        b_memory = np.empty((n, self.tree.data[0].size))
+        b_idx = np.empty((n,), dtype=np.int32)  # np.empty((n,))
         b_ISWeights = np.empty((n, 1))
 
         priority_segment = self.tree.tree[0] / n
@@ -195,7 +192,7 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
         self.PER_b = np.min([1.0, self.PER_b + self.PER_b_increment_per_sampling])  # max = 1
 
         prob_min = np.min(self.tree.tree[-self.tree.capacity:]) / self.tree.tree[0]
-        max_weight = (prob_min * n) ** (-self.PER_b)
+        # max_weight = (prob_min * n) ** (-self.PER_b)
 
         for i in range(n):
             a = priority_segment * i
@@ -203,14 +200,15 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
             value = np.random.uniform(a, b)
             index, priority, data = self.tree.get_leaf(value)
             prob = priority / self.tree.tree[0]
-            b_ISWeights[i, 0] = (prob * n) ** (-self.PER_b) / max_weight
+            # b_ISWeights[i, 0] = (prob * n) ** (-self.PER_b) / max_weight
+            b_ISWeights[i, 0] = np.power(prob / prob_min, -self.PER_b)
             b_idx[i] = index
-            b_memory.append([data])
+            # b_memory.append([data])
+            b_memory[i, :] = data
 
         return b_idx, b_memory, b_ISWeights
 
     def batch_update(self, tree_idx, abs_errors):
-
         # convert to abs and avoid 0 probability
         abs_errors += self.PER_e
         clipped_errors = np.minimum(abs_errors, self.absolute_error_upper)

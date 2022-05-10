@@ -239,7 +239,7 @@ plt.show()
 
 """
 
-"""
+# """
 with open("saved/natural_memo_e001_May_iter3.data", "rb") as f1:
     data_e001 = pickle.load(f1)
 #
@@ -262,16 +262,21 @@ with open("saved/natural_reward_e004_May_iter3.data", "rb") as f1:
     rew_e004 = pickle.load(f1)
 
 figure(figsize=(25, 5), dpi=180)
-plt.plot(rew_e001[:], 'g-', label='reward_e001')
-plt.plot(rew_e002[:], 'b*-', label='reward_e002')
-plt.plot(rew_e003[:], 'k--', label='reward_e003')
-plt.plot(rew_e004[:], 'r-.', label='reward_e004')
+reward_e001 = np.sum(rew_e001[:270])
+plt.plot(rew_e001[:270], 'g-', label='reward_e001, iter = 1')
+# plt.plot(rew_e002[:270], 'b*-', label='reward_e002')
+# plt.plot(rew_e003[:270], 'k--', label='reward_e003')
+# plt.plot(rew_e004[:270], 'r-.', label='reward_e004')
 
-plt.title("reward of E001~E004, iter=3")
+plt.plot(rew_e004[270:270*2], 'b', label='reward_e001, iter = 2')
+
+plt.plot(rew_e004[-270:], 'k', label='reward_e001, iter = 3')
+
+plt.title("reward of E004, iter=3")
 plt.xlabel("every 3 hours")
 plt.legend()
 plt.show()
-"""
+# """
 
 """
 with open("saved/natural_memo_e001.data", "rb") as f1:
@@ -289,12 +294,13 @@ with open("saved/natural_reward_e001_May_iter3.data", "rb") as f1:
 with open("saved/natural_reward_e002_May_iter3.data", "rb") as f1:
     rew_e002 = pickle.load(f1)
 
-with open("saved/natural_reward_e003.data", "rb") as f1:
+with open("saved/natural_reward_e003.data_May_iter3", "rb") as f1:
     rew_e003 = pickle.load(f1)
 
 with open("saved/natural_reward_e004_May_iter3.data", "rb") as f1:
     rew_e004 = pickle.load(f1)
 
+figure(figsize=(25, 5), dpi=180)
 plt.plot(rew_e001[:], 'g-', label='reward_e001')
 # plt.plot(rew_e002[:], 'b*', label='reward_e002')
 # plt.plot(rew_e003[:], 'k--', label='reward_e003')
@@ -305,7 +311,7 @@ plt.legend()
 plt.show()
 """
 
-# """
+"""
 # plots: dcdc, ac_in, ssr, wasted...
 output_sum_May_default = "oist_summary_May_default.csv"
 output_sum_May_default_2 = "oist_summary_May_default_2.csv"
@@ -396,4 +402,4 @@ plt.plot(acin_iter1[0:30], 'r*-', label='DQN purchased power')
 # # plt.ylim(0, 1)
 plt.legend(loc='upper right')
 plt.show()
-# """
+"""
