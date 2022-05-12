@@ -239,7 +239,7 @@ plt.show()
 
 """
 
-# """
+"""
 with open("saved/natural_memo_e001_May_iter3.data", "rb") as f1:
     data_e001 = pickle.load(f1)
 #
@@ -276,7 +276,7 @@ plt.title("reward of E004, iter=3")
 plt.xlabel("every 3 hours")
 plt.legend()
 plt.show()
-# """
+"""
 
 """
 with open("saved/natural_memo_e001.data", "rb") as f1:
@@ -311,7 +311,7 @@ plt.legend()
 plt.show()
 """
 
-"""
+# """
 # plots: dcdc, ac_in, ssr, wasted...
 output_sum_May_default = "oist_summary_May_default.csv"
 output_sum_May_default_2 = "oist_summary_May_default_2.csv"
@@ -321,6 +321,8 @@ output_sum_May_iter1 = "oist_summary_May_iter1_3.csv"
 output_sum_May_iter1_shuf = "oist_summary_May_iter1_shuffle.csv"
 output_sum_May_iter3 = "oist_summary_May_iter3.csv"
 output_sum_May_iter1_1hr = "oist_summary_May_iter1_1hr.csv"
+
+oist_sum_May_prio_iter1_3hr = "oist_summary_May_Prior_iter1.csv"
 
 output_getpath = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir))
 output_dir = output_getpath + "/apis-emulator/data/output"
@@ -333,6 +335,8 @@ output_file_iter1_shuf = os.path.join(output_dir, output_sum_May_iter1_shuf)
 output_file_iter3 = os.path.join(output_dir, output_sum_May_iter3)
 output_file_iter1_1hr = os.path.join(output_dir, output_sum_May_iter1_1hr)
 
+output_file_prio_iter1_3hr = os.path.join(output_dir, oist_sum_May_prio_iter1_3hr)
+
 data_default = pd.read_csv(output_file_default)
 # data_default_2 = pd.read_csv(output_file_default_2)
 data_default_lin = pd.read_csv(output_file_default_lin)
@@ -340,6 +344,8 @@ data_iter1 = pd.read_csv(output_file_iter1)
 data_iter1_shuf = pd.read_csv(output_file_iter1_shuf)
 data_iter3 = pd.read_csv(output_file_iter3)
 data_iter1_1hr = pd.read_csv(output_file_iter1_1hr)
+
+data_prio_iter1_3hr = pd.read_csv(output_file_prio_iter1_3hr)
 
 dcdc_default = data_default['wg'][0:30]
 # dcdc_default_2 = data_default_2['wg'][0:30]
@@ -349,24 +355,32 @@ dcdc_iter1_shuf = data_iter1_shuf['wg'][0:30]
 dcdc_iter3 = data_iter3['wg'][0:90]
 dcdc_iter1_1hr = data_iter1_1hr['wg'][0:30]
 
-acin_default = data_default_lin['acin']  # lin
+dcdc_prio_iter1_3hr = data_prio_iter1_3hr['wg'][0:30]
+
+acin_default = data_default['acin']  # lin
 acin_iter1 = data_iter1_1hr['acin']
+
+acin_prio_iter1 = data_prio_iter1_3hr['acin']
 
 wasted_default = data_default['wasted']
 wasted_iter1 = data_iter1['wasted']
+wasted_prio_iter1 = data_prio_iter1_3hr['wasted']
 
 ssr_pv_default = data_default['ssr_pv']
 ssr_pv_iter1 = data_iter1['ssr_pv']
+ssr_pv_prio_iter1 = data_prio_iter1_3hr['ssr_pv']
 
 # bar plot of sum
 acin_default_sum = acin_default[31]
 acin_iter1_sum = acin_iter1[31]
+acin_prio_iter1_sum = acin_prio_iter1[31]
 wasted_default_sum = wasted_default[31]
 wasted_iter1_sum = wasted_iter1[31]
+wasted_prio_iter1_sum = wasted_prio_iter1[31]
 
 data = [[acin_default_sum, wasted_default_sum],
-[acin_iter1_sum, wasted_iter1_sum]]
-X = np.arange(2)
+[acin_iter1_sum, wasted_iter1_sum], [acin_prio_iter1_sum, wasted_prio_iter1_sum]]
+X = np.arange(3)
 
 # fig, ax = plt.subplots(1, 1)
 # # ax2 = ax.twinx()
@@ -378,23 +392,26 @@ X = np.arange(2)
 # ax.set_title('purchased and wasted power [W]')
 # plt.xticks([0.1, 1.1], ['purchased', 'wasted'])
 figure(figsize=(15, 10), dpi=80)
-plt.plot(acin_default[0:30], 'g--', label='default purchased power')
-plt.plot(acin_iter1[0:30], 'r*-', label='DQN purchased power')
+# plt.plot(acin_default[0:30], 'g--', label='default purchased power')
+# plt.plot(acin_iter1[0:30], 'r*-', label='DQN purchased power')
+# plt.plot(acin_prio_iter1[0:30], 'b-', label='Prior_DQN purchased power')
 
-# plt.plot(ssr_pv_default[0:30], 'r--+', label='default ssr')
-# plt.plot(ssr_pv_iter1[0:30], 'g*-', label='DQN ssr')
+# plt.plot(ssr_pv_default[0:30], 'g--+', label='default ssr')
+# plt.plot(ssr_pv_iter1[0:30], 'r*-', label='DQN ssr')
+# plt.plot(ssr_pv_prio_iter1[0:30], 'b*-', label='Prio_DQN ssr')
 
-# plt.plot(dcdc_default, 'm--', label='default exchanged power')
+plt.plot(dcdc_default, 'g--', label='default exchanged power')
 # plt.plot(dcdc_default_2, 'c--', label='default exchanged power macbook')
 # plt.plot(dcdc_default_lin, 'm--', label='default exchanged power')
 #
 #####
-# plt.plot(dcdc_iter1, 'go-', label='DQN exchanged power, iter=1, 3hrs')
+plt.plot(dcdc_iter1, 'ro-', label='DQN exchanged power, iter=1, 3hrs')
 # plt.plot(dcdc_iter1_shuf, 'b*-', label='DQN exchanged power, shuffle, iter=1, 3hrs')
 ####
 # plt.plot(dcdc_iter3, 'go-', label='DQN exchanged power, iter=3')
 # plt.plot(dcdc_iter1_1hr, 'k--', label='DQN exchanged power, iter=1, 1hr')
 
+plt.plot(dcdc_prio_iter1_3hr, 'b-', label='Prio_DQN exchanged power, iter=1, 3hrs')
 # #
 # plt.xlabel("Days")
 # plt.ylabel("Power [W]")
@@ -402,4 +419,4 @@ plt.plot(acin_iter1[0:30], 'r*-', label='DQN purchased power')
 # # plt.ylim(0, 1)
 plt.legend(loc='upper right')
 plt.show()
-"""
+# """
