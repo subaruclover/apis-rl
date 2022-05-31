@@ -102,7 +102,8 @@ def train(RL):
         # TODO: (when reset) agent needs to get value from the env, not given
         # reset with the env?
         observation = env.reset_time(house_id)
-        start_time = time.time()
+        # start_time = time.time()
+        total_reward = 0
 
         while day < N_DAY:  # True:  # not gl.sema:
 
@@ -123,7 +124,8 @@ def train(RL):
 
             RL.store_transition(observation, actions, reward, observation_)
 
-            reward_list.append(reward)
+            # reward_list.append(reward)
+            total_reward += reward
 
             # if total_steps > MEMORY_SIZE:
             # if (total_steps > 24*3) and (total_steps % 2 == 0):
@@ -157,6 +159,8 @@ def train(RL):
             # observation = observation_
             # total_steps += 1
 
+        # Track rewards
+        reward_list.append(total_reward)
         # end_time = time.time()
         # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
