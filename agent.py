@@ -269,7 +269,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e001_
+        # reward = - p2_e001_
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
@@ -395,7 +396,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e002_
+        # reward = - p2_e002_
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
@@ -505,7 +507,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e003_
+        # reward = - p2_e003_
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
@@ -615,7 +618,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e004_
+        # reward = - p2_e004_
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
@@ -855,7 +859,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e001_  # array
+        # reward = - p2_e001_  # array
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)  # sum p2 for all
         # print(reward, type(reward))
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
@@ -985,7 +990,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e002_
+        # reward = - p2_e002_
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)
         # TODO: terminal condition: done
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
@@ -1096,7 +1102,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e003_
+        # reward = - p2_e003_
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
@@ -1207,7 +1214,8 @@ class House():
             print("wrong house id, input again")
 
         # reward: different p2 for each house? / average p2 for all?
-        reward = - p2_e004_
+        # reward = - p2_e004_
+        reward = - np.sum(p2_e001_, p2_e002_, p2_e003_, p2_e004_)
         # done = time.sleep(60)  # time, e.g., one hour(time.sleep(60*60)) or given #EPI
         # done: for one day; pesudo code: (hour, day)
 
