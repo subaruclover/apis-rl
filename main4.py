@@ -157,6 +157,10 @@ def train(RL):
         # end_time = time.time()
         # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
+    saver = tf.train.Saver()
+    saver.save(RL.sess, 'model/E004/E004_model')
+    print('Model Trained and Saved')
+
     # return np.vstack((episodes, steps)), RL.memory
     return RL.memory, reward_list
 

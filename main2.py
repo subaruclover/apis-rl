@@ -169,6 +169,10 @@ def train(RL):
         # end_time = time.time()
         # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
+    saver = tf.train.Saver()
+    saver.save(RL.sess, 'model/E002/E002_model')
+    print('Model Trained and Saved')
+
     # return np.vstack((episodes, steps)), RL.memory
     return RL.memory, reward_list
 
@@ -187,10 +191,10 @@ house_id = "E002"  # input('input the house id: ')
 prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file
-with open("saved/prio_memo_e002_May_iter5_time.data", "wb") as fp:
+with open("saved/prio_memo_e002_May_train_time.data", "wb") as fp:
     pickle.dump(prio_memory, fp)
 # save reward to json file
-with open("saved/prio_reward_e002_May_iter5_time.data", "wb") as fp:
+with open("saved/prio_reward_e002_May_train_time.data", "wb") as fp:
     pickle.dump(prio_reward, fp)
 
 # compare based on first success
