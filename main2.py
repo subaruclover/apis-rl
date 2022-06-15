@@ -147,7 +147,7 @@ def train(RL):
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
-                time.sleep(60*3)  # update every hour
+                time.sleep(0.01)  # update every hour
             else:
                 done = True
                 day += 1
@@ -170,7 +170,7 @@ def train(RL):
         # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
     saver = tf.train.Saver()
-    saver.save(RL.sess, 'model/E002/E002_model')
+    saver.save(RL.sess, 'model/E002/E002_model_prio')
     print('Model Trained and Saved')
 
     # return np.vstack((episodes, steps)), RL.memory

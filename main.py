@@ -19,6 +19,7 @@ Note that sample data have 48 data points each day (record every 30mins), we onl
 """
 # import tensorflow as tf
 import tensorflow.compat.v1 as tf
+
 tf.disable_eager_execution()
 import os
 
@@ -37,6 +38,7 @@ import pickle
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
+
 sns.set(style="whitegrid")
 import h5py
 
@@ -53,7 +55,7 @@ from agent import APIS, House  # Env
 # agent = APIS()
 
 # start_time = time.time()
-
+"""
 ##############################
 # Data loading
 # get log data for states
@@ -61,6 +63,7 @@ host = conf.b_host
 port = conf.b_port
 # url = "http://0.0.0.0:4390/get/log"
 URL = "http://" + host + ":" + str(port) + "/get/log"
+
 
 # dicts of states for all houses
 pvc_charge_power = {}
@@ -73,7 +76,7 @@ wb = {}  # meter.wb, Battery Power [W]
 pv_list = []
 load_list = []
 p2_list = []
-
+"""
 # need to refresh the output data every 5s? time.sleep()
 """
 while gl.sema:  # True, alter for different time periods
@@ -190,32 +193,10 @@ while gl.sema:  # True, alter for different time periods
 # give a set of init actions (action 5, 6, 7 for act_req and act_acc)
 env = House(action_request=[7, 5], action_accept=[6])
 env.seed(1)
+
+
 # print(env.seed(21))
 
-MEMORY_SIZE = 10000  # 10000
-
-sess = tf.Session()
-
-# EPI = 1, e_greedy_increment=0.01
-# EPI = 3, e_greedy_increment=0.005
-
-# with tf.variable_scope('natural_DQN'):
-#     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
-#     )
-
-#
-with tf.variable_scope('DQN_with_prioritized_replay'):
-    RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.002, sess=sess, prioritized=True, output_graph=True,
-    )  # n_features: 6 states
-sess.run(tf.global_variables_initializer())  # DQN
-
-# saver = tf.train.Saver()
-
-# saver.save(sess, 'model/E001/E001_model')
 
 def combine_actions(RL, observation):
     # Do action combination? with \theta probability
@@ -230,6 +211,7 @@ def combine_actions(RL, observation):
 
     return combine_action
 
+
 # TODO: separate data into training set (5 month) + testing set
 
 
@@ -239,7 +221,7 @@ def train(RL):
     steps = []
     episodes = []
     reward_list = []
-    EPI = 5   # #.of iter
+    EPI = 5  # #.of iter
     N_DAY = 30
 
     # house_id = input('input the house id: ')
@@ -272,9 +254,10 @@ def train(RL):
 
             # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
             actions_space = np.linspace(0.2, 0.9, 8).tolist()
-            print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
-                                                                                  actions_space[action_request[1]],
-                                                                                  actions_space[action_accept[0]]))
+            print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(
+                actions_space[action_request[0]],
+                actions_space[action_request[1]],
+                actions_space[action_accept[0]]))
             # Store the experience in memory
             RL.store_transition(observation, actions, reward, observation_)
 
@@ -285,7 +268,7 @@ def train(RL):
             #     RL.learn()
             # start learn after 100 steps and the frequency of learning
             # accumulate some memory before start learning
-            if (total_steps > 24*3) and (total_steps % 2 == 0):
+            if (total_steps > 24 * 3) and (total_steps % 2 == 0):
                 RL.learn()
             # RL.learn()
 
@@ -295,7 +278,7 @@ def train(RL):
                 total_steps += 1
                 print("total_steps = ", total_steps)
 
-                time.sleep(60*3)  # update every 3 hours
+                time.sleep(0.01)  # update every 3 hours
             else:
                 done = True
                 day += 1
@@ -319,12 +302,39 @@ def train(RL):
 
     # save trained model
     saver = tf.train.Saver()
-    saver.save(RL.sess, 'model/E001/E001_model')
+    saver.save(RL.sess, 'model/E001/E001_model_prio')
     print('Model Trained and Saved')
 
     # return np.vstack((episodes, steps)), RL.memory
     return RL.memory, reward_list
 
+
+MEMORY_SIZE = 10000  # 10000
+
+sess = tf.Session()
+
+# EPI = 1, e_greedy_increment=0.01
+# EPI = 3, e_greedy_increment=0.005
+
+# with tf.variable_scope('natural_DQN'):
+#     RL_natural = DQNPrioritizedReplay(
+#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
+#     )
+
+#
+
+with tf.variable_scope('DQN_with_prioritized_replay'):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+    )  # n_features: 6 states
+
+sess.run(tf.global_variables_initializer())
+
+# saver = tf.train.Saver()
+
+# saver.save(sess, 'model/E001/E001_model')
 
 house_id = "E001"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
@@ -342,10 +352,10 @@ house_id = "E001"  # input('input the house id: ')
 prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file
-with open("saved/prio_memo_e001_May_iter5_sumP2_time.data", "wb") as fp:
+with open("saved/prio_memo_e001_May_iter5_train_time.data", "wb") as fp:
     pickle.dump(prio_memory, fp)
 # save reward to json file
-with open("saved/prio_reward_e001_May_iter5_sumP2_time.data", "wb") as fp:
+with open("saved/prio_reward_e001_May_iter5_train_time.data", "wb") as fp:
     pickle.dump(prio_reward, fp)
 
 # saver.save(sess, 'E001_model')

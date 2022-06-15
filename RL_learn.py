@@ -221,6 +221,7 @@ class Memory():  # stored as (s, a, r, s_) in SumTree
 
 # DQN, with/without Prioritized Replay
 class DQNPrioritizedReplay:
+
     def __init__(self,
                  n_actions,
                  n_features,
@@ -233,6 +234,7 @@ class DQNPrioritizedReplay:
                  e_greedy_increment=None,
                  output_graph=True,  # False,
                  prioritized=True,
+                 test=True,
                  sess=None):
         self.n_actions = n_actions
         self.n_features = n_features
@@ -246,6 +248,7 @@ class DQNPrioritizedReplay:
         self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
 
         self.prioritized = prioritized  # decide to use prioritize experience replay or not
+        self.test = test
 
         self.learn_step_counter = 0
 
@@ -346,10 +349,18 @@ class DQNPrioritizedReplay:
         # TODO
         # fixed the first action, select the second <- softmax, repeat for 3rd
         # np.argmax, get the top 3 values?
-        print("epsilon value:", self.epsilon)
+        # print("epsilon value:", self.epsilon)
         # to have batch dimension when feed into tf placeholder
         observation = observation[np.newaxis, :]
-
+        
+        # TODO: self.test 
+        # no test when training
+        # if self.test:
+        #     self.epsilon = 0
+        # else:
+        #     self.epsilon =
+        self.epsilon = self.epsilon_max if self.test is True else self.epsilon
+        print("epsilon value is", self.epsilon)
         if np.random.uniform() < self.epsilon:  # act greedy
             # forward feed the observation and get q value for every actions
             actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})

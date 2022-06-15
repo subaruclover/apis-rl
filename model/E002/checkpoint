@@ -1,2 +1,2 @@
-model_checkpoint_path: "E002_model"
-all_model_checkpoint_paths: "E002_model"
+model_checkpoint_path: "E002_model_prio"
+all_model_checkpoint_paths: "E002_model_prio"
