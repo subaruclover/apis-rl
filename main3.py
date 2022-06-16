@@ -6,7 +6,8 @@ created by: Qiong
 
 """
 import pickle
-
+import warnings
+warnings.filterwarnings('ignore', category=FutureWarning)
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 import os

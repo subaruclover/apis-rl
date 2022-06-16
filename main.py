@@ -17,6 +17,8 @@ set 24 data points for each day, and update their RSOCs with SonyCSL's APIS
 Note that sample data have 48 data points each day (record every 30mins), we only need 24 for testing
 
 """
+import warnings
+warnings.filterwarnings('ignore', category=FutureWarning)
 # import tensorflow as tf
 import tensorflow.compat.v1 as tf
 
