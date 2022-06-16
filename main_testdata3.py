@@ -85,7 +85,7 @@ def test(RL):
                 total_steps += 1
                 print("total_steps = ", total_steps)
 
-                time.sleep(0.01)  # update every 3 hours
+                time.sleep(60*3)  # update every 3 hours
             else:
                 done = True
                 day += 1
@@ -122,11 +122,11 @@ with tf.Session() as sess:
     # graph = tf.get_default_graph()
     # sess.run(tf.global_variables_initializer())
 
-# with tf.variable_scope('DQN_with_prioritized_replay'):
-RL_prio_test = DQNPrioritizedReplay(
-    n_actions=8, n_features=8, memory_size=10000,
-    e_greedy_increment=0.003, sess=None, prioritized=True, test=True, output_graph=True,
-)  # n_features: 6 states
+    with tf.variable_scope('DQN_with_prioritized_replay'):
+        RL_prio_test = DQNPrioritizedReplay(
+            n_actions=8, n_features=8, memory_size=10000,
+            e_greedy_increment=0.003, sess=None, prioritized=True, test=True, output_graph=True,
+        )  # n_features: 6 states
 
 # sess.run()
 

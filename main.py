@@ -217,93 +217,104 @@ def combine_actions(RL, observation):
 
 def train(RL):
     print("House E001, training start")
+
     total_steps = 0
     steps = []
     episodes = []
     reward_list = []
-    EPI = 5  # #.of iter
-    N_DAY = 30
+    EPI = 3  # #.of iter
+    N_RUN = 4  # 4
+    N_DAY = 30  # 30
 
-    # house_id = input('input the house id: ')
-
-    for i_episode in range(EPI):
-        # 1 EPI: test one month data first (shorten from one year)
-        # (1day, 24hrs) 24 min, action updated every hour (1 min)
-        print("Episode {} starts".format(i_episode))
-        day = 0
-        hour = 0
-        done = False
-
-        # TODO: (when reset) agent needs to get value from the env, not given
-        # reset with the env
-        observation = env.reset_time(house_id)
+    for i_run in range(N_RUN):
+        print("********Run {} starts********".format(i_run))
         total_reward = 0
+        # day = 0
+        # hour = 0
+        # done = False
 
-        while day < N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
+        for i_episode in range(EPI):
+            # 1 EPI: test one month data first (shorten from one year)
+            # (1day, 24hrs) 24 min, action updated every hour (1 min)
+            print("********Episode {} starts*********".format(i_episode))
+            day = 0
+            hour = 0
+            done = False
 
-            # start_time = time.time()
+            # TODO: (when reset) agent needs to get value from the env, not given
+            # reset with the env
+            observation = env.reset_time(house_id)
+            # total_reward = 0
 
-            # choose actions (e-greedy)
-            actions = RL.choose_actions(observation)
-            action_request = [actions[0], actions[2]]
-            action_accept = [actions[1]]
+            while day < N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
 
-            # house_id = input('input the house id: ')
-            # TODO: add done (how to make it offline? with the current online simulation)
-            observation_, reward, info = env.step1_time(action_request, action_accept, house_id)
+                # start_time = time.time()
 
-            # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-            actions_space = np.linspace(0.2, 0.9, 8).tolist()
-            print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(
-                actions_space[action_request[0]],
-                actions_space[action_request[1]],
-                actions_space[action_accept[0]]))
-            # Store the experience in memory
-            RL.store_transition(observation, actions, reward, observation_)
+                # choose actions (e-greedy)
+                actions = RL.choose_actions(observation)
+                action_request = [actions[0], actions[2]]
+                action_accept = [actions[1]]
 
-            # reward_list.append(reward)
-            total_reward += reward
-            # print("total step", total_steps)
-            # if total_steps > 100:  # MEMORY_SIZE
-            #     RL.learn()
-            # start learn after 100 steps and the frequency of learning
-            # accumulate some memory before start learning
-            if (total_steps > 24 * 3) and (total_steps % 2 == 0):
-                RL.learn()
-            # RL.learn()
+                # house_id = input('input the house id: ')
+                # TODO: add done (how to make it offline? with the current online simulation)
+                observation_, reward, info = env.step1_time(action_request, action_accept, house_id)
 
-            if hour < 24 / 3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
-                hour += 1
-                observation = observation_
-                total_steps += 1
-                print("total_steps = ", total_steps)
+                # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+                actions_space = np.linspace(0.2, 0.9, 8).tolist()
+                print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(
+                    actions_space[action_request[0]],
+                    actions_space[action_request[1]],
+                    actions_space[action_accept[0]]))
+                # Store the experience in memory
+                RL.store_transition(observation, actions, reward, observation_)
 
-                time.sleep(0.01)  # update every 3 hours
-            else:
-                done = True
-                day += 1
-                print('Day', day, ' finished')
-                hour = 0
+                # reward_list.append(reward)
+                total_reward += reward
+                # print("total step", total_steps)
+                # if total_steps > 100:  # MEMORY_SIZE
+                #     RL.learn()
+                # start learn after 100 steps and the frequency of learning
+                # accumulate some memory before start learning
+                if (total_steps > 24 * 3) and (total_steps % 2 == 0):
+                    RL.learn()
+                # RL.learn()
 
-                if day < N_DAY:
+                if hour < 24 / 3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+                    hour += 1
                     observation = observation_
-                    steps.append(total_steps)
-                    episodes.append(i_episode)
-                else:
-                    break
+                    total_steps += 1
+                    print("total_steps = ", total_steps)
 
-            # observation = observation_
-            # total_steps += 1
-            # print("total_steps = ", total_steps)
-        # Track rewards
-        reward_list.append(total_reward)
-        # end_time = time.time()
-        # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
+                    time.sleep(60*3)  # update every 3 hours
+                else:
+                    done = True
+                    day += 1
+                    print('Day', day, ' finished')
+                    hour = 0
+
+                    if day < N_DAY:
+                        observation = observation_
+                        steps.append(total_steps)
+                        episodes.append(i_episode)
+                    else:
+                        print('********End of input Days.********')
+                        break
+
+                # observation = observation_
+                # total_steps += 1
+                # print("total_steps = ", total_steps)
+            # Track rewards
+            reward_list.append(total_reward)
+            # print(reward_list)
+            # end_time = time.time()
+            # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
     # save trained model
     saver = tf.train.Saver()
     saver.save(RL.sess, 'model/E001/E001_model_prio')
     print('Model Trained and Saved')
+
+    # print(reward_list)
 
     # return np.vstack((episodes, steps)), RL.memory
     return RL.memory, reward_list
@@ -332,10 +343,6 @@ with tf.variable_scope('DQN_with_prioritized_replay'):
 
 sess.run(tf.global_variables_initializer())
 
-# saver = tf.train.Saver()
-
-# saver.save(sess, 'model/E001/E001_model')
-
 house_id = "E001"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
 # natural_memory, natural_reward = train(RL_natural)
@@ -352,10 +359,10 @@ house_id = "E001"  # input('input the house id: ')
 prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file
-with open("saved/prio_memo_e001_May_iter5_train_time.data", "wb") as fp:
+with open("saved/prio_memo_e001_May_train_time.data", "wb") as fp:
     pickle.dump(prio_memory, fp)
 # save reward to json file
-with open("saved/prio_reward_e001_May_iter5_train_time.data", "wb") as fp:
+with open("saved/prio_reward_e001_May_train_time.data", "wb") as fp:
     pickle.dump(prio_reward, fp)
 
 # saver.save(sess, 'E001_model')

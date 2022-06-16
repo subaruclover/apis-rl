@@ -234,7 +234,7 @@ class DQNPrioritizedReplay:
                  e_greedy_increment=None,
                  output_graph=True,  # False,
                  prioritized=True,
-                 test=True,
+                 test=False,
                  sess=None):
         self.n_actions = n_actions
         self.n_features = n_features
