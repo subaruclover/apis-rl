@@ -65,7 +65,7 @@ def train(RL):
     episodes = []
     reward_list = []
     EPI = 3
-    N_RUN = 4  # 4
+    N_RUN = 3  # 4
     N_DAY = 30
 
     for i_run in range(N_RUN):

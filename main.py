@@ -195,7 +195,28 @@ env = House(action_request=[7, 5], action_accept=[6])
 env.seed(1)
 
 
-# print(env.seed(21))
+MEMORY_SIZE = 10000  # 10000
+
+sess = tf.Session()
+
+# EPI = 1, e_greedy_increment=0.01
+# EPI = 3, e_greedy_increment=0.005
+
+# with tf.variable_scope('natural_DQN'):
+#     RL_natural = DQNPrioritizedReplay(
+#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
+#     )
+
+#
+
+with tf.variable_scope('DQN_with_prioritized_replay'):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+    )  # n_features: 6 states
+
+sess.run(tf.global_variables_initializer())
 
 
 def combine_actions(RL, observation):
@@ -223,7 +244,7 @@ def train(RL):
     episodes = []
     reward_list = []
     EPI = 3  # #.of iter
-    N_RUN = 4  # 4
+    N_RUN = 3  # 4
     N_DAY = 30  # 30
 
     for i_run in range(N_RUN):
@@ -319,29 +340,6 @@ def train(RL):
     # return np.vstack((episodes, steps)), RL.memory
     return RL.memory, reward_list
 
-
-MEMORY_SIZE = 10000  # 10000
-
-sess = tf.Session()
-
-# EPI = 1, e_greedy_increment=0.01
-# EPI = 3, e_greedy_increment=0.005
-
-# with tf.variable_scope('natural_DQN'):
-#     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
-#     )
-
-#
-
-with tf.variable_scope('DQN_with_prioritized_replay'):
-    RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
-    )  # n_features: 6 states
-
-sess.run(tf.global_variables_initializer())
 
 house_id = "E001"  # input('input the house id: ')
 # his_natural, natural_memory = train(RL_natural)
