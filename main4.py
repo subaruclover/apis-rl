@@ -37,8 +37,7 @@ from agent import APIS, House
 
 
 ############################
-env = House(action_request=[7, 5], action_accept=[6])
-env.seed(1)
+
 
 MEMORY_SIZE = 10000  # 10000
 
@@ -58,6 +57,9 @@ with tf.variable_scope('DQN_with_prioritized_replay'):
     )
 sess.run(tf.global_variables_initializer())
 
+# env = House(action_request=[7, 5], action_accept=[6])
+# env.seed(1)
+
 
 def train(RL):
     print("House E004, training start")
@@ -70,8 +72,14 @@ def train(RL):
     N_DAY = 30
 
     for i_run in range(N_RUN):
-        print("********Run {} starts********".format(i_run))
+
+        env = House(action_request=[7, 5], action_accept=[6])
+        env.seed(1)
+        print("********Run {} starts********".format(i_run+1))
         total_reward = 0
+
+        # reset with the env
+        observation = env.reset_time(house_id)
 
         for i_episode in range(EPI):
 
@@ -80,8 +88,8 @@ def train(RL):
             hour = 0
             done = False
 
-            # reset with the env
-            observation = env.reset_time(house_id)
+            # # reset with the env
+            # observation = env.reset_time(house_id)
             # start_time = time.time()
             # total_reward = 0
 
@@ -116,7 +124,7 @@ def train(RL):
                     observation = observation_
                     total_steps += 1
                     print("total_steps = ", total_steps)
-                    time.sleep(60*3)  # update every hour
+                    time.sleep(0)  # update every hour
                 else:
                     done = True
                     day += 1
@@ -138,9 +146,12 @@ def train(RL):
             # end_time = time.time()
             # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
-    saver = tf.train.Saver()
-    saver.save(RL.sess, 'model/E004/E004_model_prio')
-    print('Model Trained and Saved')
+        time.sleep(10)
+        print("*******save model start for RUN {} *******".format(i_run+1))
+        # save model after each iter is over (set checkpoint? --for certain numbers of steps)
+        saver = tf.train.Saver()
+        saver.save(RL.sess, 'model/E004/E004_model_prio')
+        print('Model Trained and Saved')
 
     # return np.vstack((episodes, steps)), RL.memory
     return RL.memory, reward_list

@@ -5,23 +5,16 @@
 @author: Qiong
 """
 
-import logging.config
-import math
-from math import sin, cos, pi
-import time
 import datetime
+import logging.config
+from math import sin, cos, pi
 
 import numpy as np
-import random
-import gym
 from gym.utils import seeding
 
 logger = logging.getLogger(__name__)
 
-import global_var as gl
 import config as conf
-import analyser
-import core
 import requests, json
 
 # import os
@@ -29,13 +22,13 @@ import requests, json
 
 from createScenario import CreateScenario1, CreateScenario2, CreateScenario3, CreateScenario4
 
-from RL_learn import DQNNet, SumTree, Memory
+from RL_learn import DQNNet
 
 # Data loading
 # get log data for states
 host = conf.b_host
 port = conf.b_port
-# url = "http://0.0.0.0:4390/get/log"
+# URL = "http://0.0.0.0:4390/get/log"
 URL = "http://" + host + ":" + str(port) + "/get/log"
 
 # dicts of states for all houses
@@ -1235,6 +1228,8 @@ class House():
         super().reset(seed=seed)
         """
 
+        # requests.adapters.DEFAULT_RETRIES = 5
+        # output_data = requests.get(URL, timeout=10).text
         output_data = requests.get(URL).text
         output_data = json.loads(output_data)  # dict
 

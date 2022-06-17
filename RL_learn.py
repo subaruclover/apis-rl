@@ -353,7 +353,6 @@ class DQNPrioritizedReplay:
         # to have batch dimension when feed into tf placeholder
         observation = observation[np.newaxis, :]
         
-        # TODO: self.test 
         # no test when training
         # if self.test:
         #     self.epsilon = 0
