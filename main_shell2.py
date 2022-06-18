@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-run the main.py file for multiple times (runs)
+run the main2.py file for multiple times (runs)
 
 Author: Qiong
 """
@@ -17,12 +17,8 @@ while i_run < N_RUN:
     # execute the code for N_RUN times
 
     print("********Run {} starts********".format(i_run))
-    exec(open("main.py").read())
-    # execfile('main.py')  # removed in python 3.x
-    # os.system("python main.py")
-    # f = os.popen("python main.py")
-
-    # print(prio_reward)
+    exec(open("main2.py").read())
+    # execfile('main2.py')  # removed in python 3.x
 
     with open("saved/prio_memo_e001_May_train_time_run{}.data".format(i_run), "wb") as fp:
         pickle.dump(prio_memory, fp)

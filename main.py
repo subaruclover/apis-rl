@@ -197,30 +197,6 @@ env = House(action_request=[7, 5], action_accept=[6])
 env.seed(1)
 
 
-MEMORY_SIZE = 10000  # 10000
-
-sess = tf.Session()
-
-# EPI = 1, e_greedy_increment=0.01
-# EPI = 3, e_greedy_increment=0.005
-
-# with tf.variable_scope('natural_DQN'):
-#     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
-#     )
-
-#
-
-with tf.variable_scope('DQN_with_prioritized_replay'):
-    RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
-    )  # n_features: 6 states
-
-sess.run(tf.global_variables_initializer())
-
-
 def combine_actions(RL, observation):
     # Do action combination? with \theta probability
     # choose basic a1 and a2 using softmax/greedy..
@@ -246,91 +222,91 @@ def train(RL):
     episodes = []
     reward_list = []
     EPI = 3  # #.of iter
-    N_RUN = 3  # 4
+    # N_RUN = 3  # 4
     N_DAY = 30  # 30
 
-    for i_run in range(N_RUN):
-        print("********Run {} starts********".format(i_run))
+    # for i_run in range(N_RUN):
+    #     print("********Run {} starts********".format(i_run))
+    #     total_reward = 0
+    #     # day = 0
+    #     # hour = 0
+    #     # done = False
+
+    for i_episode in range(EPI):
+        # 1 EPI: test one month data first (shorten from one year)
+        # (1day, 24hrs) 24 min, action updated every hour (1 min)
+        print("********Episode {} starts*********".format(i_episode))
+        day = 0
+        hour = 0
+        done = False
+
+        # TODO: (when reset) agent needs to get value from the env, not given
+        # reset with the env
+        observation = env.reset_time(house_id)
         total_reward = 0
-        # day = 0
-        # hour = 0
-        # done = False
 
-        for i_episode in range(EPI):
-            # 1 EPI: test one month data first (shorten from one year)
-            # (1day, 24hrs) 24 min, action updated every hour (1 min)
-            print("********Episode {} starts*********".format(i_episode))
-            day = 0
-            hour = 0
-            done = False
+        while day < N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
 
-            # TODO: (when reset) agent needs to get value from the env, not given
-            # reset with the env
-            observation = env.reset_time(house_id)
-            # total_reward = 0
+            # start_time = time.time()
 
-            while day < N_DAY:  # True:  # not gl.sema: total_steps <= 24 (one day)
+            # choose actions (e-greedy)
+            actions = RL.choose_actions(observation)
+            action_request = [actions[0], actions[2]]
+            action_accept = [actions[1]]
 
-                # start_time = time.time()
+            # house_id = input('input the house id: ')
+            # TODO: add done (how to make it offline? with the current online simulation)
+            observation_, reward, info = env.step1_time(action_request, action_accept, house_id)
 
-                # choose actions (e-greedy)
-                actions = RL.choose_actions(observation)
-                action_request = [actions[0], actions[2]]
-                action_accept = [actions[1]]
+            # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
+            actions_space = np.linspace(0.2, 0.9, 8).tolist()
+            print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(
+                actions_space[action_request[0]],
+                actions_space[action_request[1]],
+                actions_space[action_accept[0]]))
+            # Store the experience in memory
+            RL.store_transition(observation, actions, reward, observation_)
 
-                # house_id = input('input the house id: ')
-                # TODO: add done (how to make it offline? with the current online simulation)
-                observation_, reward, info = env.step1_time(action_request, action_accept, house_id)
+            # reward_list.append(reward)
+            total_reward += reward
+            # print("total step", total_steps)
+            # if total_steps > 100:  # MEMORY_SIZE
+            #     RL.learn()
+            # start learn after 100 steps and the frequency of learning
+            # accumulate some memory before start learning
+            if (total_steps > 24 * 3) and (total_steps % 2 == 0):
+                RL.learn()
+            # RL.learn()
 
-                # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-                actions_space = np.linspace(0.2, 0.9, 8).tolist()
-                print("House E001, Scenario file updated with act_req {}, {} and act_acc {}".format(
-                    actions_space[action_request[0]],
-                    actions_space[action_request[1]],
-                    actions_space[action_accept[0]]))
-                # Store the experience in memory
-                RL.store_transition(observation, actions, reward, observation_)
+            if hour < 24 / 3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+                hour += 1
+                observation = observation_
+                total_steps += 1
+                print("total_steps = ", total_steps)
 
-                # reward_list.append(reward)
-                total_reward += reward
-                # print("total step", total_steps)
-                # if total_steps > 100:  # MEMORY_SIZE
-                #     RL.learn()
-                # start learn after 100 steps and the frequency of learning
-                # accumulate some memory before start learning
-                if (total_steps > 24 * 3) and (total_steps % 2 == 0):
-                    RL.learn()
-                # RL.learn()
+                time.sleep(60*3)  # update every 3 hours
+            else:
+                done = True
+                day += 1
+                print('Day', day, ' finished')
+                hour = 0
 
-                if hour < 24 / 3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
-                    hour += 1
+                if day < N_DAY:
                     observation = observation_
-                    total_steps += 1
-                    print("total_steps = ", total_steps)
-
-                    time.sleep(60*3)  # update every 3 hours
+                    steps.append(total_steps)
+                    episodes.append(i_episode)
                 else:
-                    done = True
-                    day += 1
-                    print('Day', day, ' finished')
-                    hour = 0
+                    # print('********End of input Days.********')
+                    break
 
-                    if day < N_DAY:
-                        observation = observation_
-                        steps.append(total_steps)
-                        episodes.append(i_episode)
-                    else:
-                        print('********End of input Days.********')
-                        break
-
-                # observation = observation_
-                # total_steps += 1
-                # print("total_steps = ", total_steps)
-            # Track rewards
-            reward_list.append(total_reward)
-            # print(reward_list)
-            # end_time = time.time()
-            # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
+            # observation = observation_
+            # total_steps += 1
+            # print("total_steps = ", total_steps)
+        # Track rewards
+        reward_list.append(total_reward)
+        # print(reward_list)
+        # end_time = time.time()
+        # print("episode {} - training time: {:.2f}mins".format(i_episode, (end_time - start_time) / 60 * gl.acc))
 
     # save trained model
     saver = tf.train.Saver()
@@ -355,255 +331,40 @@ house_id = "E001"  # input('input the house id: ')
 #     pickle.dump(natural_reward, fp)
 
 ##
+
+MEMORY_SIZE = 10000  # 10000
+
+sess = tf.Session()
+
+# EPI = 1, e_greedy_increment=0.01
+# EPI = 3, e_greedy_increment=0.005
+
+# with tf.variable_scope('natural_DQN'):
+#     RL_natural = DQNPrioritizedReplay(
+#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
+#     )
+
+with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+    )  # n_features: 6 states
+
+sess.run(tf.global_variables_initializer())
+
 # his_prio, prio_memory = train(RL_prio)
-prio_memory, prio_reward = train(RL_prio)
+if __name__ == '__main__':
+    prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file
-with open("saved/prio_memo_e001_May_train_time.data", "wb") as fp:
-    pickle.dump(prio_memory, fp)
-# save reward to json file
-with open("saved/prio_reward_e001_May_train_time.data", "wb") as fp:
-    pickle.dump(prio_reward, fp)
+# with open("saved/prio_memo_e001_May_train_time.data", "wb") as fp:
+#     pickle.dump(prio_memory, fp)
+# # save reward to json file
+# with open("saved/prio_reward_e001_May_train_time.data", "wb") as fp:
+#     pickle.dump(prio_reward, fp)
 
 # saver.save(sess, 'E001_model')
 
-# compare based on first success
-# plt.title("E001")
-# plt.plot(his_natural[0, :], his_natural[1, :] - his_natural[1, 0], c='b', label='natural DQN')
-# plt.plot(natural_memory[:24, 8], 'g', label='natural DQN p2')
 
 
-# plt.plot(his_prio[0, :], his_prio[1, :] - his_prio[1, 0], c='b', label='DQN with prioritized replay')
-# plt.plot(prio_memory_store, 'g', label='DQN with prioritized replay p2')
-# plt.legend(loc='best')
-# plt.ylabel('reward (p2)')
-# plt.xlabel('episode (hour)')
-# plt.grid()
-# plt.show()
-
-"""
-
-##################################
-# Memory initialization
-RSOC = np.array([battery.initial_rsoc])
-day = 0
-quarter_hour = 0
-done = False
-timestep = 15.0
-
-for i in range(pretrain_length):
-
-    state = np.concatenate((x[day * 96 + quarter_hour, :], RSOC), axis=-1)
-    action = np.random.randint(0, action_size)
-
-    # Compute the reward and new state based on the selected action
-    # next_rsoc, reward
-    next_rsoc, reward, p2_sim, prod = battery.step(state, action, timestep)
-    #     print('next_rsoc: ', next_rsoc, 'reward: ', reward)
-
-    # Store the experience in memory
-    if quarter_hour < 96 - 1:
-        quarter_hour += 1
-        next_state = np.concatenate((x[day * 96 + quarter_hour, :], next_rsoc), axis=-1)
-    else:
-        done = True
-        day += 1
-        quarter_hour = 0
-        if day < len(x) / 96:
-            next_state = np.concatenate(
-                (x[day * 96 + quarter_hour, :], next_rsoc), axis=-1
-            )
-        else:
-            break
-
-    RSOC = next_rsoc
-    experience = state, action, reward, next_state, done
-    memory.store(experience)
-
-
-#########################################
-# DQN Training
-
-DQN = DQNNet(
-    state_size=state_size, action_size=action_size, learning_rate=learning_rate
-)
-
-decay_step = 0  # Decay rate for ϵ-greedy policy
-RSOC = np.array([battery.initial_rsoc])
-day = 0
-quarter_hour = 0
-done = False
-timestep = 15.0
-quarter_hour_rewards = []
-day_mean_rewards = []
-
-while day < len(x) / 96:
-
-    state = np.concatenate((x[day * 96 + quarter_hour, :], RSOC), axis=-1)
-
-    # ϵ-greedy policy
-    exp_exp_tradeoff = np.random.rand()
-    explore_probability = explore_stop + (explore_start - explore_stop) * np.exp(
-        -decay_rate * decay_step
-    )
-    if explore_probability > exp_exp_tradeoff:
-        action = np.random.randint(0, action_size)
-    else:
-        action = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
-
-    # Compute the reward and new state based on the selected action
-    next_RSOC, reward, p2_sim, prod = battery.step(state, action, timestep)
-    #   print('next_rsoc: ', next_RSOC, 'reward: ', reward)
-
-    quarter_hour_rewards.append(reward)
-
-    # Store the experience in memory
-    if quarter_hour < 96 - 1:
-        quarter_hour += 1
-        next_state = np.concatenate((x[day * 96 + quarter_hour, :], next_RSOC), axis=-1)
-    else:
-        done = True
-        day += 1
-        quarter_hour = 0
-        if day < len(x) / 96:
-            next_state = np.concatenate(
-                (x[day * 96 + quarter_hour, :], next_RSOC), axis=-1
-            )
-        else:
-            break
-        mean_reward = np.mean(quarter_hour_rewards)
-        day_mean_rewards.append(mean_reward)
-        quarter_hour_rewards = []
-        print(
-            "Day: {}".format(day),
-            "Mean reward: {:.2f}".format(mean_reward),
-            "Training loss: {:.2f}".format(loss),
-            "Explore P: {:.2f} \n".format(explore_probability),
-        )
-
-    RSOC = next_RSOC
-    experience = state, action, reward, next_state, done
-    memory.store(experience)
-    decay_step += 1
-
-    # DQN training
-    tree_idx, batch, ISWeights_mb = memory.sample(
-        batch_size
-    )  # Obtain random mini-batch from memory
-
-    states_mb = np.array([each[0][0] for each in batch])
-    actions_mb = np.array([each[0][1] for each in batch])
-    rewards_mb = np.array([each[0][2] for each in batch])
-    next_states_mb = np.array([each[0][3] for each in batch])
-    dones_mb = np.array([each[0][4] for each in batch])
-
-    targets_mb = DQN.model.predict(states_mb)
-
-    #     print('s_mb:',states_mb, 'a_mb:', actions_mb, 'r_mb:', rewards_mb)
-
-    # Update those targets at which actions are taken
-    target_batch = []
-    q_next_state = DQN.model.predict(next_states_mb)
-    for i in range(0, len(batch)):
-        action = np.argmax(q_next_state[i])
-        if dones_mb[i] == 1:
-            target_batch.append(rewards_mb[i])
-        else:
-            target = rewards_mb[i] + gamma * q_next_state[i][action]
-            target_batch.append(rewards_mb[i])
-
-    # Replace the original with the updated targets
-    one_hot = np.zeros((len(batch), action_size))
-    one_hot[np.arange(len(batch)), actions_mb] = 1
-    targets_mb = targets_mb.astype("float64")
-    target_batch = np.array([each for each in target_batch]).astype("float64")
-    np.place(targets_mb, one_hot > 0, target_batch)
-
-    loss = DQN.model.train_on_batch(
-        states_mb, targets_mb, sample_weight=ISWeights_mb.ravel()
-    )
-
-    # Update priority
-    absolute_errors = []
-    predicts_mb = DQN.model.predict(states_mb)
-    for i in range(0, len(batch)):
-        absolute_errors.append(
-            np.abs(predicts_mb[i][actions_mb[i]] - targets_mb[i][actions_mb[i]])
-        )
-    absolute_errors = np.array(absolute_errors)
-
-    tree_idx = np.array([int(each) for each in tree_idx])
-    memory.batch_update(tree_idx, absolute_errors)
-
-    # Save model every 5 days
-    if day % 5 == 0:
-        # DQN.model.save_weights("/Users/Huang/Documents/DQNBattery/DQN_quarterhour_avg_214.hdf5")
-        DQN.model.save_weights("./DQN_quarterhour_avg_214.hdf5")
-
-
-############################################
-# Testing
-# DQN.model.load_weights("/Users/Huang/Documents/DQNBattery/DQN_quarterhour_avg_214.hdf5")
-DQN.model.load_weights("./DQN_quarterhour_avg_214.hdf5")
-
-
-RSOC = np.array([battery.initial_rsoc])
-day = 0
-quarter_hour = 0
-done = False
-timestep = 15.0
-RSOC_list = []
-action_list = []
-reward_list = []
-p2_sim_list = []
-prod_list = []
-
-while day < len(x) / 96:
-
-    state = np.concatenate((x[day * 96 + quarter_hour, :], RSOC), axis=-1)
-    action = np.argmax(DQN.model.predict(np.expand_dims(state, axis=0)))
-
-    next_RSOC, reward, p2_sim, prod = battery.step(state, action, timestep)
-    #     print('next_rsoc: ', next_RSOC, 'reward: ', reward)
-
-    RSOC = next_RSOC
-    RSOC_list.append(RSOC)
-    #     RSOC_list.append(RSOC/100)
-    reward_list.append(reward)
-    action_list.append(action)
-    p2_sim_list.append(p2_sim)
-    prod_list.append(prod)
-
-    if quarter_hour < 96 - 1:
-        quarter_hour += 1
-        next_state = np.concatenate((x[day * 96 + quarter_hour, :], next_RSOC), axis=-1)
-    else:
-        done = True
-        day += 1
-        quarter_hour = 0
-        if day < len(x) / 96:
-            next_state = np.concatenate(
-                (x[day * 96 + quarter_hour, :], next_RSOC), axis=-1
-            )
-        else:
-            break
-
-# print(np.mean(reward_list))
-end_time = time.time()
-print("training time: {:.2f}mins".format((end_time - start_time) / 60))
-
-#################
-# plot reward
-fig, ax = plt.subplots(1, 1, figsize=(12, 4))
-
-ax.plot(day_mean_rewards, "b-", label="reward")
-# ax.plot(mean_reward)
-
-ax.set_xlabel("days of Year 2019 (houe214)", fontsize=14)
-ax.set_ylabel("Average reward", fontsize=14)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-ax.legend(loc="lower right", fontsize=14)
-
-plt.show()
-"""

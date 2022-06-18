@@ -49,8 +49,8 @@ def train(RL):
     episodes = []
     reward_list = []
     EPI = 3
-    N_RUN = 3  # 4
-    N_DAY = 5
+    # N_RUN = 3  # 4
+    N_DAY = 30
 
     # for i_run in range(N_RUN):
     #     print("********Run {} starts********".format(i_run))
@@ -100,7 +100,7 @@ def train(RL):
                 observation = observation_
                 total_steps += 1
                 print("total_steps = ", total_steps)
-                time.sleep(0)  # update every hour
+                time.sleep(60*3)  # update every hour
             else:
                 done = True
                 day += 1
@@ -155,6 +155,9 @@ MEMORY_SIZE = 10000  # 10000
 #         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
 #         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
 #     )
+
+# if __name__ == '__main__':
+
 sess = tf.Session()
 with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE): #as scope:
     RL_prio = DQNPrioritizedReplay(
@@ -162,22 +165,22 @@ with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE): #as 
         e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
     )
 
-    # scope.reuse_variables()  # reuse
-    RL_prio_2 = DQNPrioritizedReplay(
-            n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-            e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
-        )
+        # scope.reuse_variables()  # reuse
+        # RL_prio_2 = DQNPrioritizedReplay(
+        #         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        #         e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+        #     )
+        #
+        # # scope.reuse_variables()
+        # RL_prio_3 = DQNPrioritizedReplay(
+        #         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        #         e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+        #     )
 
-    # scope.reuse_variables()
-    RL_prio_3 = DQNPrioritizedReplay(
-            n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-            e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
-        )
+sess.run(tf.global_variables_initializer())  # init
 
-    sess.run(tf.global_variables_initializer())  # init
-
-print("********Run 1 starts********")
-prio_memory, prio_reward = train(RL_prio)
+if __name__ == '__main__':
+    prio_memory, prio_reward = train(RL_prio)
 
 """
 time.sleep(4)
@@ -193,11 +196,11 @@ prio_memory_3, prio_reward_3 = train(RL_prio_3)
 """
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file
-with open("saved/prio_memo_e003_May_train_time.data", "wb") as fp:
-    pickle.dump(prio_memory, fp)
-# save reward to json file
-with open("saved/prio_reward_e003_May_train_time.data", "wb") as fp:
-    pickle.dump(prio_reward, fp)
+# with open("saved/prio_memo_e003_May_train_time.data", "wb") as fp:
+#     pickle.dump(prio_memory, fp)
+# # save reward to json file
+# with open("saved/prio_reward_e003_May_train_time.data", "wb") as fp:
+#     pickle.dump(prio_reward, fp)
 
 # compare based on first success
 # plt.title("E003")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-run the main.py file for multiple times (runs)
+run the main4.py file for multiple times (runs)
 
 Author: Qiong
 """
@@ -8,7 +8,7 @@ Author: Qiong
 # import os
 import pickle
 
-# import main as main
+# import main4 as main4
 
 N_RUN = 3
 i_run = 0
@@ -17,10 +17,10 @@ while i_run < N_RUN:
     # execute the code for N_RUN times
 
     print("********Run {} starts********".format(i_run))
-    exec(open("main.py").read())
-    # execfile('main.py')  # removed in python 3.x
-    # os.system("python main.py")
-    # f = os.popen("python main.py")
+    exec(open("main4.py").read())
+    # execfile('main4.py')  # removed in python 3.x
+    # os.system("python main4.py")
+    # f = os.popen("python main4.py")
 
     # print(prio_reward)
 
