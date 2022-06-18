@@ -24,10 +24,10 @@ while i_run < N_RUN:
 
     # print(prio_reward)
 
-    with open("saved/prio_memo_e001_May_train_time_run{}.data".format(i_run), "wb") as fp:
+    with open("saved/prio_memo_e004_May_train_time_run{}.data".format(i_run), "wb") as fp:
         pickle.dump(prio_memory, fp)
     # save reward to json file
-    with open("saved/prio_reward_e001_May_train_time_run{}.data".format(i_run), "wb") as fp:
+    with open("saved/prio_reward_e004_May_train_time_run{}.data".format(i_run), "wb") as fp:
         pickle.dump(prio_reward, fp)
 
     i_run += 1

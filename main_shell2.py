@@ -20,10 +20,10 @@ while i_run < N_RUN:
     exec(open("main2.py").read())
     # execfile('main2.py')  # removed in python 3.x
 
-    with open("saved/prio_memo_e001_May_train_time_run{}.data".format(i_run), "wb") as fp:
+    with open("saved/prio_memo_e002_May_train_time_run{}.data".format(i_run), "wb") as fp:
         pickle.dump(prio_memory, fp)
     # save reward to json file
-    with open("saved/prio_reward_e001_May_train_time_run{}.data".format(i_run), "wb") as fp:
+    with open("saved/prio_reward_e002_May_train_time_run{}.data".format(i_run), "wb") as fp:
         pickle.dump(prio_reward, fp)
 
     i_run += 1
