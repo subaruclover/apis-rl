@@ -7,6 +7,7 @@ Author: Qiong
 
 # import os
 import pickle
+import sys
 
 N_RUN = 3
 i_run = 0
@@ -15,6 +16,14 @@ while i_run < N_RUN:
     # execute the code for N_RUN times
 
     print("********Run {} starts********".format(i_run))
+
+    if i_run == 0:
+        sys.argv = ['main.py', '--seed=1']
+    elif i_run == 1:
+        sys.argv = ['main.py', '--seed=21']
+    elif i_run == 2:
+        sys.argv = ['main.py', '--seed=42']
+
     exec(open("main3.py").read())
     # execfile('main3.py')
     # os.system("python main3.py")

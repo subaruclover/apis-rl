@@ -5,6 +5,7 @@ DQN training, single run, house E002
 created by: Qiong
 
 """
+import argparse
 import pickle
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -39,28 +40,8 @@ from RL_learn import Memory, DQNPrioritizedReplay
 from agent import APIS, House
 
 ############################
-env = House(action_request=[7, 5], action_accept=[6])
-env.seed(1)
-
-
-MEMORY_SIZE = 10000  # 10000
-
-sess = tf.Session()
-
-# with tf.variable_scope('natural_DQN'):
-#     RL_natural = DQNPrioritizedReplay(
-#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
-#     )
-
-
-with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE):
-    RL_prio = DQNPrioritizedReplay(
-        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
-    )
-
-sess.run(tf.global_variables_initializer())
+# env = House(action_request=[7, 5], action_accept=[6])
+# env.seed(1)
 
 
 def train(RL):
@@ -72,6 +53,9 @@ def train(RL):
     EPI = 3
     N_RUN = 3
     N_DAY = 30
+
+    env = House(action_request=[7, 5], action_accept=[6])
+    env.seed(1)
 
     # for i_run in range(N_RUN):
     #     print("********Run {} starts********".format(i_run))
@@ -119,7 +103,7 @@ def train(RL):
             total_reward += reward
 
             # if total_steps > MEMORY_SIZE:
-            if (total_steps > 24*3) and (total_steps % 2 == 0):
+            if total_steps > 24*3:  # and (total_steps % 2 == 0):
                 RL.learn()
 
             if hour < 24/3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
@@ -167,8 +151,34 @@ house_id = "E002"  # input('input the house id: ')
 # with open("saved/natural_reward_e002_May_iter1_time.data", "wb") as fp:
 #     pickle.dump(natural_reward, fp)
 
+
+MEMORY_SIZE = 10000  # 10000
+
+sess = tf.Session()
+
+# with tf.variable_scope('natural_DQN'):
+#     RL_natural = DQNPrioritizedReplay(
+#         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+#         e_greedy_increment=0.008, sess=sess, prioritized=False, output_graph=True,
+#     )
+
+
+with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE):
+    RL_prio = DQNPrioritizedReplay(
+        n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+        e_greedy_increment=0.0015, seed=1, sess=sess, prioritized=True, test=False, output_graph=True,
+    )
+
+sess.run(tf.global_variables_initializer())
+
 # his_prio, prio_memory = train(RL_prio)
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--seed", default=1, type=int)
+
+    args = parser.parse_args()
+
     prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file

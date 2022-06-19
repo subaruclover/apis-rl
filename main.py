@@ -17,6 +17,7 @@ set 24 data points for each day, and update their RSOCs with SonyCSL's APIS
 Note that sample data have 48 data points each day (record every 30mins), we only need 24 for testing
 
 """
+import argparse
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
 # import tensorflow as tf
@@ -193,8 +194,8 @@ while gl.sema:  # True, alter for different time periods
 
 ############################
 # give a set of init actions (action 5, 6, 7 for act_req and act_acc)
-env = House(action_request=[7, 5], action_accept=[6])
-env.seed(1)
+# env = House(action_request=[7, 5], action_accept=[6])
+# env.seed(1)
 
 
 def combine_actions(RL, observation):
@@ -224,6 +225,10 @@ def train(RL):
     EPI = 3  # #.of iter
     # N_RUN = 3  # 4
     N_DAY = 30  # 30
+
+    # give a set of init actions (action 5, 6, 7 for act_req and act_acc)
+    env = House(action_request=[7, 5], action_accept=[6])
+    env.seed(1)
 
     # for i_run in range(N_RUN):
     #     print("********Run {} starts********".format(i_run))
@@ -274,7 +279,7 @@ def train(RL):
             #     RL.learn()
             # start learn after 100 steps and the frequency of learning
             # accumulate some memory before start learning
-            if (total_steps > 24 * 3) and (total_steps % 2 == 0):
+            if total_steps > 24 * 3:  # and (total_steps % 2 == 0):
                 RL.learn()
             # RL.learn()
 
@@ -348,13 +353,19 @@ sess = tf.Session()
 with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE):
     RL_prio = DQNPrioritizedReplay(
         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+        e_greedy_increment=0.0015, seed=1, sess=sess, prioritized=True, test=False, output_graph=True,
     )  # n_features: 6 states
 
 sess.run(tf.global_variables_initializer())
 
 # his_prio, prio_memory = train(RL_prio)
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--seed", default=1, type=int)
+
+    args = parser.parse_args()
+
     prio_memory, prio_reward = train(RL_prio)
 # prio_memory_store = [prio_memory.tree.data[i][9] for i in range(24*55)]  # reward(p2)
 # save memo to json file

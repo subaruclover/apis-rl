@@ -11,8 +11,10 @@ import matplotlib.pyplot as plt
 # import tensorflow as tf
 import tensorflow.compat.v1 as tf
 
-np.random.seed(1)
-tf.set_random_seed(1)
+
+def set_seed(seed):
+    np.random.seed(seed)
+    tf.set_random_seed(seed)
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense
@@ -231,6 +233,7 @@ class DQNPrioritizedReplay:
                  replace_target_iter=100,  # 500,
                  memory_size=10000,
                  batch_size=256,
+                 seed=1,
                  e_greedy_increment=None,
                  output_graph=True,  # False,
                  prioritized=True,
@@ -244,6 +247,7 @@ class DQNPrioritizedReplay:
         self.replace_target_iter = replace_target_iter
         self.memory_size = memory_size
         self.batch_size = batch_size
+        self.seed = seed
         self.epsilon_increment = e_greedy_increment
         self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
 
@@ -278,6 +282,7 @@ class DQNPrioritizedReplay:
 
     def _build_net(self):
         def build_layers(s, c_names, n_l1, w_initializer, b_initializer, trainable):
+            set_seed(self.seed)
             with tf.variable_scope('l1'):
                 w1 = tf.get_variable('w1', [self.n_features, n_l1], initializer=w_initializer, collections=c_names,
                                      trainable=trainable)

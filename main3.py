@@ -5,12 +5,16 @@ DQN training, single run, house E003
 created by: Qiong
 
 """
+import argparse
 import pickle
 import warnings
+
 warnings.filterwarnings('ignore', category=FutureWarning)
 import tensorflow.compat.v1 as tf
+
 tf.disable_eager_execution()
 import os
+
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 import logging.config
@@ -25,6 +29,7 @@ import requests, json
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 sns.set(style="whitegrid")
 
 # RL_learn functions
@@ -36,10 +41,10 @@ class BatteryEnv: my battery model -> replaced with APIS battery model
 from RL_learn import Memory, DQNPrioritizedReplay
 from agent import APIS, House
 
+
 ############################
-env = House(action_request=[7, 5], action_accept=[6])
-env.seed(1)
-# print(env.seed(2))
+# env = House(action_request=[7, 5], action_accept=[6])
+# env.seed(1)
 
 
 def train(RL):
@@ -51,6 +56,9 @@ def train(RL):
     EPI = 3
     # N_RUN = 3  # 4
     N_DAY = 30
+
+    env = House(action_request=[7, 5], action_accept=[6])
+    env.seed(1)
 
     # for i_run in range(N_RUN):
     #     print("********Run {} starts********".format(i_run))
@@ -82,9 +90,10 @@ def train(RL):
 
             actions_space = np.linspace(0.2, 0.9, 8).tolist()
             # actions_space = np.around(np.linspace(0.3, 0.9, 7).tolist(), 1)
-            print("House E003, Scenario file updated with act_req {}, {} and act_acc {}".format(actions_space[action_request[0]],
-                                                                                  actions_space[action_request[1]],
-                                                                                  actions_space[action_accept[0]]))
+            print("House E003, Scenario file updated with act_req {}, {} and act_acc {}".format(
+                actions_space[action_request[0]],
+                actions_space[action_request[1]],
+                actions_space[action_accept[0]]))
 
             RL.store_transition(observation, actions, reward, observation_)
 
@@ -92,10 +101,10 @@ def train(RL):
             total_reward += reward
 
             # if total_steps > MEMORY_SIZE:
-            if (total_steps > 24*3) and (total_steps % 2 == 0):
+            if total_steps > 24 * 3:  # and (total_steps % 2 == 0):
                 RL.learn()
 
-            if hour < 24/3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
+            if hour < 24 / 3:  # 24 - 1:#(total_steps > 0) and (total_steps % 24 == 0):  # one day
                 hour += 1
                 observation = observation_
                 total_steps += 1
@@ -159,27 +168,33 @@ MEMORY_SIZE = 10000  # 10000
 # if __name__ == '__main__':
 
 sess = tf.Session()
-with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE): #as scope:
+with tf.variable_scope('DQN_with_prioritized_replay', reuse=tf.AUTO_REUSE):  # as scope:
     RL_prio = DQNPrioritizedReplay(
         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+        e_greedy_increment=0.0015, seed=1, sess=sess, prioritized=True, test=False, output_graph=True,
     )
 
-        # scope.reuse_variables()  # reuse
-        # RL_prio_2 = DQNPrioritizedReplay(
-        #         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        #         e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
-        #     )
-        #
-        # # scope.reuse_variables()
-        # RL_prio_3 = DQNPrioritizedReplay(
-        #         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
-        #         e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
-        #     )
+    # scope.reuse_variables()  # reuse
+    # RL_prio_2 = DQNPrioritizedReplay(
+    #         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+    #         e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+    #     )
+    #
+    # # scope.reuse_variables()
+    # RL_prio_3 = DQNPrioritizedReplay(
+    #         n_actions=8, n_features=8, memory_size=MEMORY_SIZE,
+    #         e_greedy_increment=0.002, sess=sess, prioritized=True, test=False, output_graph=True,
+    #     )
 
 sess.run(tf.global_variables_initializer())  # init
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--seed", default=1, type=int)
+
+    args = parser.parse_args()
+
     prio_memory, prio_reward = train(RL_prio)
 
 """
