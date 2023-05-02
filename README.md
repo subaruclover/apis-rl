@@ -10,13 +10,12 @@ config.py and global_var.py are files copied from the apis-main. These files are
 agent.py is the main file for getting the state variables and generating new scenario.json file. New scenario.json
 file will be replaced the older file under the directory apis-main/exe/.
 
-## TODO
-makefile for apis-rl under the main APIS (makefile)
 
-### consider: 
-- venv for make file
-- requirement.txt for the dependency of the project
-(pandas, tf, keras, numpy, matplotlib, ...)
+## How to use
+Run 
 
+```bash
+$ make run-rl
+```
 
-
+Results will be stored under apis-emulator/data/ folder with the names you defined in apis-emulator/config.pay file.
