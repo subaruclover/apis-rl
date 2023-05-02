@@ -17,5 +17,6 @@ Run
 ```bash
 $ make run-rl
 ```
+in APIS (check makefile)
 
 Results will be stored under apis-emulator/data/ folder with the names you defined in apis-emulator/config.pay file.
